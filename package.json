@@ -4,7 +4,7 @@
   "scripts": {
     "generate": "graphql-codegen",
     "build": "tsc --build tsconfig.json",
-    "heroku-start": "npm run generate && ts-node src/wg/index.ts",
+    "start": "npm run generate && ts-node src/wg/index.ts",
     "all": "ts-node src/bot.ts --channel --council --forum --proposals",
     "quiet": "ts-node src/bot.ts --quiet --channel --council --forum --proposals",
     "verbose": "ts-node src/bot.ts --verbose --channel --council --forum --proposals",
