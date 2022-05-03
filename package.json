@@ -4,7 +4,7 @@
   "scripts": {
     "generate": "graphql-codegen",
     "build": "tsc --build tsconfig.json",
-    "start": "npm run generate && ts-node src/wg/index.ts",
+    "heroku-start": "npm run generate && ts-node src/wg/index.ts",
     "all": "ts-node src/bot.ts --channel --council --forum --proposals",
     "quiet": "ts-node src/bot.ts --quiet --channel --council --forum --proposals",
     "verbose": "ts-node src/bot.ts --verbose --channel --council --forum --proposals",
@@ -30,6 +30,7 @@
     "@graphql-codegen/typescript-operations": "^2.3.5",
     "@joystream/types": "^0.19.3",
     "@polkadot/api": "^5.9.1",
+    "axios": "^0.21.1",
     "discord.js": "^13.6.0",
     "graphql": "^16.4.0",
     "graphql-request": "^4.2.0"
