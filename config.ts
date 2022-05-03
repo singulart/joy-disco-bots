@@ -10,7 +10,7 @@ export const dapplookerUrl =
 export const wsLocation = "wss://rpc.joystream.org:9944"; //"wss://joystreamstats.live:9945";
 
 // bot tokens
-export const discordToken = "ODQ4MzEzMzkzOTQ5MDQ4ODcy.YLKzag.VCCPTkF_hcCbEOCXhsmFfISw138";
+export const discordToken = "";
 export const tgToken = "";
 
 // telegram chat ID
