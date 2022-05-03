@@ -6,3 +6,7 @@ An ongoing initiative to unify the various Joystream Discord tools into one mono
 3. Atlas videos bot
 4. Membership bot
 
+# Heroku deployment
+
+1. Set `TOKEN` config var
+2. Create `NODE_OPTIONS=--max_old_space_size=2560` config var, otherwise heap errors are possible.
