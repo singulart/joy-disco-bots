@@ -1,14 +1,9 @@
-import { OpeningId, Opening, ApplicationId, Application } from "@joystream/types/working-group";
-// import { Application as HiringApplication, Opening as HiringOpening} from "@joystream/types/hiring";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Hash, EventRecord } from "@polkadot/types/interfaces";
 import { BlockNumber } from "@joystream/types/common";
-import { Option, u32, u64, Vec, StorageKey } from "@polkadot/types";
+import { Vec } from "@polkadot/types";
 import { types } from "@joystream/types";
 
-export const getApplication = async (api: ApiPromise, group: string, hash: Hash, applicationId: ApplicationId): Promise<Application> => {
-    return api.query[group].applicationById.at(hash, applicationId)
-}
 
 export const connectApi = async (url: string): Promise<ApiPromise> => {
     const provider = new WsProvider(url);
