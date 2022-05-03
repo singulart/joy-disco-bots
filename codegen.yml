@@ -1,0 +1,64 @@
+# Run codegen using: npm run generate
+# Make sure the schema endpoint is accessible! 
+schema: https://query.joystream.org/graphql
+documents:
+  - >
+    query openingById($openingId: ID!) {
+      workingGroupOpeningByUniqueInput(where: {id: $openingId}) {
+        metadata {
+          applicationDetails
+          description
+          hiringLimit
+          expectedEnding
+          shortDescription
+          title
+          id
+        }
+        rewardPerBlock
+        stakeAmount
+        unstakingPeriod
+      }
+    }
+
+  - >
+    query workerById($workerId: ID!) {
+      workerByUniqueInput(where: {id: $workerId}) {
+          membership {
+          handle
+          id
+        }
+        status {
+          __typename
+        }
+        rewardPerBlock
+        stake
+        rewardAccount
+        roleAccount
+        stakeAccount
+      }
+    }
+
+  - > 
+    query applicationById($applicationId: ID!) {
+      workingGroupApplicationByUniqueInput(where: {id: $applicationId}) {
+        applicant {
+          handle
+        }
+        openingId
+      }
+    }
+
+  - >
+    query memberById($memberId: ID!) {
+      memberships(where: {id_eq: $memberId}) {
+        handle
+        id
+      }
+    }
+
+generates:
+  ./src/qntypes.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-graphql-request
