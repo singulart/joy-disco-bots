@@ -122,6 +122,6 @@ function safeOpeningTitle(opening: OpeningByIdQuery, id: string): string {
     return opening.workingGroupOpeningByUniqueInput.metadata.title || `Untitled #${id}`
 }
 function getOpeningId(opening: OpeningByIdQuery): string {
-    return opening.workingGroupOpeningByUniqueInput.metadata.id;
+    return opening.workingGroupOpeningByUniqueInput.id;
 }
 

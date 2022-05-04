@@ -125,3 +125,12 @@ export const findDiscordChannel = (
   client.channels.cache.find(
     (channel: any) => channel.name === name
   ) as TextChannel;
+
+export const delayBlocking = (milliseconds: number) => {
+    const timeInitial: Date = new Date();
+    var timeNow: Date = new Date();
+    for ( ; timeNow.getMilliseconds() - timeInitial.getMilliseconds() < milliseconds; ){
+        timeNow = new Date();
+    }
+    console.log('Sleep done!');
+}
