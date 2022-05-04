@@ -36,20 +36,22 @@ const discordBotToken = process.env.TOKEN || undefined; // environment variable 
 ;(async () => {
 
   const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+
+  client.once("ready", async () => {
+    console.log('Discord.js client ready');
+    const channels: DiscordChannels = await getDiscordChannels(client);
+    const api: ApiPromise = await connectApi(wsLocation);
+    await api.isReady;
+    Object.values(eventsMapping).forEach((block: number) =>
+      getBlockHash(api, block).then((hash) =>
+        getEvents(api, hash).then((events: EventRecord[]) =>
+          processGroupEvents(block, events, channels)
+        )
+      )
+    );
+  });
+
   client.login(discordBotToken).then(async () => {
     console.log("Bot logged in successfully");
-    client.once("ready", async () => {
-      console.log('Discord.js client ready');
-      const channels: DiscordChannels = await getDiscordChannels(client);
-      const api: ApiPromise = await connectApi(wsLocation);
-      await api.isReady;
-      Object.values(eventsMapping).forEach((block: number) =>
-        getBlockHash(api, block).then((hash) =>
-          getEvents(api, hash).then((events: EventRecord[]) =>
-            processGroupEvents(api, block, hash, events, channels)
-          )
-        )
-      );
-    });
   });
 })()

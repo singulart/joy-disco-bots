@@ -13,8 +13,7 @@ import { processGroupEvents } from "./wg_event_handlers";
   const discordBotToken = process.env.TOKEN || undefined; // environment variable TOKEN must be set
 
   const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS] });
-  client.login(discordBotToken).then(async () => {
-    console.log(`Bot logged in. Current server[s]: ${client.guilds.cache.map(g => g.name).join(', ')}`);
+
     client.once("ready", async () => {
       console.log('Discord.js client ready');
       const channels: DiscordChannels = await getDiscordChannels(client);
@@ -23,10 +22,13 @@ import { processGroupEvents } from "./wg_event_handlers";
       api.rpc.chain.subscribeFinalizedHeads(async (header: Header) => {
         getBlockHash(api, +header.number).then((hash) =>
           getEvents(api, hash).then((events: EventRecord[]) =>
-            processGroupEvents(api, +header.number, hash, events, channels)
+            processGroupEvents(+header.number, events, channels)
           )
         )
       })
     });
+
+  client.login(discordBotToken).then(async () => {
+    console.log(`Bot logged in. Current server[s]: ${client.guilds.cache.map(g => g.name).join(', ')}`);
   });
 })()

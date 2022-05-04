@@ -19,8 +19,8 @@ export const getOpeningAddedEmbed = (id: OpeningId, opening: OpeningByIdQuery, b
     const description = openingData.metadata.description ? 
         openingData.metadata.description : openingData.metadata.shortDescription;
     return addCommonProperties(new Discord.MessageEmbed()
-        .setTitle(`⛩ ${opening.workingGroupOpeningByUniqueInput.metadata.title} ⛩`)
-        .setDescription(description)
+        .setTitle(`⛩ ${safeOpeningTitle(opening, id.toString())} ⛩`)
+        .setDescription(description || 'Not Set')
         .addFields(
             { name: 'ID', value: id.toString(), inline: true },
             { name: 'Reward', value: openingData.rewardPerBlock.toString(), inline: true },
@@ -34,7 +34,7 @@ export const getOpeningFilledEmbed = (opening: OpeningByIdQuery, member: WorkerB
     return addCommonProperties(
         new Discord.MessageEmbed()
         .setTitle(
-            `🎉 🥳 👏🏻 ${member.workerByUniqueInput.membership.handle} was hired for opening '${opening.workingGroupOpeningByUniqueInput.metadata.title}' 🎉 🥳 👏🏻`)
+            `🎉 🥳 👏🏻 ${member.workerByUniqueInput.membership.handle} was hired for opening '${safeOpeningTitle(opening, getOpeningId(opening))}' 🎉 🥳 👏🏻`)
         , blockNumber, event );
 }
 
@@ -42,10 +42,10 @@ export const getAppliedOnOpeningEmbed = (applicationId: ApplicationId, applicati
     opening: OpeningByIdQuery, applicant: MemberByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
     return addCommonProperties(new Discord.MessageEmbed()
-        .setTitle(`🏛 ${applicant.memberships[0].handle} applied to opening ${opening.workingGroupOpeningByUniqueInput.metadata.title}`)
+        .setTitle(`🏛 ${applicant.memberships[0].handle} applied to opening ${safeOpeningTitle(opening, getOpeningId(opening))}`)
         .addFields(
             { name: 'Application ID', value: applicationId.toString(), inline: true},
-            { name: 'Opening', value:  opening.workingGroupOpeningByUniqueInput.metadata.id, inline: true},
+            { name: 'Opening', value:  getOpeningId(opening), inline: true},
             { name: 'Member ID', value: `[${applicant.memberships[0].id}]`, inline: true},
         ), blockNumber, event );
 }
@@ -117,3 +117,11 @@ const addCommonProperties = (embed: Discord.MessageEmbed, blockNumber: number, e
     .setColor(joystreamBlue)
     .setTimestamp();
 }
+
+function safeOpeningTitle(opening: OpeningByIdQuery, id: string): string {
+    return opening.workingGroupOpeningByUniqueInput.metadata.title || `Untitled #${id}`
+}
+function getOpeningId(opening: OpeningByIdQuery): string {
+    return opening.workingGroupOpeningByUniqueInput.metadata.id;
+}
+
