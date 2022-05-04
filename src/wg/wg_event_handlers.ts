@@ -21,6 +21,7 @@ import { ApplicationId, ApplyOnOpeningParameters, OpeningId, WorkingGroup } from
 import { WorkerId } from "@joystream/types/working-group";
 import { Balance } from "@joystream/types/common";
 import { GraphQLClient } from 'graphql-request';
+import { delayBlocking } from "../util";
 
 const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));
 
@@ -130,40 +131,59 @@ export const processGroupEvents = (
                         const addedOpeningIdKey = `${section}-${addedOpeningId.toString()}`;
                         console.log(addedOpeningIdKey);
 
-                        const qnOpeningObject = await queryNodeClient.openingById({ openingId: addedOpeningIdKey })
-                        if (!qnOpeningObject) {
-                            console.log('Opening not found in QN');
-                        } else {
-                            channel.send({
-                                embeds: [
-                                    getOpeningAddedEmbed(
-                                        addedOpeningId,
-                                        qnOpeningObject,
-                                        blockNumber,
-                                        value
-                                    ),
-                                ],
-                            });
+                        let attempt = 1;
+                        const maxAttempts = 3;
+                        while(attempt <= maxAttempts) {
+                            console.log(`Attempt ${attempt}/${maxAttempts} to fetch the opening ${addedOpeningId.toString()} from QN...`);
+                            const qnOpeningObject = await queryNodeClient.openingById({ openingId: addedOpeningIdKey })
+                            if (!qnOpeningObject || !qnOpeningObject.workingGroupOpeningByUniqueInput) {
+                                console.log('Opening not found in QN');
+                                delayBlocking(6000);
+                                attempt = attempt + 1;
+                            } else {
+                                channel.send({
+                                    embeds: [
+                                        getOpeningAddedEmbed(
+                                            addedOpeningId,
+                                            qnOpeningObject,
+                                            blockNumber,
+                                            value
+                                        ),
+                                    ],
+                                });
+                                break;
+                            }
                         }
                         break;
                     case "OpeningFilled":
                         const filledOpeningId = data[0] as OpeningId;
-                        const hiredWorkerId = Object.values(
-                            JSON.parse(data[1].toString())
-                        )[0] as number;
-
-                        const hiredWorker = await queryNodeClient.workerById({ workerId: `${section}-${hiredWorkerId.toString()}` });
                         const filledOpeningObject = await queryNodeClient.openingById({ openingId: `${section}-${filledOpeningId.toString()}` });
-                        console.log(hiredWorker.workerByUniqueInput.membership.handle);
-                        channel.send({
-                            embeds: [
-                                getOpeningFilledEmbed(
-                                    filledOpeningObject,
-                                    hiredWorker,
-                                    blockNumber,
-                                    value
-                                ),
-                            ],
+                        const hiredWorkers = Object.values<WorkerId>(JSON.parse(data[1].toString()));
+
+                        hiredWorkers.map(async (id, index, values) => {
+                            let attempt = 1;
+                            const maxAttempts = 3;
+                            while(attempt <= maxAttempts) {
+                                console.log(`Attempt ${attempt}/${maxAttempts} to fetch the worker ${id} from QN...`);
+                                const hiredWorker = await queryNodeClient.workerById({ workerId: `${section}-${id.toString()}` });
+                                if(!hiredWorker || !hiredWorker.workerByUniqueInput) {
+                                    delayBlocking(6000);
+                                    attempt = attempt + 1;
+                                    continue;
+                                }
+                                console.log(hiredWorker.workerByUniqueInput.membership.handle);
+                                channel.send({
+                                    embeds: [
+                                        getOpeningFilledEmbed(
+                                            filledOpeningObject,
+                                            hiredWorker,
+                                            blockNumber,
+                                            value
+                                        ),
+                                    ],
+                                });
+                                break;     
+                            }
                         });
                         break;
                     case "WorkerRewardAmountUpdated":

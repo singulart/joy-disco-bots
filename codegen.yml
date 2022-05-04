@@ -12,8 +12,8 @@ documents:
           expectedEnding
           shortDescription
           title
-          id
         }
+        id
         rewardPerBlock
         stakeAmount
         unstakingPeriod
