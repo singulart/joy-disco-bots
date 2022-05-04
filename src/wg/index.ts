@@ -14,7 +14,7 @@ import { processGroupEvents } from "./wg_event_handlers";
 
   const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS] });
   client.login(discordBotToken).then(async () => {
-    console.log("Bot logged in successfully");
+    console.log(`Bot logged in. Current server[s]: ${client.guilds.cache.map(g => g.name).join(', ')}`);
     client.once("ready", async () => {
       console.log('Discord.js client ready');
       const channels: DiscordChannels = await getDiscordChannels(client);
