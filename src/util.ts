@@ -36,7 +36,7 @@ export const getDiscordChannels = async (
     const channel = findDiscordChannel(client, channelNames[c]);
     if (channel) discordChannels[c] = channel;
     else {
-      console.log(`${channelNames[c]} not found`);
+      console.log(`Channel '${channelNames[c]}' not found on this server`);
     }
   });
   return discordChannels;

@@ -1,4 +1,4 @@
-import { EventRecord, Hash } from "@polkadot/types/interfaces";
+import { EventRecord } from "@polkadot/types/interfaces";
 import { getSdk } from '../qntypes'
 import {
     getApplicationWithdrawnEmbed,
@@ -15,7 +15,6 @@ import {
 } from "./embeds";
 import { wgEvents, channelNames, hydraLocation as queryNodeUrl } from "../../config";
 import { DiscordChannels } from "../types";
-import { ApiPromise } from "@polkadot/api";
 import type { Option } from '@polkadot/types';
 
 import { ApplicationId, ApplyOnOpeningParameters, OpeningId, WorkingGroup } from "@joystream/types/augment/all/types";
@@ -26,9 +25,7 @@ import { GraphQLClient } from 'graphql-request';
 const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));
 
 export const processGroupEvents = (
-    api: ApiPromise,
     blockNumber: number,
-    hash: Hash,
     events: EventRecord[],
     channels: DiscordChannels
 ) =>
