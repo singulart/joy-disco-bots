@@ -10,7 +10,7 @@ import { OpeningByIdQuery, WorkerByIdQuery, ApplicationByIdQuery, MemberByIdQuer
 export const getBudgetSetEmbed = (balanceSet: number, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
     return addCommonProperties(new Discord.MessageEmbed()
-        .setTitle(`💰 💵 💸 💴 💶 ${formatBalance(balanceSet, { withUnit: 'JOY' })} added to the Treasury 💰 💵 💸 💴 💶 `)
+        .setTitle(`💰 💵 💸 💴 💶 ${formatBalance(balanceSet, { withUnit: 'tJOY' })} added to the Treasury 💰 💵 💸 💴 💶 `)
         , blockNumber, event );
 }
 
@@ -25,8 +25,14 @@ export const getOpeningAddedEmbed = (id: OpeningId, opening: OpeningByIdQuery, b
             { name: 'ID', value: id.toString(), inline: true },
             { name: 'Reward', value: openingData.rewardPerBlock.toString(), inline: true },
             { name: 'Application Stake', value: openingData.stakeAmount.toString(), inline: true },
-            // { name: 'Created By', value: opening.creator.membership.handle, inline: true },
         ), blockNumber, event );
+}
+
+export const getOpeningCancelledEmbed = (id: OpeningId, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+    const openingData = opening.workingGroupOpeningByUniqueInput;
+    return addCommonProperties(new Discord.MessageEmbed()
+        .setTitle(`⛩ Opening ${safeOpeningTitle(opening, id.toString())} was cancelled⛩`)
+        , blockNumber, event );
 }
 
 export const getOpeningFilledEmbed = (opening: OpeningByIdQuery, member: WorkerByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
@@ -57,7 +63,17 @@ export const getWorkerRewardAmountUpdatedEmbed = (reward: Balance, member: Worke
     return addCommonProperties(new Discord.MessageEmbed()
         .setTitle(`💰💰💰 Salary of ${member.workerByUniqueInput.membership.handle} updated`)
         .addFields(
-            { name: 'Salary', value: formatBalance(reward, { withUnit: 'JOY' }), inline: true }
+            { name: 'Salary', value: formatBalance(reward, { withUnit: 'tJOY' }), inline: true }
+        ), blockNumber, event );
+}
+
+export const getWorkerRewardedEmbed = (reward: Balance, member: WorkerByIdQuery, missed: boolean,
+    blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+
+    return addCommonProperties(new Discord.MessageEmbed()
+        .setTitle(`💰💰💰 Remuneration for ${member.workerByUniqueInput.membership.handle} ${missed ? 'FAILED!' : 'paid successfully'}`)
+        .addFields(
+            { name: `Amount ${missed ? 'missed' : 'paid'}`, value: formatBalance(reward, { withUnit: 'tJOY' }), inline: true }
         ), blockNumber, event );
 }
 
@@ -105,7 +121,7 @@ export const getStakeUpdatedEmbed = (stake: Balance | null, member: WorkerByIdQu
     return addCommonProperties(new Discord.MessageEmbed()
         .setTitle(`💰💰💰 ${member.workerByUniqueInput.membership.handle}'s stake has been ${action}`)
         .addFields(
-            { name: 'Amount', value: stake ? formatBalance(stake, { withUnit: 'JOY' }) : 'Not Set', inline: true }
+            { name: 'Amount', value: stake ? formatBalance(stake, { withUnit: 'tJOY' }) : 'Not Set', inline: true }
         ), blockNumber, event );
 }
 

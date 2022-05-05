@@ -12,12 +12,14 @@ import {
     getWorkerExitedEmbed,
     getWorkerRewardAmountUpdatedEmbed,
     getWorkerTerminatedEmbed,
+    getOpeningCancelledEmbed,
+    getWorkerRewardedEmbed,
 } from "./embeds";
 import { wgEvents, channelNames, hydraLocation as queryNodeUrl } from "../../config";
 import { DiscordChannels } from "../types";
 import type { Option } from '@polkadot/types';
 
-import { ApplicationId, ApplyOnOpeningParameters, OpeningId, WorkingGroup } from "@joystream/types/augment/all/types";
+import { ApplicationId, ApplyOnOpeningParameters, OpeningId, WorkingGroup, RewardPaymentType } from "@joystream/types/augment/all/types";
 import { WorkerId } from "@joystream/types/working-group";
 import { Balance } from "@joystream/types/common";
 import { GraphQLClient } from 'graphql-request';
@@ -127,34 +129,48 @@ export const processGroupEvents = (
                         }
                         break;
                     case "OpeningAdded":
-                        const addedOpeningId = data[0] as OpeningId;
-                        const addedOpeningIdKey = `${section}-${addedOpeningId.toString()}`;
-                        console.log(addedOpeningIdKey);
+                    case "OpeningCanceled":
+                        const openingId = data[0] as OpeningId;
+                        const openingIdKey = `${section}-${openingId.toString()}`;
+                        console.log(openingIdKey);
 
                         let attempt = 1;
                         const maxAttempts = 3;
                         while(attempt <= maxAttempts) {
-                            console.log(`Attempt ${attempt}/${maxAttempts} to fetch the opening ${addedOpeningId.toString()} from QN...`);
-                            const qnOpeningObject = await queryNodeClient.openingById({ openingId: addedOpeningIdKey })
+                            console.log(`Attempt ${attempt}/${maxAttempts} to fetch the opening ${openingId.toString()} from QN...`);
+                            const qnOpeningObject = await queryNodeClient.openingById({ openingId: openingIdKey })
                             if (!qnOpeningObject || !qnOpeningObject.workingGroupOpeningByUniqueInput) {
                                 console.log('Opening not found in QN');
                                 delayBlocking(6000);
                                 attempt = attempt + 1;
                             } else {
-                                channel.send({
-                                    embeds: [
-                                        getOpeningAddedEmbed(
-                                            addedOpeningId,
-                                            qnOpeningObject,
-                                            blockNumber,
-                                            value
-                                        ),
-                                    ],
-                                });
+                                if(method === "OpeningAdded") {
+                                    channel.send({
+                                        embeds: [
+                                            getOpeningAddedEmbed(
+                                                openingId,
+                                                qnOpeningObject,
+                                                blockNumber,
+                                                value
+                                            ),
+                                        ],
+                                    });    
+                                } else {
+                                    channel.send({
+                                        embeds: [
+                                            getOpeningCancelledEmbed(
+                                                openingId,
+                                                qnOpeningObject,
+                                                blockNumber,
+                                                value
+                                            ),
+                                        ],
+                                    });    
+                                }
                                 break;
                             }
                         }
-                        break;
+                        break;                        
                     case "OpeningFilled":
                         const filledOpeningId = data[0] as OpeningId;
                         const filledOpeningObject = await queryNodeClient.openingById({ openingId: `${section}-${filledOpeningId.toString()}` });
@@ -186,10 +202,27 @@ export const processGroupEvents = (
                             }
                         });
                         break;
+                    case "RewardPaid":
+                        const paidWorkerId = data[0] as WorkerId;
+                        const paidWorkerAffected = await queryNodeClient.workerById({ workerId: `${section}-${paidWorkerId.toString()}` });
+                        const paidReward = data[2] as Balance;
+                        const isRewardMissed = (data[3] as RewardPaymentType).isMissedReward;
+                        channel.send({
+                            embeds: [
+                                getWorkerRewardedEmbed(
+                                    paidReward,
+                                    paidWorkerAffected,
+                                    isRewardMissed,
+                                    blockNumber,
+                                    value
+                                ),
+                            ],
+                        });
+                        break;
                     case "WorkerRewardAmountUpdated":
                         const workerId = data[0] as WorkerId;
                         const workerAffected = await queryNodeClient.workerById({ workerId: `${section}-${workerId.toString()}` });
-                        const reward = (data[1] as Option<Balance>).unwrapOr(0 as unknown as Balance)
+                        const reward = (data[1] as Option<Balance>).unwrapOr(0 as unknown as Balance);
                         channel.send({
                             embeds: [
                                 getWorkerRewardAmountUpdatedEmbed(
