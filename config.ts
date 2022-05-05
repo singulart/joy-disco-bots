@@ -66,6 +66,8 @@ export const wgEvents = [
   "BudgetSet",
   "UpdatedWorkingGroupBudget", //unlike all others, this event comes in a dedicated section 'joystreamUtility'
   "OpeningAdded",
+  "OpeningCanceled",
+  "RewardPaid",
   "OpeningFilled",
   "StakeDecreased",
   "StakeIncreased",

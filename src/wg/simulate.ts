@@ -14,14 +14,16 @@ const eventsMapping = {
   // OpeningFilled: 74353,
   // OpeningAdded: 43286,
   // OpeningAdded2: 125834,
-  // OpeningCancelled: 44492,
+  // OpeningCancelled: 602245,
+  // RewardPaid: 608580,
+  MissedReward: 115920,
   // WorkerRewardAmountUpdated: 112393,
   // WorkerRewardAmountUpdated2: 117500,
   // WorkerRoleAccountUpdated: 44513,
   // RewardPayment: 57600,
   // NewMissedRewardLevelReached: 57640,
-  AppliedOnOpening: 43405,
-  AppliedOnOpening2: 83269,
+  // AppliedOnOpening: 43405,
+  // AppliedOnOpening2: 83269,
   // ApplicationWithdrawn: 514629,
   // StakeIncreased: 4264798,
   // StakeDecreased: 4264862,
@@ -42,13 +44,14 @@ const discordBotToken = process.env.TOKEN || undefined; // environment variable 
     const channels: DiscordChannels = await getDiscordChannels(client);
     const api: ApiPromise = await connectApi(wsLocation);
     await api.isReady;
-    Object.values(eventsMapping).forEach((block: number) =>
+    Object.values(eventsMapping).forEach((block: number) => {
+      console.log(`Processing ${block}`);
       getBlockHash(api, block).then((hash) =>
         getEvents(api, hash).then((events: EventRecord[]) =>
           processGroupEvents(block, events, channels)
         )
       )
-    );
+    });
   });
 
   client.login(discordBotToken).then(async () => {
