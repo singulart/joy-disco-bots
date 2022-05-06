@@ -127,10 +127,5 @@ export const findDiscordChannel = (
   ).map((value: AnyChannel, key: string, collection: Collection<string, AnyChannel>) => value as TextChannel);
 
 export const delayBlocking = (milliseconds: number) => {
-    const timeInitial: Date = new Date();
-    var timeNow: Date = new Date();
-    for ( ; timeNow.getMilliseconds() - timeInitial.getMilliseconds() < milliseconds; ){
-        timeNow = new Date();
-    }
-    console.log('Sleep done!');
+  return new Promise( resolve => setTimeout(resolve, milliseconds) );
 }

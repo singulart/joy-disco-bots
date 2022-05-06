@@ -23,7 +23,7 @@ import { ApplicationId, ApplyOnOpeningParameters, OpeningId, WorkingGroup, Rewar
 import { WorkerId } from "@joystream/types/working-group";
 import { Balance } from "@joystream/types/common";
 import { GraphQLClient } from 'graphql-request';
-import { delayBlocking } from "../util";
+import { delay } from "../util";
 import { TextChannel } from "discord.js";
 
 const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));
@@ -145,7 +145,7 @@ export const processGroupEvents = (
                             const qnOpeningObject = await queryNodeClient.openingById({ openingId: openingIdKey })
                             if (!qnOpeningObject || !qnOpeningObject.workingGroupOpeningByUniqueInput) {
                                 console.log('Opening not found in QN');
-                                delayBlocking(6000);
+                                await delay(6000);
                                 attempt = attempt + 1;
                             } else {
                                 if(method === "OpeningAdded") {
@@ -189,7 +189,7 @@ export const processGroupEvents = (
                                 console.log(`Attempt ${attempt}/${maxAttempts} to fetch the worker ${id} from QN...`);
                                 const hiredWorker = await queryNodeClient.workerById({ workerId: `${section}-${id.toString()}` });
                                 if(!hiredWorker || !hiredWorker.workerByUniqueInput) {
-                                    delayBlocking(6000);
+                                    await delay(6000);
                                     attempt = attempt + 1;
                                     continue;
                                 }
