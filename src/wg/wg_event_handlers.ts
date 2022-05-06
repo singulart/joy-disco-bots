@@ -24,6 +24,7 @@ import { WorkerId } from "@joystream/types/working-group";
 import { Balance } from "@joystream/types/common";
 import { GraphQLClient } from 'graphql-request';
 import { delayBlocking } from "../util";
+import { TextChannel } from "discord.js";
 
 const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));
 
@@ -54,7 +55,8 @@ export const processGroupEvents = (
                         console.log(withdrawnApplicationKey);
                         const withdrawnApplication = await queryNodeClient.applicationById({ applicationId: withdrawnApplicationKey });
 
-                        channel.send({
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({
                             embeds: [
                                 getApplicationWithdrawnEmbed(
                                     withdrawnId,
@@ -63,7 +65,7 @@ export const processGroupEvents = (
                                     value
                                 ),
                             ],
-                        });
+                        }));
                         break;
                     case "AppliedOnOpening":
                         const applicationOpeningId = (data[0] as ApplyOnOpeningParameters).opening_id;
@@ -72,7 +74,8 @@ export const processGroupEvents = (
                         const application = await queryNodeClient.applicationById({ applicationId: applicationId.toString() });
                         const openingObject = await queryNodeClient.openingById({ openingId: `${section}-${applicationOpeningId.toString()}` });
                         const applicant = await queryNodeClient.memberById({ memberId: applicantId.toString() });
-                        channel.send({
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({
                             embeds: [
                                 getAppliedOnOpeningEmbed(
                                     applicationId,
@@ -83,15 +86,16 @@ export const processGroupEvents = (
                                     value
                                 ),
                             ],
-                        });
+                        }));
                         break;
                     case "BudgetSet":
                         const balance = (data[0] as Balance).toNumber();
-                        channel.send({
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({
                             embeds: [
                                 getBudgetSetEmbed(balance, blockNumber, value),
                             ],
-                        });
+                        }));
                         break;
                     case "UpdatedWorkingGroupBudget":
                         const budgetChange = (data[1] as Balance).toNumber();
@@ -145,7 +149,8 @@ export const processGroupEvents = (
                                 attempt = attempt + 1;
                             } else {
                                 if(method === "OpeningAdded") {
-                                    channel.send({
+                                    channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                                    ch.send({
                                         embeds: [
                                             getOpeningAddedEmbed(
                                                 openingId,
@@ -154,9 +159,10 @@ export const processGroupEvents = (
                                                 value
                                             ),
                                         ],
-                                    });    
+                                    }));
                                 } else {
-                                    channel.send({
+                                    channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                                        ch.send({
                                         embeds: [
                                             getOpeningCancelledEmbed(
                                                 openingId,
@@ -165,7 +171,7 @@ export const processGroupEvents = (
                                                 value
                                             ),
                                         ],
-                                    });    
+                                    }));
                                 }
                                 break;
                             }
@@ -188,8 +194,9 @@ export const processGroupEvents = (
                                     continue;
                                 }
                                 console.log(hiredWorker.workerByUniqueInput.membership.handle);
-                                channel.send({
-                                    embeds: [
+                                channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                                    ch.send({
+                                        embeds: [
                                         getOpeningFilledEmbed(
                                             filledOpeningObject,
                                             hiredWorker,
@@ -197,7 +204,7 @@ export const processGroupEvents = (
                                             value
                                         ),
                                     ],
-                                });
+                                }));
                                 break;     
                             }
                         });
@@ -207,7 +214,8 @@ export const processGroupEvents = (
                         const paidWorkerAffected = await queryNodeClient.workerById({ workerId: `${section}-${paidWorkerId.toString()}` });
                         const paidReward = data[2] as Balance;
                         const isRewardMissed = (data[3] as RewardPaymentType).isMissedReward;
-                        channel.send({
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({
                             embeds: [
                                 getWorkerRewardedEmbed(
                                     paidReward,
@@ -217,13 +225,14 @@ export const processGroupEvents = (
                                     value
                                 ),
                             ],
-                        });
+                        }));
                         break;
                     case "WorkerRewardAmountUpdated":
                         const workerId = data[0] as WorkerId;
                         const workerAffected = await queryNodeClient.workerById({ workerId: `${section}-${workerId.toString()}` });
                         const reward = (data[1] as Option<Balance>).unwrapOr(0 as unknown as Balance);
-                        channel.send({
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({
                             embeds: [
                                 getWorkerRewardAmountUpdatedEmbed(
                                     reward,
@@ -232,7 +241,7 @@ export const processGroupEvents = (
                                     value
                                 ),
                             ],
-                        });
+                        }));
                         break;
                     case "TerminatedLeader":
                     case "TerminatedWorker":
@@ -240,7 +249,8 @@ export const processGroupEvents = (
                         const terminatedWorkerKey = `${section}-${terminatedId.toString()}`;
 
                         const terminatedIdWorker = await queryNodeClient.workerById({ workerId: terminatedWorkerKey });
-                        channel.send({
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({
                             embeds: [
                                 getWorkerTerminatedEmbed(
                                     terminatedIdWorker,
@@ -248,7 +258,7 @@ export const processGroupEvents = (
                                     value
                                 ),
                             ],
-                        });
+                        }));
                         break;
                     case "WorkerExited":
                         const exitedId = data[0] as WorkerId;
@@ -256,7 +266,8 @@ export const processGroupEvents = (
                         console.log(exitedWorkerKey);
 
                         const exitedMember = await queryNodeClient.workerById({ workerId: exitedWorkerKey });
-                        channel.send({
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({
                             embeds: [
                                 getWorkerExitedEmbed(
                                     exitedMember,
@@ -264,17 +275,20 @@ export const processGroupEvents = (
                                     value
                                 ),
                             ],
-                        });
+                        }));
                         break;
                     case "LeaderSet":
                         const leaderId = data[0] as WorkerId;
                         const leaderWorker = await queryNodeClient.workerById({ workerId: `${section}-${leaderId.toString()}` });
-                        channel.send({
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({
                             embeds: [getLeaderSetEmbed(leaderWorker, blockNumber, value)],
-                        });
+                        }));
                         break;
                     case "LeaderUnset":
-                        channel.send({ embeds: [getLeaderUnsetEmbed(blockNumber, value)] });
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({ embeds: [getLeaderUnsetEmbed(blockNumber, value)] })
+                        );
                         break;
                     case "StakeDecreased":
                     case "StakeIncreased":
@@ -283,7 +297,8 @@ export const processGroupEvents = (
                         const stakeWorker = await queryNodeClient.workerById({ workerId: `${section}-${stakeWorkerId.toString()}` });
                         const stake = data[1] as Balance;
 
-                        channel.send({
+                        channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) => 
+                            ch.send({
                             embeds: [
                                 getStakeUpdatedEmbed(
                                     stake,
@@ -293,7 +308,7 @@ export const processGroupEvents = (
                                     value
                                 ),
                             ],
-                        });
+                        }));
                         break;
                 }
             }

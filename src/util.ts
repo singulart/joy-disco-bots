@@ -1,4 +1,4 @@
-import { Client, TextChannel } from "discord.js";
+import { AnyChannel, Client, Collection, TextChannel } from "discord.js";
 import { apiUrl, statusUrl, channelNames } from "../config";
 import moment from "moment";
 import axios from "axios";
@@ -121,10 +121,10 @@ export const getMemberHandles = async (): Promise<MemberHandles[]> => {
 export const findDiscordChannel = (
   client: Client,
   name: string
-): TextChannel =>
-  client.channels.cache.find(
+): TextChannel[] =>
+  client.channels.cache.filter(
     (channel: any) => channel.name === name
-  ) as TextChannel;
+  ).map((value: AnyChannel, key: string, collection: Collection<string, AnyChannel>) => value as TextChannel);
 
 export const delayBlocking = (milliseconds: number) => {
     const timeInitial: Date = new Date();
