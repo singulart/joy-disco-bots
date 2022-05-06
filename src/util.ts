@@ -126,6 +126,6 @@ export const findDiscordChannel = (
     (channel: any) => channel.name === name
   ).map((value: AnyChannel, key: string, collection: Collection<string, AnyChannel>) => value as TextChannel);
 
-export const delayBlocking = (milliseconds: number) => {
+export const delay = (milliseconds: number) => {
   return new Promise( resolve => setTimeout(resolve, milliseconds) );
 }
