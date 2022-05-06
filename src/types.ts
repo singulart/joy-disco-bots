@@ -32,7 +32,7 @@ export interface ChannelNames {
   [key: string]: string;
 }
 export interface DiscordChannels {
-  [key: string]: Discord.TextChannel;
+  [key: string]: Discord.TextChannel[];
 }
 
 export interface Council {
