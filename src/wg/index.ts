@@ -29,6 +29,6 @@ import { banner } from "../banner";
   });
 
   client.login(discordBotToken).then(async () => {
-    console.log(`Bot online. Current server[s]: ${client.guilds.cache.map(g => g.name).join(',')}`);
+    console.log(`Bot online. Current server[s]: ${(await client.guilds.fetch({limit: 10})).map((g) => g.name).join(',')}`);
   });
 })()
