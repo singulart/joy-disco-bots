@@ -54,6 +54,11 @@ const discordBotToken = process.env.TOKEN || undefined; // environment variable 
     });
   });
 
+  client.on("debug", console.log);
+  client.on("error", console.error);
+  client.on("apiResponse", console.log);
+  client.on("apiRequest", console.error);
+
   client.login(discordBotToken).then(async () => {
     console.log("Bot logged in successfully");
   });

@@ -28,6 +28,12 @@ import { banner } from "../banner";
     });
   });
 
+  client.on("debug", console.log);
+  client.on("error", console.error);
+  client.on("apiResponse", console.log);
+  client.on("apiRequest", console.error);
+
+
   client.login(discordBotToken).then(async () => {
     console.log(`Bot online. Current server[s]: ${(await client.guilds.fetch({limit: 10})).map((g) => g.name).join(',')}`);
   });
