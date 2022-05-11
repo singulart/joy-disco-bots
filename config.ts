@@ -53,8 +53,8 @@ export const channelNames: ChannelNames = {
   distributionWorkingGroup: "distributors",
   gatewayWorkingGroup: "gateway",
   operationsWorkingGroupAlpha: "builders",
-  operationsWorkingGroupGamma: "human-resources",
-  operationsWorkingGroupBeta: "marketing"
+  operationsWorkingGroupGamma: "marketing",
+  operationsWorkingGroupBeta: "human-resources"
 };
 
 export const wgEvents = [
