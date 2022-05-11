@@ -10,7 +10,7 @@ import { processGroupEvents } from "./wg_event_handlers";
 const eventsMapping = {
   // BudgetRefill: 28800,
   // BudgetSet: 978,
-  // UpdatedWorkingGroupBudget: 103053,
+  UpdatedWorkingGroupBudget: 103053,
   // OpeningFilled: 74353,
   // OpeningAdded: 43286,
   // OpeningAdded2: 125834,
