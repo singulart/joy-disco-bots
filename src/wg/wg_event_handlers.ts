@@ -101,35 +101,36 @@ export const processGroupEvents = (
             const budgetChange = (data[1] as Balance).toNumber();
             const wg: WorkingGroup = data[0] as WorkingGroup;
             console.log(wg.toHuman());
-            let dynamicChannel = null;
+            let dynamicChannels: TextChannel[] = null;
 
             if (wg.isForum) {
-              dynamicChannel = channels["forumWorkingGroup"];
+              dynamicChannels = channels["forumWorkingGroup"];
             } else if (wg.isContent) {
-              dynamicChannel = channels["contentWorkingGroup"];
+              dynamicChannels = channels["contentWorkingGroup"];
             } else if (wg.isOperationsAlpha) {
-              dynamicChannel = channels["operationsWorkingGroupAlpha"];
+              dynamicChannels = channels["operationsWorkingGroupAlpha"];
             } else if (wg.isMembership) {
-              dynamicChannel = channels["membershipWorkingGroup"];
+              dynamicChannels = channels["membershipWorkingGroup"];
             } else if (wg.isOperationsBeta) {
-              dynamicChannel = channels["operationsWorkingGroupBeta"];
+              dynamicChannels = channels["operationsWorkingGroupBeta"];
             } else if (wg.isOperationsGamma) {
-              dynamicChannel = channels["operationsWorkingGroupGamma"];
+              dynamicChannels = channels["operationsWorkingGroupGamma"];
             } else if (wg.isStorage) {
-              dynamicChannel = channels["storageWorkingGroup"];
+              dynamicChannels = channels["storageWorkingGroup"];
             } else if (wg.isDistribution) {
-              dynamicChannel = channels["distributionWorkingGroup"];
+              dynamicChannels = channels["distributionWorkingGroup"];
             } else if (wg.isGateway) {
-              dynamicChannel = channels["gatewayWorkingGroup"];
+              dynamicChannels = channels["gatewayWorkingGroup"];
             }
-            if (!dynamicChannel) {
+            if (!dynamicChannels || dynamicChannels.length == 0) {
               console.log(`Channel not configured for [${section}]`);
             } else {
-              dynamicChannel.send({
-                embeds: [
-                  getBudgetSetEmbed(budgetChange, blockNumber, value),
-                ],
-              });
+              dynamicChannels.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
+                ch.send({
+                  embeds: [
+                    getBudgetSetEmbed(budgetChange, blockNumber, value),
+                  ],
+                }));
             }
             break;
           case "OpeningAdded":
