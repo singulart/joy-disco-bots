@@ -1,7 +1,13 @@
 import { AnyChannel, Client, Collection, TextChannel } from "discord.js";
-import { apiUrl, statusUrl, channelNames } from "../config";
+import { channelNames } from "../config";
 import moment from "moment";
 import axios from "axios";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { Hash, EventRecord } from "@polkadot/types/interfaces";
+import { BlockNumber } from "@joystream/types/common";
+import { Vec } from "@polkadot/types";
+import { types } from "@joystream/types";
+
 
 //types
 import {
@@ -11,7 +17,31 @@ import {
   MemberHandles,
 } from "./types";
 
-export const parseArgs = (args: string[]): Options => {
+export const connectApi = async (url: string): Promise<ApiPromise> => {
+  const provider = new WsProvider(url);
+  return await ApiPromise.create({ provider, types });
+}
+
+export const getBlockHash = (
+  api: ApiPromise,
+  block: BlockNumber | number
+): Promise<Hash> => {
+  try {
+    return api.rpc.chain.getBlockHash(block);
+  } catch (e) {
+    return getBestHash(api);
+  }
+};
+
+export const getBestHash = (api: ApiPromise) =>
+  api.rpc.chain.getFinalizedHead();
+
+export const getEvents = (
+    api: ApiPromise,
+    hash: Hash
+  ): Promise<Vec<EventRecord>> => api.query.system.events.at(hash);
+
+  export const parseArgs = (args: string[]): Options => {
   const inArgs = (term: string): boolean => {
     return args.find((a) => a.search(term) > -1) ? true : false;
   };
@@ -82,17 +112,6 @@ export const passedTime = (start: number, now: number): string => {
 // status endpoint
 const formatPrice = (price: number) =>
   `${Math.floor(price * 100000000) / 100} $`;
-
-export const fetchTokenValue = (): Promise<string> =>
-  axios
-    .get(statusUrl)
-    .then(({ data }) => formatPrice(+data.price))
-    .catch(async () => {
-      const { data } = await axios.get(statusUrl);
-      if (data && !data.error) return formatPrice(+data.price);
-      console.log(`Failed to fetch status.`);
-      return `?`;
-    });
 
 // member handles (tg, discord, github)
 export const getMemberHandles = async (): Promise<MemberHandles[]> => {
