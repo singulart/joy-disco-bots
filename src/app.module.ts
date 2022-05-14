@@ -12,21 +12,19 @@ import { Intents, Message } from 'discord.js';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
-        commands: ['**/*.command.js'],
         discordClientOptions: {
           intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
         },
-        removeGlobalCommands: true,
         registerCommandOptions: [
           {
-            forGuild: configService.get('DISCORD_SERVER'),
+            forGuild: '933091008529448990',
             allowFactory: (message: Message) =>
               !message.author.bot && message.content === '!deploy',
             removeCommandsBefore: true,
           },
         ],
       } as DiscordModuleOption),
-      inject: [ConfigService],
+      inject: [ConfigService],      
     }),
     WgModule,
     IdentityModule

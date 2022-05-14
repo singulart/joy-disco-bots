@@ -2,3 +2,4 @@ src/qntypes.ts
 .DS_Store
 node_modules
 lib
+dist
