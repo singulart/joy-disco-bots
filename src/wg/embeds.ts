@@ -2,7 +2,7 @@ import { joystreamBlue } from '../../config'
 import { formatBalance } from '@polkadot/util';
 import { EventRecord } from '@polkadot/types/interfaces';
 import Discord from 'discord.js';
-import { OpeningId, ApplicationId, Application } from "@joystream/types/working-group";
+import { OpeningId, ApplicationId } from "@joystream/types/working-group";
 import { Balance } from '@joystream/types/common';
 import { OpeningByIdQuery, WorkerByIdQuery, ApplicationByIdQuery, MemberByIdQuery } from '../qntypes';
 
@@ -16,20 +16,19 @@ export const getBudgetSetEmbed = (balanceSet: number, blockNumber: number, event
 
 export const getOpeningAddedEmbed = (id: OpeningId, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
   const openingData = opening.workingGroupOpeningByUniqueInput;
-  const description = openingData.metadata.description ?
-    openingData.metadata.description : openingData.metadata.shortDescription;
+  const description = openingData?.metadata.description ?
+    openingData.metadata.description : openingData?.metadata.shortDescription;
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`⛩ ${safeOpeningTitle(opening, id.toString())} ⛩`)
     .setDescription(description || 'Not Set')
     .addFields(
       { name: 'ID', value: id.toString(), inline: true },
-      { name: 'Reward', value: openingData.rewardPerBlock.toString(), inline: true },
-      { name: 'Application Stake', value: openingData.stakeAmount.toString(), inline: true },
+      { name: 'Reward', value: openingData?.rewardPerBlock.toString(), inline: true },
+      { name: 'Application Stake', value: openingData?.stakeAmount.toString(), inline: true },
     ), blockNumber, event);
 }
 
 export const getOpeningCancelledEmbed = (id: OpeningId, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
-  const openingData = opening.workingGroupOpeningByUniqueInput;
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`⛩ Opening ${safeOpeningTitle(opening, id.toString())} was cancelled⛩`)
     , blockNumber, event);
@@ -40,7 +39,7 @@ export const getOpeningFilledEmbed = (opening: OpeningByIdQuery, member: WorkerB
   return addCommonProperties(
     new Discord.MessageEmbed()
       .setTitle(
-        `🎉 🥳 👏🏻 ${member.workerByUniqueInput.membership.handle} was hired for opening '${safeOpeningTitle(opening, getOpeningId(opening))}' 🎉 🥳 👏🏻`)
+        `🎉 🥳 👏🏻 ${member.workerByUniqueInput?.membership.handle} was hired for opening '${safeOpeningTitle(opening, getOpeningId(opening))}' 🎉 🥳 👏🏻`)
     , blockNumber, event);
 }
 
@@ -61,7 +60,7 @@ export const getWorkerRewardAmountUpdatedEmbed = (reward: Balance, member: Worke
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
-    .setTitle(`💰💰💰 Salary of ${member.workerByUniqueInput.membership.handle} updated`)
+    .setTitle(`💰💰💰 Salary of ${member.workerByUniqueInput?.membership.handle} updated`)
     .addFields(
       { name: 'Salary', value: formatBalance(reward, { withUnit: 'tJOY' }), inline: true }
     ), blockNumber, event);
@@ -71,7 +70,7 @@ export const getWorkerRewardedEmbed = (reward: Balance, member: WorkerByIdQuery,
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
-    .setTitle(`💰💰💰 Remuneration for ${member.workerByUniqueInput.membership.handle} ${missed ? 'FAILED!' : 'paid successfully'}`)
+    .setTitle(`💰💰💰 Remuneration for ${member.workerByUniqueInput?.membership.handle} ${missed ? 'FAILED!' : 'paid successfully'}`)
     .addFields(
       { name: `Amount ${missed ? 'missed' : 'paid'}`, value: formatBalance(reward, { withUnit: 'tJOY' }), inline: true }
     ), blockNumber, event);
@@ -79,7 +78,7 @@ export const getWorkerRewardedEmbed = (reward: Balance, member: WorkerByIdQuery,
 
 export const getLeaderSetEmbed = (member: WorkerByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
-  return addCommonProperties(new Discord.MessageEmbed().setTitle(`🏛 ${member.workerByUniqueInput.membership.handle} is a new Lead`), blockNumber, event);
+  return addCommonProperties(new Discord.MessageEmbed().setTitle(`🏛 ${member.workerByUniqueInput?.membership.handle} is a new Lead`), blockNumber, event);
 }
 
 export const getLeaderUnsetEmbed = (blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
@@ -101,7 +100,7 @@ export const getWorkerExitedOrTerminatedEmbed = (action: string, member: WorkerB
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
-    .setTitle(`🏛 Worker ${member.workerByUniqueInput.membership.handle} has ${action}`)
+    .setTitle(`🏛 Worker ${member.workerByUniqueInput?.membership.handle} has ${action}`)
     , blockNumber, event);
 }
 
@@ -109,17 +108,17 @@ export const getApplicationWithdrawnEmbed = (applicationId: ApplicationId, appli
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
-    .setTitle(`🏛 Application of ${application.workingGroupApplicationByUniqueInput.applicant.handle} withdrawn`)
+    .setTitle(`🏛 Application of ${application.workingGroupApplicationByUniqueInput?.applicant.handle} withdrawn`)
     .addFields(
-      { name: 'Application ID', value: applicationId.toString(), inline: true },
-      { name: 'Opening ID', value: application.workingGroupApplicationByUniqueInput.openingId, inline: true },
+      { name: 'Application ID', value: applicationId.toString() || 'Not Set', inline: true },
+      { name: 'Opening ID', value: application.workingGroupApplicationByUniqueInput?.openingId || 'Not Set', inline: true },
     ), blockNumber, event);
 }
 
 export const getStakeUpdatedEmbed = (stake: Balance | null, member: WorkerByIdQuery, action: string, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
-    .setTitle(`💰💰💰 ${member.workerByUniqueInput.membership.handle}'s stake has been ${action}`)
+    .setTitle(`💰💰💰 ${member.workerByUniqueInput?.membership.handle}'s stake has been ${action}`)
     .addFields(
       { name: 'Amount', value: stake ? formatBalance(stake, { withUnit: 'tJOY' }) : 'Not Set', inline: true }
     ), blockNumber, event);
@@ -135,9 +134,9 @@ const addCommonProperties = (embed: Discord.MessageEmbed, blockNumber: number, e
 }
 
 function safeOpeningTitle(opening: OpeningByIdQuery, id: string): string {
-  return opening.workingGroupOpeningByUniqueInput.metadata.title || `Untitled #${id}`
+  return opening.workingGroupOpeningByUniqueInput?.metadata.title || `Untitled #${id}`
 }
 function getOpeningId(opening: OpeningByIdQuery): string {
-  return opening.workingGroupOpeningByUniqueInput.id;
+  return opening.workingGroupOpeningByUniqueInput?.id || 'Not Set';
 }
 
