@@ -29,15 +29,7 @@
       "./node_modules/@polkadot/ts",
       "./node_modules/@types"
     ],
-    "declarationDir": "lib",
-    "outDir": "lib"
-  },
-  "include": [
-    "src/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.d.ts"
-  ]
+    "declarationDir": "./dist",
+    "outDir": "./dist"
+  }
 }
