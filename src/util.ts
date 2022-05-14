@@ -1,7 +1,5 @@
 import { AnyChannel, Client, Collection, TextChannel } from "discord.js";
 import { channelNames } from "../config";
-import moment from "moment";
-import axios from "axios";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Hash, EventRecord } from "@polkadot/types/interfaces";
 import { BlockNumber } from "@joystream/types/common";
@@ -13,8 +11,6 @@ import { types } from "@joystream/types";
 import {
   DiscordChannels,
   Options,
-  Proposals,
-  MemberHandles,
 } from "./types";
 
 export const connectApi = async (url: string): Promise<ApiPromise> => {
@@ -70,71 +66,6 @@ export const getDiscordChannels = async (
     }
   });
   return discordChannels;
-};
-
-export const printStatus = (
-  opts: Options,
-  data: {
-    block: number;
-    chain: string;
-    posts: number[];
-    proposals: Proposals;
-  }
-): void => {
-  if (opts.verbose < 1) return;
-
-  const { block, chain, proposals, posts } = data;
-  const date = formatTime();
-  let message = `[${date}] ${chain} #${block} `;
-
-  if (opts.forum) message += `Posts:${posts[1]} `;
-  if (opts.proposals)
-    message += `Proposals:${proposals.current} (Voting:${proposals.active.length} GracePeriod:${proposals.executing.length}) `;
-
-  console.debug(message);
-};
-
-// time
-export const formatTime = (time?: any, format = "H:mm:ss"): string =>
-  moment(time).format(format);
-
-export const passedTime = (start: number, now: number): string => {
-  const passed = moment.utc(moment(now).diff(start)).valueOf();
-  const format =
-    passed > 86400000
-      ? "d:HH:mm:ss[d]"
-      : passed > 3600000
-      ? "H:mm:ss[h]"
-      : "mm:ss[m]";
-  return formatTime(passed, format);
-};
-
-// status endpoint
-const formatPrice = (price: number) =>
-  `${Math.floor(price * 100000000) / 100} $`;
-
-// member handles (tg, discord, github)
-export const getMemberHandles = async (): Promise<MemberHandles[]> => {
-  console.debug(`Fetching user handles`);
-  const rawUrl = `https://raw.githubusercontent.com/Joystream/community-repo/master/council/guides/council_member_discord_usernames.md`;
-  return await axios
-    .get(rawUrl)
-    .then(({ data }) => {
-      const rows = data
-        .split(`\n`)
-        .filter((line: string) => line.includes(`|`))
-        .slice(2);
-      return rows.map((row: string) => {
-        const [, handle, discord, id, telegram, github] = row
-          .split(`|`)
-          .map((s) => s.trim());
-        return { handle, discord: { handle: discord, id }, telegram, github };
-      });
-    })
-    .catch((error) => {
-      console.error(`Fetch user handles.`, error.message);
-      return [];
-    });
 };
 
 export const findDiscordChannel = (

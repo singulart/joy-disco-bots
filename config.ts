@@ -1,6 +1,6 @@
 import { ChannelNames } from "./src/types";
 export const dbFile = "./db.json";
-
+export const database = "joy_dao";
 export const wsLocation = "wss://rpc.joystream.org:9944"; 
 
 // bot tokens

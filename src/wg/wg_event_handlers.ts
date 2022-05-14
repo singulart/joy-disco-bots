@@ -101,7 +101,7 @@ export const processGroupEvents = (
             const budgetChange = (data[1] as Balance).toNumber();
             const wg: WorkingGroup = data[0] as WorkingGroup;
             console.log(wg.toHuman());
-            let dynamicChannels: TextChannel[] = null;
+            let dynamicChannels: TextChannel[] = [];
 
             if (wg.isForum) {
               dynamicChannels = channels["forumWorkingGroup"];
