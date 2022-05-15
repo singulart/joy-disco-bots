@@ -1,6 +1,6 @@
 import { HasMany, Model } from 'sequelize-typescript'
 import { Column, Table } from 'sequelize-typescript'
-import { DaoRole } from './daorole'
+import { DaoRole } from './daorole.entity'
 
 @Table({
   tableName: 'dao_membership',
@@ -20,6 +20,9 @@ export class DaoMembership extends Model {
 
   @Column
   membership!: string // on-chain user membership handle
+
+  @Column
+  accountAddress!: string 
 
   @Column
   discordHandle!: string 
