@@ -17,14 +17,14 @@ import { Intents, Message } from 'discord.js';
         },
         registerCommandOptions: [
           {
-            forGuild: '933091008529448990',
+            forGuild: configService.get('DISCORD_SERVER'),
             allowFactory: (message: Message) =>
               !message.author.bot && message.content === '!deploy',
             removeCommandsBefore: true,
           },
         ],
       } as DiscordModuleOption),
-      inject: [ConfigService],      
+      inject: [ConfigService],
     }),
     WgModule,
     IdentityModule

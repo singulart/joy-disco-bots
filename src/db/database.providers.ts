@@ -1,9 +1,10 @@
 import { Sequelize} from 'sequelize-typescript'
 import url from 'url';
 import { DaoMembership } from './daomembership.entity';
-import { DaoRole } from './daorole';
+import { DaoRole } from './daorole.entity';
 import { Logger } from '@nestjs/common';
 import { database } from '../../config';
+import { PendingVerification } from './pendingverification.entity';
 
 const logger = new Logger('DB');
 const dbUrl = process.env.DATABASE_URL || `postgres://localhost:5432/${database}`;
@@ -23,10 +24,22 @@ export const databaseProviders = [
         username: dbConfig.username,
         password: dbConfig.password
       });
-      sequelize.addModels([DaoMembership, DaoRole]);
+      sequelize.addModels([DaoMembership, DaoRole, PendingVerification]);
       await sequelize.sync();
       return sequelize;
     },
+  },
+  {
+    provide: 'DAO_MEMBERSHIP_REPOSITORY',
+    useValue: DaoMembership,
+  },
+  {
+    provide: 'DAO_ROLE_REPOSITORY',
+    useValue: DaoRole,
+  },
+  {
+    provide: 'PENDING_VERIFICATION_REPOSITORY',
+    useValue: PendingVerification,
   },
 ];
 
