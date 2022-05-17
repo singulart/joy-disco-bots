@@ -62,7 +62,7 @@ export const getWorkerRewardAmountUpdatedEmbed = (reward: Balance, member: Worke
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 Salary of ${member.workerByUniqueInput?.membership.handle} updated`)
     .addFields(
-      { name: 'Salary', value: formatBalance(reward, { withUnit: 'tJOY' }), inline: true }
+      { name: 'Salary', value: formatBalance(reward.toString(), { withUnit: 'tJOY' }), inline: true }
     ), blockNumber, event);
 }
 
@@ -72,7 +72,7 @@ export const getWorkerRewardedEmbed = (reward: Balance, member: WorkerByIdQuery,
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 Remuneration for ${member.workerByUniqueInput?.membership.handle} ${missed ? 'FAILED!' : 'paid successfully'}`)
     .addFields(
-      { name: `Amount ${missed ? 'missed' : 'paid'}`, value: formatBalance(reward, { withUnit: 'tJOY' }), inline: true }
+      { name: `Amount ${missed ? 'missed' : 'paid'}`, value: formatBalance(reward.toString(), { withUnit: 'tJOY' }), inline: true }
     ), blockNumber, event);
 }
 
@@ -120,7 +120,7 @@ export const getStakeUpdatedEmbed = (stake: Balance | null, member: WorkerByIdQu
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 ${member.workerByUniqueInput?.membership.handle}'s stake has been ${action}`)
     .addFields(
-      { name: 'Amount', value: stake ? formatBalance(stake, { withUnit: 'tJOY' }) : 'Not Set', inline: true }
+      { name: 'Amount', value: stake ? formatBalance(stake.toString(), { withUnit: 'tJOY' }) : 'Not Set', inline: true }
     ), blockNumber, event);
 }
 
