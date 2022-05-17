@@ -9,9 +9,9 @@ import {
 import { Inject, Logger } from '@nestjs/common';
 import { CacheType, CommandInteraction, ContextMenuInteraction } from 'discord.js';
 import { PendingVerification } from 'src/db/pendingverification.entity';
+import { DaoMembership } from 'src/db/daomembership.entity';
 import { SolveDto } from './solve.dto';
 import { signatureVerify } from '@polkadot/util-crypto';
-// import { stringToU8a } from '@polkadot/util';
 
 @Command({
   name: 'solve',
@@ -24,30 +24,80 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
   constructor(
     @Inject('PENDING_VERIFICATION_REPOSITORY')
     private readonly pendingVerificationRepository: typeof PendingVerification,
+    @Inject('DAO_MEMBERSHIP_REPOSITORY')
+    private readonly daoMembershipRepository: typeof DaoMembership,
   ) {}
 
   async handler(@Payload() dto: SolveDto, context: TransformedCommandExecutionContext) {
 
-    const verification = (await this.pendingVerificationRepository.findOne({where: {startedByDiscordHandle: this.buildHandle(context.interaction)}}))?.get();
+    // length check
+    if(dto.challenge.length !== 130) {
+      context.interaction.reply({
+        content: `Signed challenge must be exactly 130 symbols. You sent a string with ${dto.challenge.length} symbols`,
+        ephemeral: true
+      });
+    }
+    // existing pending verification check
+    // TODO how to make sure only one pending verification exist for a given user? 
+    const verification = await this.pendingVerificationRepository.findOne(
+      {
+        where: {
+          startedByDiscordHandle: this.buildHandle(context.interaction)
+        }, 
+        raw: true
+      });
 
     if(verification) {
-      this.logger.debug(`Verifying string '${verification?.challenge}' using signature '${dto.challenge}' and address '${verification?.claimedAccountAddress}'`)
-      // const challengeBytes = stringToU8a(verification?.challenge);
-      // const signature = stringToU8a(dto.challenge.substring(2));
-      // const publicKey = stringToU8a(verification.claimedAccountAddress);
-      // let publicKey: Uint8Array | null = null;
+      this.logger.debug(`Verifying that challenge '${verification.challenge}' signature '${dto.challenge}' was signed by address '${verification.claimedAccountAddress}'`);
+      const { isValid } = signatureVerify(verification.challenge, dto.challenge, verification.claimedAccountAddress);
 
-      // try {
-      //   publicKey = decodeAddress(verification.claimedAccountAddress);
-      // } catch (err) {
-      //   console.error(err);
-      // }
+      // verify that this address isn't yet claimed
+      const existingBinding = await this.daoMembershipRepository.findOne(
+        {
+          where: {
+            membership: verification.claimedMembership
+          }, 
+          raw: true
+        });
+      
+      if(existingBinding) {
+        this.logger.log(`Identity '${existingBinding.membership}' already claimed by '${existingBinding.discordHandle}'`);
+        context.interaction.reply({
+          content: `🤔 This identity seems to be already claimed`,
+          ephemeral: true
+        });
+      } else {
+        const created = await this.daoMembershipRepository.create(
+          { 
+            membership: verification.claimedMembership, 
+            accountAddress: verification.claimedAccountAddress,
+            discordHandle: this.buildHandle(context.interaction)
+          });
+        if(created) {
+          this.logger.log(`${this.buildHandle(context.interaction)} claimed identity '${verification.claimedMembership}'`);
+          // clean up the pending verification records
+          await this.pendingVerificationRepository.destroy(
+            {
+              where: {
+                startedByDiscordHandle: this.buildHandle(context.interaction)
+              }
+            }
+          );
 
+          // assign 'identity verified' server role 
+          context.interaction.reply({
+            content: `Congrats! You have successfully claimed the identity. Your on-chain roles should show up within 30 minutes`,
+            ephemeral: true
+          })
+        } else {
+          this.logger.log(`Creating record failed.`);
+          context.interaction.reply({
+            content: `Well, this is embarassing, but I have to ask you to try again later.`,
+            ephemeral: true
+          })
+        }
+      }
 
-      // не работает! есть предположение что не работает потому что полькадот аппка юзает более новую версию хэшируюшей либы
-      // то есть я хэширую более новой либой, а проверяю более старой
-      const { isValid } = signatureVerify(verification?.challenge, dto.challenge, verification.claimedAccountAddress);
-      this.logger.log(isValid);
       context.interaction.reply({
         content: `Status: ${isValid}`,
         ephemeral: true
