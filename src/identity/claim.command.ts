@@ -26,7 +26,6 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
 
   async handler(@Payload() dto: ClaimDto, context: TransformedCommandExecutionContext) {
 
-    // if (!(interaction.member.roles as GuildMemberRoleManager).cache.some(role => Object.values(botConfig.adminRoles).includes(role.name))) {
     const challenge = nanoid();
     await this.pendingVerificationRepository.create(
       { 
@@ -36,18 +35,9 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
         challenge: challenge
       });
     context.interaction.reply({
-        content: "Forbidden",
+        content: `Copy the following string and sign it:\n${challenge}`,
         ephemeral: true
       })
-    // } else {
-    //   const quest = JSON.parse(dto.quest) as Quest
-    //   quest.status = 'OPEN';
-    //   this.questsService.saveQuest(quest);
-    //   interaction.reply({
-    //     content: ".",
-    //     ephemeral: true
-    //   })  
-    // }
   }
   buildHandle(interaction: CommandInteraction<CacheType> | ContextMenuInteraction<CacheType>): string {
     return `${interaction.user.username}#${interaction.user.discriminator}`;
