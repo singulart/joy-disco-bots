@@ -55,7 +55,33 @@ documents:
         id
       }
     }
-
+  - > 
+    query memberByHandle($handle: String) {
+      memberships(where: {handle_eq: $handle}) {
+        controllerAccount
+        rootAccount
+        isCouncilMember
+        roles {
+          id
+          groupId
+          status {
+            ... on WorkerStatusActive {
+              __typename
+            }
+            ... on WorkerStatusLeaving {
+              __typename
+            }
+            ... on WorkerStatusLeft {
+              __typename
+            }
+            ... on WorkerStatusTerminated {
+              __typename
+            }
+          }
+          isLead
+        }
+      }
+    }
 generates:
   ./src/qntypes.ts:
     plugins:

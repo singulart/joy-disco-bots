@@ -2,8 +2,8 @@ import { Param } from '@discord-nestjs/core';
 
 
 export class ClaimDto {
-  @Param({ description: 'Joystream user', required: true})
+  @Param({ description: 'Your Joystream username', required: true})
     username!: string;
-  @Param({ description: 'Wallet address', required: true})
+  @Param({ description: 'Root or controller address of your Joystream user', required: true})
     wallet!: string;
 }
