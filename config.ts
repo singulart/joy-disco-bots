@@ -3,6 +3,8 @@ export const dbFile = "./db.json";
 export const database = "joy_dao";
 export const wsLocation = "wss://rpc.joystream.org:9944"; 
 
+export const identityValidatedRole = '🔷identity-verified';
+
 // bot tokens
 export const discordToken = "";
 

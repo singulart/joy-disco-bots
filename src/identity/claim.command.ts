@@ -52,6 +52,7 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
           content: `You already started to claim on-chain identity. Use \`/solve\` command to finish the process`,
           ephemeral: true
         })  
+        return
       } else {
         const challenge = nanoid();
         const created = await this.pendingVerificationRepository.create(
@@ -67,11 +68,13 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
             content: `Copy the following string and sign it using [Polkadot App](https://polkadot.js.org/apps/?rpc=wss://rpc.joystream.org:9944/#/signing):\n\`${challenge}\`\nThen, use \`/solve\` command to finish the process.`,
             ephemeral: true
           })
+          return
         } else {
           context.interaction.reply({
             content: `Well, this is embarassing, but I have to ask you to try again later.`,
             ephemeral: true
           })
+          return
         }
       }
     } else {
@@ -79,8 +82,7 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
         content: `You cannot claim this identity`,
         ephemeral: true
       })
-    }
-    
+    }    
   }
   buildHandle(interaction: CommandInteraction<CacheType> | ContextMenuInteraction<CacheType>): string {
     return `${interaction.user.username}#${interaction.user.discriminator}`;
