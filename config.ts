@@ -1,16 +1,8 @@
 import { ChannelNames } from "./src/types";
-export const dbFile = "./db.json";
-export const database = "joy_dao";
+
 export const wsLocation = "wss://rpc.joystream.org:9944"; 
-
 export const identityValidatedRole = '🔷identity-verified';
-
-// bot tokens
-export const discordToken = "";
-
-// time between heartbeat announcement in milliseconds
-export const heartbeat = 60000 * 60 * 6;
-export const councilStatusHeartbeat = 86400000;
+export const database = "joy_dao";
 
 // video bot
 export const channelId = "938526399801729024";
@@ -23,8 +15,8 @@ export const createdAgoUnit = "minutes";
 // wg bot
 export const channelNames: ChannelNames = {
   council: "council",
-  proposals: "proposals-bot",
-  forum: "forum-bot",
+  proposals: "proposals",
+  forum: "forum",
   tokenomics: "tokenomics",
   videos: "video-bot",
   general: "general",

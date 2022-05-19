@@ -2,16 +2,20 @@ import { TransformPipe } from '@discord-nestjs/common';
 import {
   Command,
   DiscordTransformedCommand,
+  InjectDiscordClient,
   Payload,
   TransformedCommandExecutionContext,
   UsePipes,
 } from '@discord-nestjs/core';
 import { Inject, Logger } from '@nestjs/common';
-import { CacheType, CommandInteraction, ContextMenuInteraction } from 'discord.js';
+import { CacheType, Client, CommandInteraction, ContextMenuInteraction, Role } from 'discord.js';
 import { PendingVerification } from 'src/db/pendingverification.entity';
 import { DaoMembership } from 'src/db/daomembership.entity';
 import { SolveDto } from './solve.dto';
 import { signatureVerify } from '@polkadot/util-crypto';
+import { findServerRole } from 'src/util';
+import { ConfigService } from '@nestjs/config';
+import { identityValidatedRole } from 'config';
 
 @Command({
   name: 'solve',
@@ -26,6 +30,9 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
     private readonly pendingVerificationRepository: typeof PendingVerification,
     @Inject('DAO_MEMBERSHIP_REPOSITORY')
     private readonly daoMembershipRepository: typeof DaoMembership,
+    @InjectDiscordClient()
+    private readonly client: Client,
+    private readonly configService: ConfigService 
   ) { }
 
   async handler(@Payload() dto: SolveDto, context: TransformedCommandExecutionContext) {
@@ -102,6 +109,16 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
           );
 
           // assign 'identity verified' server role 
+          const serverToCheck = this.configService.get('DISCORD_SERVER');
+          const verifiedRole = await findServerRole(
+            this.client, 
+            serverToCheck, 
+            identityValidatedRole) as Role;
+          this.logger.debug(verifiedRole);
+          const serverUser = await context.interaction.guild?.members.fetch({user: context.interaction.user});
+          
+          serverUser?.roles.add(verifiedRole.id, 'Verified via claiming on-chain identity');
+          
           context.interaction.reply({
             content: `Congrats! You have successfully claimed the identity. Your on-chain roles should show up within 30 minutes`,
             ephemeral: true

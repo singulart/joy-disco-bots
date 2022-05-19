@@ -1,17 +1,11 @@
-import { AnyChannel, Client, Collection, TextChannel } from "discord.js";
+import { AnyChannel, Client, Collection, Role, TextChannel } from "discord.js";
 import { channelNames } from "../config";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Hash, EventRecord } from "@polkadot/types/interfaces";
 import { BlockNumber } from "@joystream/types/common";
 import { Vec } from "@polkadot/types";
 import { types } from "@joystream/types";
-
-
-//types
-import {
-  DiscordChannels,
-  Options,
-} from "./types";
+import { DiscordChannels } from "./types";
 
 export const connectApi = async (url: string): Promise<ApiPromise> => {
   const provider = new WsProvider(url);
@@ -37,23 +31,6 @@ export const getEvents = (
     hash: Hash
   ): Promise<Vec<EventRecord>> => api.query.system.events.at(hash);
 
-  export const parseArgs = (args: string[]): Options => {
-  const inArgs = (term: string): boolean => {
-    return args.find((a) => a.search(term) > -1) ? true : false;
-  };
-
-  const options: Options = {
-    verbose: inArgs("--verbose") ? 2 : inArgs("--quiet") ? 0 : 1,
-    channel: inArgs("--channel"),
-    council: inArgs("--council"),
-    forum: inArgs("--forum"),
-    proposals: inArgs("--proposals"),
-  };
-
-  if (options.verbose > 1) console.debug("args", args, "\noptions", options);
-  return options;
-};
-
 export const getDiscordChannels = async (
   client: Client
 ): Promise<DiscordChannels> => {
@@ -62,7 +39,7 @@ export const getDiscordChannels = async (
     const channel = findDiscordChannel(client, channelNames[c]);
     if (channel) discordChannels[c] = channel;
     else {
-      console.log(`Channel '${channelNames[c]}' not found on this server`);
+      console.warn(`Channel '${channelNames[c]}' not found on this server`);
     }
   });
   return discordChannels;
@@ -76,6 +53,18 @@ export const findDiscordChannel = (
     (channel: any) => channel.name === name
   ).map((value: AnyChannel, key: string, collection: Collection<string, AnyChannel>) => value as TextChannel);
 
+export const findServerRole = async (
+  client: Client,
+  serverName: string,
+  roleName: string
+): Promise<Role | undefined> => {
+  
+  const server = await client.guilds.fetch(serverName);
+  // if(!server) console.error(`Server`);
+  const role = server.roles.cache.find(role => role.name === roleName);
+  return role;
+}
+  
 export const delay = (milliseconds: number) => {
   return new Promise( resolve => setTimeout(resolve, milliseconds) );
 }
