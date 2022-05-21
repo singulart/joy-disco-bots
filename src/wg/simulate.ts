@@ -2,7 +2,7 @@ import { Client, Intents } from "discord.js";
 import { ApiPromise } from "@polkadot/api";
 import { EventRecord } from "@polkadot/types/interfaces";
 import { wsLocation } from "../../config";
-import { connectApi, getBlockHash, getEvents } from "./api_extension";
+import { connectApi, getBlockHash, getEvents } from "../util";
 import { getDiscordChannels } from "../util";
 import { DiscordChannels } from "../types";
 import { processGroupEvents } from "./wg_event_handlers";

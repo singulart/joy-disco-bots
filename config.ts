@@ -1,32 +1,8 @@
 import { ChannelNames } from "./src/types";
-export const dbFile = "./db.json";
 
-// href
-export const domain = "https://pioneer.joystreamstats.live";
-export const apiUrl = "https://api.joystreamstats.live/api";
-export const statusUrl = "https://joystreamstats.live/static/status.json";
-export const dapplookerUrl =
-  "https://analytics.dapplooker.com/api/public/dashboard/c70b56bd-09a0-4472-a557-796afdc64d3b/card/155";
-export const wsLocation = "wss://rpc.joystream.org:9944"; //"wss://joystreamstats.live:9945";
-
-// bot tokens
-export const discordToken = "";
-export const tgToken = "";
-
-// telegram chat ID
-export const chatid = "-1001438587296";
-
-// time between heartbeat announcement in milliseconds
-export const heartbeat = 60000 * 60 * 6;
-export const councilStatusHeartbeat = 86400000;
-
-// minutes between checking for proposal updates
-export const proposalDelay = 15;
-
-export const suppressedThreads = [180, 265, 275, 390]; // 180 tokens, 265 faucet, 275 pets, 390 bounty-24
-
-// storage bot
-export const reRunCronTimingInHour = 5;
+export const wsLocation = "wss://rpc.joystream.org:9944"; 
+export const identityValidatedRole = '🔷identity-verified';
+export const database = "joy_dao";
 
 // video bot
 export const channelId = "938526399801729024";
@@ -39,8 +15,8 @@ export const createdAgoUnit = "minutes";
 // wg bot
 export const channelNames: ChannelNames = {
   council: "council",
-  proposals: "proposals-bot",
-  forum: "forum-bot",
+  proposals: "proposals",
+  forum: "forum",
   tokenomics: "tokenomics",
   videos: "video-bot",
   general: "general",
