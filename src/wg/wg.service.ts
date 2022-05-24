@@ -4,7 +4,7 @@ import { DiscordChannels } from "../types";
 import { ApiPromise } from "@polkadot/api";
 import { findServerRole, getDiscordChannels } from "../util";
 import { connectApi, getBlockHash, getEvents } from "../util";
-import { processGroupEvents } from "./wg_event_handlers";
+import { processGroupEvents } from "./wg.handlers";
 import { banner } from "../banner";
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectDiscordClient, Once } from "@discord-nestjs/core";
