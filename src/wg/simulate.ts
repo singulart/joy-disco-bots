@@ -5,7 +5,7 @@ import { wsLocation } from "../../config";
 import { connectApi, getBlockHash, getEvents } from "../util";
 import { getDiscordChannels } from "../util";
 import { DiscordChannels } from "../types";
-import { processGroupEvents } from "./wg_event_handlers";
+import { processGroupEvents } from "./wg.handlers";
 
 const eventsMapping = {
   // BudgetRefill: 28800,

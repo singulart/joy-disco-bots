@@ -39,10 +39,7 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
 
     // length check
     if (dto.challenge.length !== 130) {
-      context.interaction.reply({
-        content: `Signed challenge must be exactly 130 symbols. You sent a string with ${dto.challenge.length} symbols`,
-        ephemeral: true
-      });
+      this.reply(`Signed challenge must be exactly 130 symbols. You sent a string with ${dto.challenge.length} symbols`, context);
       return;
     }
     // existing pending verification check
@@ -60,18 +57,12 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
       try {
         const { isValid } = signatureVerify(verification.challenge, dto.challenge, verification.claimedAccountAddress);
         if (!isValid) {
-          context.interaction.reply({
-            content: `Signed challenge you provided is not correct`,
-            ephemeral: true
-          })
+          this.reply(`Signed challenge you provided is not correct`, context);
           return;
         }
       } catch (error) {
         this.logger.debug(`Verification failed for '${verification.claimedAccountAddress}'`);
-        context.interaction.reply({
-          content: `Signed challenge you provided is not correct`,
-          ephemeral: true
-        })
+        this.reply(`Signed challenge you provided is not correct`, context);
         return;
       }
       // verify that this address isn't yet claimed
@@ -85,10 +76,7 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
 
       if (existingBinding) {
         this.logger.log(`Identity '${existingBinding.membership}' already claimed by '${existingBinding.discordHandle}'`);
-        context.interaction.reply({
-          content: `🤔 This identity seems to be already claimed`,
-          ephemeral: true
-        });
+        this.reply(`🤔 This identity seems to be already claimed`, context);
         return
       } else {
         const created = await this.daoMembershipRepository.create(
@@ -119,26 +107,17 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
           
           serverUser?.roles.add(verifiedRole.id, 'Verified via claiming on-chain identity');
           
-          context.interaction.reply({
-            content: `Congrats! You have successfully claimed the identity. Your on-chain roles should show up within 30 minutes`,
-            ephemeral: true
-          })
+          this.reply(`Congrats! You have successfully claimed the identity. Your on-chain roles should show up within 30 minutes`, context);
           return
         } else {
           this.logger.log(`Creating record failed.`);
-          context.interaction.reply({
-            content: `Well, this is embarassing, but I have to ask you to try again later.`,
-            ephemeral: true
-          })
+          this.reply(`Well, this is embarassing, but I have to ask you to try again later.`, context);
           return
         }
       }
     } else {
       this.logger.log(`No pending verification for user ${this.buildHandle(context.interaction)}`);
-      context.interaction.reply({
-        content: `You don't have any pending verifications. Claim your Joystream account using \`/claim\` command`,
-        ephemeral: true
-      })
+      this.reply(`You don't have any pending verifications. Claim your Joystream account using \`/claim\` command`, context);
       return
     }
   }
@@ -147,4 +126,10 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
     return `${interaction.user.username}#${interaction.user.discriminator}`;
   }
 
+  reply(replyText: string, context: TransformedCommandExecutionContext) {
+    context.interaction.reply({
+      content: replyText,
+      ephemeral: true
+    });    
+  }
 }

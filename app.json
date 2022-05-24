@@ -1,0 +1,8 @@
+{
+  "name": "Jostream Discord Bot",
+  "description": "DAO bot to serve the Joystream community",
+  "repository": "https://github.com/singulart/joystream-disco-bots/tree/master",
+  "logo": "https://miro.medium.com/max/3150/1*ciI-I4VTggwkcmCH2jGhUQ.jpeg",
+  "keywords": ["joystream", "dao", "bot"]
+}
+
