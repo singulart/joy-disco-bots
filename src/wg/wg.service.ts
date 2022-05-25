@@ -1,5 +1,11 @@
 import { Header } from '@polkadot/types/interfaces'
-import { wsLocation, identityValidatedRole } from "../../config";
+import { 
+  wsLocation, 
+  identityValidatedRole, 
+  wgLeadToRoleMap, 
+  wgToRoleMap, 
+  councilMemberRole 
+} from "../../config";
 import { DiscordChannels } from "../types";
 import { ApiPromise } from "@polkadot/api";
 import { findServerRole, getDiscordChannels } from "../util";
@@ -28,11 +34,9 @@ export class WorkingGroupService {
     this.logger.log(`Bot online. Current server[s]: ${(await this.client.guilds.fetch({ limit: 10 })).map((g) => g.name).join(',')}`);
     const channels: DiscordChannels = await getDiscordChannels(this.client);
 
-    const serverToCheck = this.configService.get('DISCORD_SERVER');
-    if(!(await findServerRole(this.client, serverToCheck, identityValidatedRole))) {
-      this.logger.error(`Role ${identityValidatedRole} not found`);
-      return;
-    }
+    // check the config settings agaist the server specified as environment variable
+    this.selfCheck();
+
     const api: ApiPromise = await connectApi(wsLocation);
     await api.isReady;
     this.logger.log(`Connected to RPC endpoint [${wsLocation}]`);
@@ -40,6 +44,21 @@ export class WorkingGroupService {
       const hash = await getBlockHash(api, +header.number);
       const events = await getEvents(api, hash);
       processGroupEvents(+header.number, events, channels);
+    });
+  }
+
+  private selfCheck() {
+    const serverToCheck = this.configService.get('DISCORD_SERVER');
+    const rolesToCheck: string[] = [
+      identityValidatedRole,
+      councilMemberRole,
+      ...Object.values(wgLeadToRoleMap),
+      ...Object.values(wgToRoleMap)
+    ];
+    rolesToCheck.forEach(async (role: string, ix: number, vals: string[]) => {
+      if (!(await findServerRole(this.client, serverToCheck, role))) {
+        this.logger.error(`Configured role [${role}] not found`);
+      }
     });
   }
 }
