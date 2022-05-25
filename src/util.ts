@@ -60,7 +60,6 @@ export const findServerRole = async (
 ): Promise<Role | undefined> => {
   
   const server = await client.guilds.fetch(serverName);
-  // if(!server) console.error(`Server`);
   const role = server.roles.cache.find(role => role.name === roleName);
   return role;
 }
