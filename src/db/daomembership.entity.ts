@@ -19,13 +19,14 @@ import { DaoRole } from './daorole.entity'
 export class DaoMembership extends Model {
 
   @Column
-  membership!: string // on-chain user membership handle
+  declare membership: string // on-chain user membership handle
 
   @Column
-  accountAddress!: string 
+  declare accountAddress: string 
 
   @Column
-  discordHandle!: string 
+  declare discordHandle: string 
 
-  @HasMany(() => DaoRole) daoRoles!: DaoRole[] // list of on-chain roles a user has
+  @HasMany(() => DaoRole) 
+  declare daoRoles: DaoRole[] // list of on-chain roles a user has
 }
