@@ -22,15 +22,15 @@ export const channelNames: ChannelNames = {
   general: "general",
 
   // groups https://github.com/Joystream/joystream/blob/c57054eebe5da4f683134dbdaaecf50263ec7336/cli/src/Types.ts#L53-L63
-  contentWorkingGroup: "content-curator",
-  storageWorkingGroup: "storage-provider",
-  forumWorkingGroup: "forum",
+  contentWorkingGroup: "▶｜content-curator",
+  storageWorkingGroup: "💿｜storage-provider",
+  forumWorkingGroup: "📋｜forum",
   membershipWorkingGroup: "membership",
-  distributionWorkingGroup: "distributors",
+  distributionWorkingGroup: "🔌｜distributors",
   gatewayWorkingGroup: "gateway",
-  operationsWorkingGroupAlpha: "builders",
-  operationsWorkingGroupGamma: "marketing",
-  operationsWorkingGroupBeta: "human-resources"
+  operationsWorkingGroupAlpha: "👷｜builders",
+  operationsWorkingGroupGamma: "📈｜marketing",
+  operationsWorkingGroupBeta: "👨｜human-resources"
 };
 
 export const wgEvents = [
