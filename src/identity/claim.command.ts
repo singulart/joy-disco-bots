@@ -29,6 +29,7 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
   ) {}
 
   async handler(@Payload() dto: ClaimDto, context: TransformedCommandExecutionContext) {
+    this.logger.log(`${this.buildHandle(context.interaction)} claiming on-chain identity '${dto.username}' (${dto.wallet})`);
 
     // verify that the address really belongs to the claimed membership
     const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));

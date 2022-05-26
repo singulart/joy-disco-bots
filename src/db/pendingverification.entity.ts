@@ -17,14 +17,15 @@ import { Column, Model, Table } from 'sequelize-typescript'
 export class PendingVerification extends Model {
   
   @Column
-  claimedMembership!: string
+  declare claimedMembership: string
 
   @Column
-  claimedAccountAddress!: string 
+  declare claimedAccountAddress: string 
 
   @Column
-  startedByDiscordHandle!: string 
+  declare startedByDiscordHandle: string 
 
-  @Column challenge!: string
+  @Column 
+  declare challenge: string
 
 }

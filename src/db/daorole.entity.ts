@@ -7,9 +7,9 @@ import { DaoMembership } from './daomembership.entity'
 })
 export class DaoRole extends Model {
   
-  @Column role!: string
+  @Column declare role: string
 
-  @ForeignKey(() => DaoMembership) @Column membershipId!: number;
+  @ForeignKey(() => DaoMembership) @Column declare membershipId: number;
 
-  @BelongsTo(() => DaoMembership) membership!: DaoMembership
+  @BelongsTo(() => DaoMembership) declare membership: DaoMembership
 }

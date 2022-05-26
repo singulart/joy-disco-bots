@@ -38,7 +38,7 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
   async handler(@Payload() dto: SolveDto, context: TransformedCommandExecutionContext) {
 
     // length check
-    if (dto.challenge.length !== 130) {
+    if (dto.challenge?.length !== 130) {
       this.reply(`Signed challenge must be exactly 130 symbols. You sent a string with ${dto.challenge.length} symbols`, context);
       return;
     }
@@ -105,7 +105,7 @@ export class SolveChallengeCommand implements DiscordTransformedCommand<SolveDto
           this.logger.debug(verifiedRole);
           const serverUser = await context.interaction.guild?.members.fetch({user: context.interaction.user});
           
-          serverUser?.roles.add(verifiedRole.id, 'Verified via claiming on-chain identity');
+          await serverUser?.roles.add(verifiedRole.id, 'Verified via claiming on-chain identity');
           
           this.reply(`Congrats! You have successfully claimed the identity. Your on-chain roles should show up within 30 minutes`, context);
           return
