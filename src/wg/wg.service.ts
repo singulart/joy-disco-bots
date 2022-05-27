@@ -31,7 +31,7 @@ export class WorkingGroupService {
     const serverToCheck = this.configService.get('DISCORD_SERVER');
     if(!(await findServerRole(this.client, serverToCheck, identityValidatedRole))) {
       this.logger.error(`Role ${identityValidatedRole} not found`);
-      return;
+      // return; TODO think of how to handle this better
     }
     const api: ApiPromise = await connectApi(wsLocation);
     await api.isReady;
