@@ -7,6 +7,7 @@ import { SolveChallengeCommand } from './solve.command';
 import { ConfigModule } from '@nestjs/config';
 import { PendingVerificationCleaner } from './pendingverificationcleaner';
 import { RoleSyncService } from './rolesync.service';
+import { CouncilService } from './council.service';
 
 @Module({
   imports: [
@@ -18,7 +19,11 @@ import { RoleSyncService } from './rolesync.service';
     IdentityClaimCommand, 
     SolveChallengeCommand, 
     PendingVerificationCleaner,
-    RoleSyncService
+    RoleSyncService,
+    CouncilService
+  ],
+  exports: [
+    CouncilService
   ]
 })
 export class IdentityModule {}

@@ -8,4 +8,4 @@ Techniques used in this project
 6. Polkadot signature verification
 7. Sequelize `declare` trick, see https://github.com/sequelize/sequelize/issues/11032#issuecomment-1002940929 
 8. Discord role assigning
-9. 
+9. Sequelize on Heroku: SSL ;) 
