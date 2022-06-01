@@ -29,14 +29,14 @@ export class RoleSyncService {
     private readonly configService: ConfigService 
   ) { }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
-  async syncOnChainRoles(): Promise<void> {
+  @Cron(CronExpression.EVERY_30_MINUTES)
+  async syncOnChainRoles() {
     this.logger.debug('Syncing on-chain roles');
     const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));
-    const totalCount = await this.daoMembershipRepository.count();
+    const totalVerifiedMembersCount = await this.daoMembershipRepository.count();
     let page = 0;
     const pageSize = 10;
-    while(page * pageSize < totalCount) {
+    while(page * pageSize < totalVerifiedMembersCount) {
       const memberships = await this.getPageOfMemberships(pageSize, page);
       for(let i = 0; i < memberships.length; i++) {
         const queryNodeMember = await queryNodeClient.memberByHandle({handle: memberships[i].membership});
@@ -73,7 +73,7 @@ export class RoleSyncService {
         }
         for(let m = 0; m < memberships[i].daoRoles.length; m++) {
           // Check that user's db role is still relevant. 
-          // If it's not, user needs to be revoked this role, and new DaoRole record deleted for this user.
+          // If it's not, user needs to be revoked this role, and corresponding DaoRole record deleted for this user.
           if(!this.hasDbRole(onChainRoles, memberships[i].daoRoles[m].role)) {
             const mainServer = this.configService.get('DISCORD_SERVER');
             const roleToRevoke = await findServerRole(

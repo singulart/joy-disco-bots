@@ -23,9 +23,8 @@ documents:
   - >
     query workerById($workerId: ID!) {
       workerByUniqueInput(where: {id: $workerId}) {
-          membership {
-          handle
-          id
+        membership {
+          ...MemberFields
         }
         status {
           __typename
@@ -37,7 +36,32 @@ documents:
         stakeAccount
       }
     }
-
+    fragment MemberFields on Membership {
+      handle
+      id    
+      controllerAccount
+      rootAccount
+      isCouncilMember
+      roles {
+        id
+        groupId
+        status {
+          ... on WorkerStatusActive {
+            __typename
+          }
+          ... on WorkerStatusLeaving {
+            __typename
+          }
+          ... on WorkerStatusLeft {
+            __typename
+          }
+          ... on WorkerStatusTerminated {
+            __typename
+          }
+        }
+        isLead
+      }
+    }
   - > 
     query applicationById($applicationId: ID!) {
       workingGroupApplicationByUniqueInput(where: {id: $applicationId}) {
@@ -51,34 +75,22 @@ documents:
   - >
     query memberById($memberId: ID!) {
       memberships(where: {id_eq: $memberId}) {
-        handle
-        id
+        ...MemberFields
       }
     }
   - > 
     query memberByHandle($handle: String) {
       memberships(where: {handle_eq: $handle}) {
-        controllerAccount
-        rootAccount
-        isCouncilMember
-        roles {
-          id
-          groupId
-          status {
-            ... on WorkerStatusActive {
-              __typename
-            }
-            ... on WorkerStatusLeaving {
-              __typename
-            }
-            ... on WorkerStatusLeft {
-              __typename
-            }
-            ... on WorkerStatusTerminated {
-              __typename
-            }
+        ...MemberFields
+      }
+    }
+  - > 
+    query activeCouncilMembers {
+      electedCouncils(where: {endedAtBlock_eq: null}) {
+        councilMembers {
+          member {
+            ...MemberFields
           }
-          isLead
         }
       }
     }
