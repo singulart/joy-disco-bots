@@ -11,6 +11,9 @@ import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Client, Role } from 'discord.js';
 import { findServerRole } from "src/util";
 
+
+const CM_ROLE = 'councilMemberRole';
+
 /**
  * Cron-based syncing of Joystream on-chain roles with Discord server roles.
  * On-chain roles are fetched from Query node for all Discord users who claimed their Joystream memberships.
@@ -39,72 +42,105 @@ export class RoleSyncService {
     while(page * pageSize < totalVerifiedMembersCount) {
       const memberships = await this.getPageOfMemberships(pageSize, page);
       for(let i = 0; i < memberships.length; i++) {
-        const queryNodeMember = await queryNodeClient.memberByHandle({handle: memberships[i].membership});
+        const ithMember = memberships[i];
+        // Query Node call to get the on-chain roles
+        const queryNodeMember = await queryNodeClient.memberByHandle({handle: ithMember.membership});
+
+        // Keep only active roles, filter the others out
         const onChainRoles = queryNodeMember.memberships[0].roles.filter((role: any) => role.status.__typename === 'WorkerStatusActive');
 
+        // first pass: assigning server roles based on joystream ones
         for(let r = 0; r < onChainRoles.length; r++) {
-          // Check that user's on-chain role is already stored in our database. 
-          // If it's not, user needs to be granted this role, and new DaoRole record created for this user.
-          if(!this.hasOnchainRole(memberships[i], onChainRoles[r].groupId)) {
-            const mainServer = this.configService.get('DISCORD_SERVER');
-            const roleToAssign = await findServerRole(
-              this.client, 
-              mainServer, 
-              wgToRoleMap[onChainRoles[r].groupId]) as Role;
-
-            if(!roleToAssign) {
-              this.logger.warn(`I was about to assign role ${wgToRoleMap[onChainRoles[r].groupId]}, but it's gone!`);
-              continue;
-            }
-            const serverUser = await this.findUser(mainServer, memberships[i]);
-            if(serverUser) {
-              await serverUser.roles.add(roleToAssign.id, 'Assigned as per on-chain role');
-              this.daoRoleRepository.create({
-                role: onChainRoles[r].groupId,
-                membershipId: memberships[i].id
-              });
-              this.logger.debug(
-                `Assigned ${memberships[i].discordHandle} server role ${wgToRoleMap[onChainRoles[r].groupId]}`
-              );  
-            } else {
-              this.logger.warn(`User ${memberships[i].discordHandle} not found on this server`);
-            }
-          }
+          const roleInJoystream = onChainRoles[r].groupId;
+          await this.maybeAssignRole(roleInJoystream, ithMember);
         }
-        for(let m = 0; m < memberships[i].daoRoles.length; m++) {
-          // Check that user's db role is still relevant. 
-          // If it's not, user needs to be revoked this role, and corresponding DaoRole record deleted for this user.
-          if(!this.hasDbRole(onChainRoles, memberships[i].daoRoles[m].role)) {
-            const mainServer = this.configService.get('DISCORD_SERVER');
-            const roleToRevoke = await findServerRole(
-              this.client, 
-              mainServer, 
-              wgToRoleMap[memberships[i].daoRoles[m].role]) as Role;
 
-            if(!roleToRevoke) {
-              this.logger.warn(`I was about to revoke role [${wgToRoleMap[memberships[i].daoRoles[m].role]}], but it's gone!`);
-              continue;
-            }
-            const serverUser = await this.findUser(mainServer, memberships[i]);
-            if(serverUser) {
-              await serverUser.roles.remove(roleToRevoke.id, 'Revoked as per on-chain changes');
-              this.daoRoleRepository.destroy({
-                where: {
-                  id: memberships[i].daoRoles[m].id
-                }
-              });
-              this.logger.debug(
-                `Revoked ${memberships[i].discordHandle} server role [${wgToRoleMap[memberships[i].daoRoles[m].role]}]`
-              );  
-            } else {
-              this.logger.warn(`User ${memberships[i].discordHandle} not found on this server`);
-            }
-          }
+        // second pass: revokation of server roles that user doesn't have anymore in joystream
+        for(let m = 0; m < ithMember.daoRoles.length; m++) {
+          const dbRole = ithMember.daoRoles[m];
+          await this.maybeRevokeRole(dbRole, ithMember, onChainRoles);
+        }
+
+        // assign council member role if needed
+        const activeCouncilMembers = await queryNodeClient.activeCouncilMembers();
+        const isUserInCouncilCurrently = activeCouncilMembers.electedCouncils[0].councilMembers.find(
+          (cm: any) => cm.member.handle === ithMember.membership
+        ) !== undefined;
+        if(isUserInCouncilCurrently) {
+          await this.maybeAssignRole(CM_ROLE, ithMember);
+        }
+
+        // revoke council member role if needed
+        const cmRole = ithMember.daoRoles.find((role) => role.role === CM_ROLE);
+        if(cmRole) {
+          await this.maybeRevokeRole(cmRole, ithMember, onChainRoles);
         }
       }
       page = page + 1;
     }
   }
+
+  private async maybeAssignRole(roleInJoystream: string, ithMember: DaoMembership) {
+    // Check that user's on-chain role is already stored in our database. 
+    // If it's not, user needs to be granted this role, and new DaoRole record created for this user.
+    if(!this.hasOnchainRole(ithMember, roleInJoystream)) {
+      const mainServer = this.configService.get('DISCORD_SERVER');
+      const roleToAssign = await findServerRole(
+        this.client, 
+        mainServer, 
+        wgToRoleMap[roleInJoystream]) as Role;
+
+      if(roleToAssign) {
+        const serverUser = await this.findUser(mainServer, ithMember);
+        if(serverUser) {
+          await serverUser.roles.add(roleToAssign.id, 'Assigned as per on-chain role');
+          this.daoRoleRepository.create({
+            role: roleInJoystream,
+            membershipId: ithMember.id
+          });
+          this.logger.debug(
+            `Assigned ${ithMember.discordHandle} server role [${wgToRoleMap[roleInJoystream]}]`
+          );  
+        } else {
+          this.logger.warn(`User ${ithMember.discordHandle} not found on this server`);
+        }
+      } else {
+        this.logger.warn(`I was about to assign role ${wgToRoleMap[roleInJoystream]}, but it's gone!`);
+      }
+    }
+  }
+
+  private async maybeRevokeRole(dbRole: DaoRole, ithMember: DaoMembership, onChainRoles: any) {
+    // Check that user's db role is still relevant. 
+    // If it's not, user needs to be revoked this role, and corresponding DaoRole record deleted for this user.
+    if(!this.hasDbRole(onChainRoles, dbRole.role)) {
+      const mainServer = this.configService.get('DISCORD_SERVER');
+      const roleToRevoke = await findServerRole(
+        this.client, 
+        mainServer, 
+        wgToRoleMap[dbRole.role]) as Role;
+
+      if(roleToRevoke) {
+        const serverUser = await this.findUser(mainServer, ithMember);
+        if(serverUser) {
+          await serverUser.roles.remove(roleToRevoke.id, 'Revoked as per on-chain changes');
+          this.daoRoleRepository.destroy({
+            where: {
+              id: dbRole.id
+            }
+          });
+          this.logger.debug(
+            `Revoked ${ithMember.discordHandle} server role [${wgToRoleMap[dbRole.role]}]`
+          );  
+        } else {
+          this.logger.warn(`User ${ithMember.discordHandle} not found on this server`);
+        }
+      } else {
+        this.logger.warn(`I was about to revoke role [${wgToRoleMap[dbRole.role]}], but it's gone!`);
+      }
+    }
+  }
+
   private async findUser(mainServerId: string, membership: DaoMembership) {
     const server = await this.client.guilds.fetch(mainServerId);
     const usernameParts = membership.discordHandle.split('#');
@@ -122,18 +158,26 @@ export class RoleSyncService {
   }
 
   private async getPageOfMemberships(pageSize: number, page: number): Promise<DaoMembership[]> {
+    
     // first query only selects ids from the master table (memberships)
-    const fetchIds = await this.daoMembershipRepository.findAll({ limit: pageSize, offset: page * pageSize, attributes: ["id"] });
+    const fetchIds = await this.daoMembershipRepository.findAll(
+      { 
+        limit: pageSize, 
+        offset: page * pageSize, 
+        attributes: ['id'] 
+    });
+    
     // second query selects memberships + relevant roles in one go (using outer join)
     // note the absence of limit/offset in this query! 
     const pageOfMemberships = await this.daoMembershipRepository.findAll({
       where: {
         id: {
-          [Op.in]: fetchIds.map<number>((record: DaoMembership, ix: number, values: DaoMembership[]) => record.id)
+          [Op.in]: fetchIds.map<number>((record: DaoMembership) => record.id)
         }
       },
       include: DaoRole
     });
+
     this.logger.debug(`Fetched ${pageOfMemberships.length} records ${pageOfMemberships.map((dao) => dao.id)}`);
     return pageOfMemberships;
   }

@@ -24,7 +24,9 @@ An ongoing initiative to unify the various Joystream Discord tools into one mono
 
 https://i.stack.imgur.com/ICWVL.gif
 
-Important gotcha: 
-When server admin invites the bot via an invite link, the bot is assigned a server role typically. This role MUST be dragged above all roles that this bot is supposed to manage (grant,) otherwise "Missing Permission" will appear even for admin bot :)
+Important gotchas: 
+1. When server admin invites the bot via an invite link, the bot is assigned a server role typically. This role MUST be dragged above all roles that this bot is supposed to manage (grant,) otherwise "Missing Permission" will appear even for admin bot :)
 
 Thanks to this [SO comment](https://stackoverflow.com/a/67799671).
+
+2. Joystream official server has `participant` role. This is the basic role allowing users to see channels and interact with them. The bot user must be assigned this role by the admin, too. 
