@@ -1,7 +1,7 @@
 import { ChannelNames } from "./src/types";
 
 export const wsLocation = "wss://rpc.joystream.org:9944"; 
-export const identityValidatedRole = '🔷identity-verified';
+export const identityValidatedRole = 'on-chain identity verified';
 export const database = "joy_dao";
 
 // video bot
