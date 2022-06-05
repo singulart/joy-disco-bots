@@ -22,7 +22,13 @@ export const databaseProviders = [
         host: dbConfig.host,
         port: dbConfig.port,
         username: dbConfig.username,
-        password: dbConfig.password
+        password: dbConfig.password,
+        dialectOptions: process.env.DEPLOYMENT_MODE === 'prod' ? {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false
+          }
+        } : {}
       });
       sequelize.addModels([DaoMembership, DaoRole, PendingVerification]);
       await sequelize.sync();
