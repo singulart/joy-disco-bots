@@ -1,7 +1,6 @@
 import { ChannelNames } from "./src/types";
 
 export const wsLocation = "wss://rpc.joystream.org:9944"; 
-export const identityValidatedRole = 'on-chain identity verified';
 export const database = "joy_dao";
 
 // video bot
@@ -31,6 +30,32 @@ export const channelNames: ChannelNames = {
   operationsWorkingGroupAlpha: "👷｜builders",
   operationsWorkingGroupGamma: "📈｜marketing",
   operationsWorkingGroupBeta: "👨｜human-resources"
+};
+
+export const identityValidatedRole = 'on-chain identity verified';
+export const councilMemberRole = "Council Member";
+
+//mapping of group Id coming from Query node to server role name
+export const wgToRoleMap: ChannelNames = {
+  contentWorkingGroup: "Content Worker",
+  storageWorkingGroup: "Storage Worker",
+  forumWorkingGroup: "Forum Worker",
+  distributionWorkingGroup: "Distribution Worker",
+  operationsWorkingGroupAlpha: "Builder Worker",
+  operationsWorkingGroupGamma: "Marketing Worker",
+  operationsWorkingGroupBeta: "HR Worker",
+  councilMemberRole: councilMemberRole
+};
+
+//same as above, just for lead
+export const wgLeadToRoleMap: ChannelNames = {
+  contentWorkingGroup: "Content Lead",
+  storageWorkingGroup: "Storage Lead",
+  forumWorkingGroup: "Forum Lead",
+  distributionWorkingGroup: "Distribution Lead",
+  operationsWorkingGroupAlpha: "Builder Lead",
+  operationsWorkingGroupGamma: "Marketing Lead",
+  operationsWorkingGroupBeta: "HR Lead"
 };
 
 export const wgEvents = [
