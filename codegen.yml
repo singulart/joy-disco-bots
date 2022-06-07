@@ -62,6 +62,7 @@ documents:
         isLead
       }
     }
+
   - > 
     query applicationById($applicationId: ID!) {
       workingGroupApplicationByUniqueInput(where: {id: $applicationId}) {
@@ -78,18 +79,55 @@ documents:
         ...MemberFields
       }
     }
+
   - > 
     query memberByHandle($handle: String) {
       memberships(where: {handle_eq: $handle}) {
         ...MemberFields
       }
     }
+
   - > 
     query activeCouncilMembers {
       electedCouncils(where: {endedAtBlock_eq: null}) {
         councilMembers {
           member {
             ...MemberFields
+          }
+        }
+      }
+    }
+
+  - >
+    query forumThreadById($threadId: ID!) {
+      forumThreadByUniqueInput(where: {id: $threadId}) {
+        id
+        title
+        author {
+          ...MemberFields
+        }
+        category {
+          id
+          title
+        }
+      }
+    }
+
+  - >
+    query postById($postId: ID!) {
+      forumPostByUniqueInput(where: {id: $postId}) {
+        id
+        author {
+          ...MemberFields
+        }
+        thread {
+          title
+          author {
+            ...MemberFields
+          }
+          category {
+            id
+            title
           }
         }
       }

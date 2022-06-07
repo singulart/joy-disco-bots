@@ -5,6 +5,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents, Message } from 'discord.js';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ForumModule } from './forum/forum.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { ScheduleModule } from '@nestjs/schedule';
       inject: [ConfigService],
     }),
     WgModule,
-    IdentityModule
+    IdentityModule,
+    ForumModule
   ],
   providers: [],
 })
