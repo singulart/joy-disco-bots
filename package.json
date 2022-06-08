@@ -20,6 +20,7 @@
   "dependencies": {
     "@discord-nestjs/common": "^2.0.17",
     "@discord-nestjs/core": "^3.3.2",
+    "@golevelup/nestjs-graphql-request": "^0.1.11",
     "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/typescript-graphql-request": "^4.4.5",
     "@graphql-codegen/typescript-operations": "^2.3.5",
