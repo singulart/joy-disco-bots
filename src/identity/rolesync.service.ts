@@ -58,6 +58,7 @@ export class RoleSyncService {
         // second pass: revokation of server roles that user doesn't have anymore in joystream
         for(let m = 0; m < ithMember.daoRoles.length; m++) {
           const dbRole = ithMember.daoRoles[m];
+          if(dbRole.role === CM_ROLE) continue; // CM role is handled separately
           await this.maybeRevokeRole(dbRole, ithMember, onChainRoles);
         }
 
