@@ -36,6 +36,13 @@ documents:
         stakeAccount
       }
     }
+
+    fragment ForumCategoryFields on ForumCategory {
+      id
+      parentId
+      title
+    }
+
     fragment MemberFields on Membership {
       handle
       id    
@@ -107,8 +114,7 @@ documents:
           ...MemberFields
         }
         category {
-          id
-          title
+          ...ForumCategoryFields
         }
       }
     }
@@ -126,8 +132,7 @@ documents:
             ...MemberFields
           }
           category {
-            id
-            title
+            ...ForumCategoryFields
           }
         }
       }

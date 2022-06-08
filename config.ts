@@ -30,7 +30,8 @@ export const channelNames: ChannelNames = {
   contentCreator: "💻｜content-creator",
   techSupport: "💻｜tech-support",
   atlasFeedback: "🛫｜atlas-testing",
-  validators: "✅｜validator"
+  validators: "✅｜validator",
+  bounties: "💻｜active-bounties"
 };
 
 export const identityValidatedRole = 'on-chain identity verified';
@@ -83,48 +84,11 @@ export const wgEvents = [
 export const forumCategoriesToChannels = [
   {
     category: {
-      id: 23,
-      name: 'Discussion'
+      id: 1,
+      name: 'Bounties'
     }, 
     channels: [
-      channelNames.general
-    ]
-  }, 
-  {
-    category: {
-      id: 28,
-      name: 'Creatives'
-    }, 
-    channels: [
-      channelNames.general
-    ]
-  }, 
-  {
-    category: {
-      id: 25,
-      name: 'Help & Support'
-    }, 
-    channels: [
-      channelNames.general,
-      channelNames.techSupport
-    ]
-  }, 
-  {
-    category: {
-      id: 18,
-      name: 'Content Creators'
-    }, 
-    channels: [
-      channelNames.contentCreator
-    ]
-  }, 
-  {
-    category: {
-      id: 29,
-      name: 'Marketing'
-    }, 
-    channels: [
-      channelNames.operationsWorkingGroupGamma
+      channelNames.bounties
     ]
   }, 
   {
@@ -134,51 +98,6 @@ export const forumCategoriesToChannels = [
     }, 
     channels: [
       channelNames.council
-    ]
-  }, 
-  {
-    category: {
-      id: 30,
-      name: 'Development'
-    }, 
-    channels: [
-      channelNames.operationsWorkingGroupAlpha
-    ]
-  }, 
-  {
-    category: {
-      id: 31,
-      name: 'Atlas Feedback'
-    }, 
-    channels: [
-      channelNames.atlasFeedback
-    ]
-  }, 
-  {
-    category: {
-      id: 32,
-      name: 'Education'
-    }, 
-    channels: [
-      channelNames.general
-    ]
-  }, 
-  {
-    category: {
-      id: 33,
-      name: 'Grants'
-    }, 
-    channels: [
-      channelNames.general
-    ]
-  }, 
-  {
-    category: {
-      id: 35,
-      name: 'Lounge'
-    }, 
-    channels: [
-      channelNames.general
     ]
   }, 
   {
@@ -246,11 +165,102 @@ export const forumCategoriesToChannels = [
   }, 
   {
     category: {
+      id: 18,
+      name: 'Content Creators'
+    }, 
+    channels: [
+      channelNames.contentCreator
+    ]
+  }, 
+  {
+    category: {
       id: 19,
       name: 'Validators'
     }, 
     channels: [
       channelNames.validators
+    ]
+  }, 
+  {
+    category: {
+      id: 23,
+      name: 'Discussion'
+    }, 
+    channels: [
+      channelNames.general
+    ]
+  }, 
+  {
+    category: {
+      id: 25,
+      name: 'Help & Support'
+    }, 
+    channels: [
+      channelNames.general,
+      channelNames.techSupport
+    ]
+  }, 
+  {
+    category: {
+      id: 28,
+      name: 'Creatives'
+    }, 
+    channels: [
+      channelNames.general
+    ]
+  }, 
+  {
+    category: {
+      id: 29,
+      name: 'Marketing'
+    }, 
+    channels: [
+      channelNames.operationsWorkingGroupGamma
+    ]
+  }, 
+  {
+    category: {
+      id: 30,
+      name: 'Development'
+    }, 
+    channels: [
+      channelNames.operationsWorkingGroupAlpha
+    ]
+  }, 
+  {
+    category: {
+      id: 31,
+      name: 'Atlas Feedback'
+    }, 
+    channels: [
+      channelNames.atlasFeedback
+    ]
+  }, 
+  {
+    category: {
+      id: 32,
+      name: 'Education'
+    }, 
+    channels: [
+      channelNames.general
+    ]
+  }, 
+  {
+    category: {
+      id: 33,
+      name: 'Grants'
+    }, 
+    channels: [
+      channelNames.general
+    ]
+  }, 
+  {
+    category: {
+      id: 35,
+      name: 'Lounge'
+    }, 
+    channels: [
+      channelNames.general
     ]
   }, 
 ]
