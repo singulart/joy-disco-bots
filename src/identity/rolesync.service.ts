@@ -113,7 +113,7 @@ export class RoleSyncService {
   private async maybeRevokeRole(dbRole: DaoRole, ithMember: DaoMembership, onChainRoles: any) {
     // Check that user's db role is still relevant. 
     // If it's not, user needs to be revoked this role, and corresponding DaoRole record deleted for this user.
-    if(this.hasOnchainRole(onChainRoles, dbRole.role)) {
+    if(!this.hasOnchainRole(onChainRoles, dbRole.role)) {
       const mainServer = this.configService.get('DISCORD_SERVER');
       const roleToRevoke = await findServerRole(
         this.client, 
