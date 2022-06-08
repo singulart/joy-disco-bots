@@ -83,7 +83,7 @@ export class RoleSyncService {
   private async maybeAssignRole(roleInJoystream: string, ithMember: DaoMembership) {
     // Check that user's on-chain role is already stored in our database. 
     // If it's not, user needs to be granted this role, and new DaoRole record created for this user.
-    if(!this.hasOnchainRole(ithMember, roleInJoystream)) {
+    if(!this.hasDbRole(ithMember, roleInJoystream)) {
       const mainServer = this.configService.get('DISCORD_SERVER');
       const roleToAssign = await findServerRole(
         this.client, 
@@ -113,7 +113,7 @@ export class RoleSyncService {
   private async maybeRevokeRole(dbRole: DaoRole, ithMember: DaoMembership, onChainRoles: any) {
     // Check that user's db role is still relevant. 
     // If it's not, user needs to be revoked this role, and corresponding DaoRole record deleted for this user.
-    if(!this.hasDbRole(onChainRoles, dbRole.role)) {
+    if(this.hasOnchainRole(onChainRoles, dbRole.role)) {
       const mainServer = this.configService.get('DISCORD_SERVER');
       const roleToRevoke = await findServerRole(
         this.client, 
@@ -149,11 +149,11 @@ export class RoleSyncService {
     return serverUser;
   }
 
-  private hasOnchainRole(member: DaoMembership, onChainRole: string): boolean {
+  private hasDbRole(member: DaoMembership, onChainRole: string): boolean {
     return member.daoRoles.find((r) => r.role === onChainRole) !== undefined;
   }
 
-  private hasDbRole(onChainRoles: any[], dbRole: string): boolean { // TODO replace any with strong type
+  private hasOnchainRole(onChainRoles: any[], dbRole: string): boolean { // TODO replace any with strong type
     return onChainRoles.find((r) => r.groupId === dbRole) !== undefined;
   }
 
