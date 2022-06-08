@@ -72,8 +72,8 @@ export class RoleSyncService {
 
         // revoke council member role if needed
         const cmRole = ithMember.daoRoles.find((role) => role.role === CM_ROLE);
-        if(cmRole) {
-          await this.maybeRevokeRole(cmRole, ithMember, onChainRoles);
+        if(cmRole && !queryNodeMember.memberships[0].isCouncilMember) {
+          await this.revokeRole(cmRole, ithMember, onChainRoles);
         }
       }
       page = page + 1;
@@ -114,30 +114,34 @@ export class RoleSyncService {
     // Check that user's db role is still relevant. 
     // If it's not, user needs to be revoked this role, and corresponding DaoRole record deleted for this user.
     if(!this.hasOnchainRole(onChainRoles, dbRole.role)) {
-      const mainServer = this.configService.get('DISCORD_SERVER');
-      const roleToRevoke = await findServerRole(
-        this.client, 
-        mainServer, 
-        wgToRoleMap[dbRole.role]) as Role;
+      this.revokeRole(dbRole, ithMember, onChainRoles);
+    }
+  }
 
-      if(roleToRevoke) {
-        const serverUser = await this.findUser(mainServer, ithMember);
-        if(serverUser) {
-          await serverUser.roles.remove(roleToRevoke.id, 'Revoked as per on-chain changes');
-          this.daoRoleRepository.destroy({
-            where: {
-              id: dbRole.id
-            }
-          });
-          this.logger.debug(
-            `Revoked ${ithMember.discordHandle} server role [${wgToRoleMap[dbRole.role]}]`
-          );  
-        } else {
-          this.logger.warn(`User ${ithMember.discordHandle} not found on this server`);
-        }
+  private async revokeRole(dbRole: DaoRole, ithMember: DaoMembership, onChainRoles: any) {
+    const mainServer = this.configService.get('DISCORD_SERVER');
+    const roleToRevoke = await findServerRole(
+      this.client, 
+      mainServer, 
+      wgToRoleMap[dbRole.role]) as Role;
+
+    if(roleToRevoke) {
+      const serverUser = await this.findUser(mainServer, ithMember);
+      if(serverUser) {
+        await serverUser.roles.remove(roleToRevoke.id, 'Revoked as per on-chain changes');
+        this.daoRoleRepository.destroy({
+          where: {
+            id: dbRole.id
+          }
+        });
+        this.logger.debug(
+          `Revoked ${ithMember.discordHandle} server role [${wgToRoleMap[dbRole.role]}]`
+        );  
       } else {
-        this.logger.warn(`I was about to revoke role [${wgToRoleMap[dbRole.role]}], but it's gone!`);
+        this.logger.warn(`User ${ithMember.discordHandle} not found on this server`);
       }
+    } else {
+      this.logger.warn(`I was about to revoke role [${wgToRoleMap[dbRole.role]}], but it's gone!`);
     }
   }
 
