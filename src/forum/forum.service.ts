@@ -7,14 +7,15 @@ import { DiscordChannels } from "../types";
 import { ApiPromise } from "@polkadot/api";
 import { getDiscordChannels } from "../util";
 import { connectApi, getBlockHash, getEvents } from "../util";
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { InjectDiscordClient, Once } from "@discord-nestjs/core";
 import { Client, TextChannel } from 'discord.js';
-import { ForumThreadByIdQuery, PostByIdQuery, Sdk } from 'src/qntypes';
+import { ForumThreadByIdQuery, PostByIdQuery } from 'src/qntypes';
 import { EventRecord } from "@polkadot/types/interfaces";
 // import { CategoryId } from '@joystream/types/forum';
 import { PostId, ThreadId } from '@joystream/types/common';
 import { getNewPostEmbed, getNewThreadEmbed } from './forum.embeds';
+import { RetryableGraphQLClient } from 'src/gql/graphql.client';
 
 
 @Injectable()
@@ -22,7 +23,7 @@ export class ForumService {
   private readonly logger = new Logger(ForumService.name);
 
   constructor(
-    @Inject("JoystreamGqlSdk") private readonly queryNodeClient: Sdk,
+    private readonly queryNodeClient: RetryableGraphQLClient,
     @InjectDiscordClient()
     private readonly client: Client) { }
 
@@ -47,7 +48,7 @@ export class ForumService {
 
             case "ThreadCreated":
               const threadId = data[1] as ThreadId;
-              const thread = await this.queryNodeClient.forumThreadById({ threadId: threadId.toString() });
+              const thread = await this.queryNodeClient.forumThreadById(threadId.toString());
               const serverChannels = this.findChannelsByThread(thread, channels);
               serverChannels?.forEach((ch: TextChannel) =>
                 ch.send({
@@ -63,7 +64,7 @@ export class ForumService {
 
             case "PostAdded":
               const postId = data[0] as PostId;
-              const post = await this.queryNodeClient.postById({ postId: postId.toString() });
+              const post = await this.queryNodeClient.postById(postId.toString());
               const serverChannels2 = this.findChannelsByPost(post, channels);
               serverChannels2?.forEach((ch: TextChannel) =>
                 ch.send({
@@ -100,7 +101,7 @@ export class ForumService {
       (mapping: any) => mapping.category.id == categoryId || mapping.category.id == parentCategoryId
     )?.channels;
     if(!mappedChannels) {
-      this.logger.log('Mapped channels not found');
+      this.logger.log(`Mapped channels not found for categoryId=${categoryId}, parentCategory=${parentCategoryId}`);
       return null;
     }
     let oneD = [] as TextChannel[];

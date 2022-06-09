@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { getSdk } from '../qntypes';
 import { hydraLocation as endpoint } from '../../config';
 import { GraphQLClient } from 'graphql-request';
+import { RetryableGraphQLClient } from './graphql.client';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { GraphQLClient } from 'graphql-request';
       inject: [GraphQLClientInject],
       useFactory: (client: GraphQLClient) => getSdk(client),
     },
+    RetryableGraphQLClient
   ],
-  exports: ['JoystreamGqlSdk']
+  exports: [RetryableGraphQLClient]
 })
 export class GraphQLModule {}

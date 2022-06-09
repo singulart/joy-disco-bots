@@ -3,12 +3,12 @@ import { Cron, CronExpression } from "@nestjs/schedule";
 import { DaoMembership } from "src/db/daomembership.entity";
 import { DaoRole } from "src/db/daorole.entity";
 import { Op } from "sequelize";
-import { Sdk } from "src/qntypes";
 import { wgToRoleMap } from "../../config";
 import { ConfigService } from "@nestjs/config";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Client, Role } from 'discord.js';
 import { findServerRole } from "src/util";
+import { RetryableGraphQLClient } from "src/gql/graphql.client";
 
 
 const CM_ROLE = 'councilMemberRole';
@@ -29,8 +29,7 @@ export class RoleSyncService {
     @InjectDiscordClient()
     private readonly client: Client,
     private readonly configService: ConfigService,
-    @Inject("JoystreamGqlSdk") 
-    private readonly queryNodeClient: Sdk, 
+    private readonly queryNodeClient: RetryableGraphQLClient,
   ) { }
 
   @Cron(CronExpression.EVERY_30_MINUTES)
@@ -44,7 +43,7 @@ export class RoleSyncService {
       for(let i = 0; i < memberships.length; i++) {
         const ithMember = memberships[i];
         // Query Node call to get the on-chain roles
-        const queryNodeMember = await this.queryNodeClient.memberByHandle({handle: ithMember.membership});
+        const queryNodeMember = await this.queryNodeClient.memberByHandle(ithMember.membership);
 
         // Keep only active roles, filter the others out
         const onChainRoles = queryNodeMember.memberships[0].roles.filter((role: any) => role.status.__typename === 'WorkerStatusActive');
