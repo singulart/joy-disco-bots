@@ -31,7 +31,6 @@ export class ForumService {
     this.logger.log(`Forum Bot online.`);
     const channels: DiscordChannels = await getDiscordChannels(this.client);
 
-
     const api: ApiPromise = await connectApi(wsLocation);
     await api.isReady;
     this.logger.log(`Forum Bot: connected to RPC endpoint [${wsLocation}]`);
@@ -47,7 +46,7 @@ export class ForumService {
           switch (method) {
 
             case "ThreadCreated":
-              const threadId = data[0] as ThreadId;
+              const threadId = data[1] as ThreadId;
               const thread = await this.queryNodeClient.forumThreadById({ threadId: threadId.toString() });
               const serverChannels = this.findChannelsByThread(thread, channels);
               serverChannels?.forEach((ch: TextChannel) =>
@@ -104,6 +103,8 @@ export class ForumService {
       this.logger.log('Mapped channels not found');
       return null;
     }
-    return channels.values.filter((ch: TextChannel) => mappedChannels.includes(ch.name));
+    let oneD = [] as TextChannel[];
+    for (let row of Object.values(channels)) for (let e of row) oneD.push(e);
+    return oneD.filter((ch: TextChannel) => mappedChannels.includes(ch.name));
   }
 }
