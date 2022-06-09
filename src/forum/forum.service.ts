@@ -50,7 +50,8 @@ export class ForumService {
               const threadId = data[1] as ThreadId;
               const thread = await this.queryNodeClient.forumThreadById(threadId.toString());
               const serverChannels = this.findChannelsByThread(thread, channels);
-              serverChannels?.forEach((ch: TextChannel) =>
+              serverChannels?.forEach((ch: TextChannel) => {
+                this.logger.debug(`Sending to channel [${ch.id.toString()}] [${ch.name}]`);
                 ch.send({
                   embeds: [
                     getNewThreadEmbed(
@@ -59,14 +60,16 @@ export class ForumService {
                       eventRecord
                     ),
                   ],
-                }));
+                })
+              });
               break;
-
+              
             case "PostAdded":
               const postId = data[0] as PostId;
               const post = await this.queryNodeClient.postById(postId.toString());
               const serverChannels2 = this.findChannelsByPost(post, channels);
-              serverChannels2?.forEach((ch: TextChannel) =>
+              serverChannels2?.forEach((ch: TextChannel) => {
+                this.logger.debug(`Sending to channel [${ch.id.toString()}] [${ch.name}]`);
                 ch.send({
                   embeds: [
                     getNewPostEmbed(
@@ -75,7 +78,8 @@ export class ForumService {
                       eventRecord
                     ),
                   ],
-                }));
+                });
+              });
               break;
           }
         })
