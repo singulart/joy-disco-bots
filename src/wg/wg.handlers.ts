@@ -1,5 +1,4 @@
 import { EventRecord } from "@polkadot/types/interfaces";
-import { getSdk } from '../qntypes'
 import {
   getApplicationWithdrawnEmbed,
   getAppliedOnOpeningEmbed,
@@ -15,23 +14,22 @@ import {
   getOpeningCancelledEmbed,
   getWorkerRewardedEmbed,
 } from "./embeds";
-import { wgEvents, channelNames, hydraLocation as queryNodeUrl } from "../../config";
+import { wgEvents, channelNames } from "../../config";
 import { DiscordChannels } from "../types";
 import type { Option } from '@polkadot/types';
 
 import { ApplicationId, ApplyOnOpeningParameters, OpeningId, WorkingGroup, RewardPaymentType } from "@joystream/types/augment/all/types";
 import { WorkerId } from "@joystream/types/working-group";
 import { Balance } from "@joystream/types/common";
-import { GraphQLClient } from 'graphql-request';
-import { delay } from "../util";
 import { TextChannel } from "discord.js";
+import { RetryableGraphQLClient } from "src/gql/graphql.client";
 
-const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));
 
 export const processGroupEvents = (
   blockNumber: number,
   events: EventRecord[],
-  channels: DiscordChannels
+  channels: DiscordChannels,
+  queryNodeClient: RetryableGraphQLClient
 ) =>
   events.forEach(
     async (value: EventRecord, index: number, array: EventRecord[]) => {
@@ -53,7 +51,7 @@ export const processGroupEvents = (
             const withdrawnId = data[0] as ApplicationId;
             const withdrawnApplicationKey = `${section}-${withdrawnId.toString()}`;
             console.log(withdrawnApplicationKey);
-            const withdrawnApplication = await queryNodeClient.applicationById({ applicationId: withdrawnApplicationKey });
+            const withdrawnApplication = await queryNodeClient.applicationById(withdrawnApplicationKey);
 
             channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
               ch.send({
@@ -71,15 +69,13 @@ export const processGroupEvents = (
             const applicationOpeningId = (data[0] as ApplyOnOpeningParameters).opening_id;
             const applicantId = (data[0] as ApplyOnOpeningParameters).member_id;
             const applicationId = data[1] as ApplicationId;
-            const application = await queryNodeClient.applicationById({ applicationId: applicationId.toString() });
-            const openingObject = await queryNodeClient.openingById({ openingId: `${section}-${applicationOpeningId.toString()}` });
-            const applicant = await queryNodeClient.memberById({ memberId: applicantId.toString() });
+            const openingObject = await queryNodeClient.openingById(`${section}-${applicationOpeningId.toString()}`);
+            const applicant = await queryNodeClient.memberById(applicantId.toString());
             channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
               ch.send({
                 embeds: [
                   getAppliedOnOpeningEmbed(
                     applicationId,
-                    application,
                     openingObject,
                     applicant,
                     blockNumber,
@@ -139,80 +135,60 @@ export const processGroupEvents = (
             const openingIdKey = `${section}-${openingId.toString()}`;
             console.log(openingIdKey);
 
-            let attempt = 1;
-            const maxAttempts = 3;
-            while (attempt <= maxAttempts) {
-              console.log(`Attempt ${attempt}/${maxAttempts} to fetch the opening ${openingId.toString()} from QN...`);
-              const qnOpeningObject = await queryNodeClient.openingById({ openingId: openingIdKey })
-              if (!qnOpeningObject || !qnOpeningObject.workingGroupOpeningByUniqueInput) {
-                console.log('Opening not found in QN');
-                await delay(6000);
-                attempt = attempt + 1;
-              } else {
-                if (method === "OpeningAdded") {
-                  channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
-                    ch.send({
-                      embeds: [
-                        getOpeningAddedEmbed(
-                          openingId,
-                          qnOpeningObject,
-                          blockNumber,
-                          value
-                        ),
-                      ],
-                    }));
-                } else {
-                  channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
-                    ch.send({
-                      embeds: [
-                        getOpeningCancelledEmbed(
-                          openingId,
-                          qnOpeningObject,
-                          blockNumber,
-                          value
-                        ),
-                      ],
-                    }));
-                }
-                break;
-              }
-            }
-            break;
-          case "OpeningFilled":
-            const filledOpeningId = data[0] as OpeningId;
-            const filledOpeningObject = await queryNodeClient.openingById({ openingId: `${section}-${filledOpeningId.toString()}` });
-            const hiredWorkers = Object.values<WorkerId>(JSON.parse(data[1].toString()));
-
-            hiredWorkers.map(async (id, index, values) => {
-              let attempt = 1;
-              const maxAttempts = 3;
-              while (attempt <= maxAttempts) {
-                console.log(`Attempt ${attempt}/${maxAttempts} to fetch the worker ${id} from QN...`);
-                const hiredWorker = await queryNodeClient.workerById({ workerId: `${section}-${id.toString()}` });
-                if (!hiredWorker || !hiredWorker.workerByUniqueInput) {
-                  await delay(6000);
-                  attempt = attempt + 1;
-                  continue;
-                }
-                console.log(hiredWorker.workerByUniqueInput.membership.handle);
+            const qnOpeningObject = await queryNodeClient.openingById(openingIdKey)
+            if (!qnOpeningObject || !qnOpeningObject.workingGroupOpeningByUniqueInput) {
+              console.log('Opening not found in QN');
+            } else {
+              if (method === "OpeningAdded") {
                 channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
                   ch.send({
                     embeds: [
-                      getOpeningFilledEmbed(
-                        filledOpeningObject,
-                        hiredWorker,
+                      getOpeningAddedEmbed(
+                        openingId,
+                        qnOpeningObject,
                         blockNumber,
                         value
                       ),
                     ],
                   }));
-                break;
+              } else {
+                channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
+                  ch.send({
+                    embeds: [
+                      getOpeningCancelledEmbed(
+                        openingId,
+                        qnOpeningObject,
+                        blockNumber,
+                        value
+                      ),
+                    ],
+                  }));
               }
+            }
+            break;
+          case "OpeningFilled":
+            const filledOpeningId = data[0] as OpeningId;
+            const filledOpeningObject = await queryNodeClient.openingById(`${section}-${filledOpeningId.toString()}`);
+            const hiredWorkers = Object.values<WorkerId>(JSON.parse(data[1].toString()));
+
+            hiredWorkers.map(async (id, index, values) => {
+              const hiredWorker = await queryNodeClient.workerById(`${section}-${id.toString()}`);
+              channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
+                ch.send({
+                  embeds: [
+                    getOpeningFilledEmbed(
+                      filledOpeningObject,
+                      hiredWorker,
+                      blockNumber,
+                      value
+                    ),
+                  ],
+                }));
             });
             break;
           case "RewardPaid":
             const paidWorkerId = data[0] as WorkerId;
-            const paidWorkerAffected = await queryNodeClient.workerById({ workerId: `${section}-${paidWorkerId.toString()}` });
+            const paidWorkerAffected = await queryNodeClient.workerById(`${section}-${paidWorkerId.toString()}`);
             const paidReward = data[2] as Balance;
             const isRewardMissed = (data[3] as RewardPaymentType).isMissedReward;
             channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
@@ -230,7 +206,7 @@ export const processGroupEvents = (
             break;
           case "WorkerRewardAmountUpdated":
             const workerId = data[0] as WorkerId;
-            const workerAffected = await queryNodeClient.workerById({ workerId: `${section}-${workerId.toString()}` });
+            const workerAffected = await queryNodeClient.workerById(`${section}-${workerId.toString()}`);
             const reward = (data[1] as Option<Balance>).unwrapOr(0 as unknown as Balance);
             channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
               ch.send({
@@ -248,8 +224,7 @@ export const processGroupEvents = (
           case "TerminatedWorker":
             const terminatedId = data[0] as WorkerId;
             const terminatedWorkerKey = `${section}-${terminatedId.toString()}`;
-
-            const terminatedIdWorker = await queryNodeClient.workerById({ workerId: terminatedWorkerKey });
+            const terminatedIdWorker = await queryNodeClient.workerById(terminatedWorkerKey);
             channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
               ch.send({
                 embeds: [
@@ -266,7 +241,7 @@ export const processGroupEvents = (
             const exitedWorkerKey = `${section}-${exitedId.toString()}`;
             console.log(exitedWorkerKey);
 
-            const exitedMember = await queryNodeClient.workerById({ workerId: exitedWorkerKey });
+            const exitedMember = await queryNodeClient.workerById(exitedWorkerKey);
             channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
               ch.send({
                 embeds: [
@@ -280,7 +255,7 @@ export const processGroupEvents = (
             break;
           case "LeaderSet":
             const leaderId = data[0] as WorkerId;
-            const leaderWorker = await queryNodeClient.workerById({ workerId: `${section}-${leaderId.toString()}` });
+            const leaderWorker = await queryNodeClient.workerById(`${section}-${leaderId.toString()}`);
             channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>
               ch.send({
                 embeds: [getLeaderSetEmbed(leaderWorker, blockNumber, value)],
@@ -295,7 +270,7 @@ export const processGroupEvents = (
           case "StakeIncreased":
           case "StakeSlashed":
             const stakeWorkerId = data[0] as WorkerId;
-            const stakeWorker = await queryNodeClient.workerById({ workerId: `${section}-${stakeWorkerId.toString()}` });
+            const stakeWorker = await queryNodeClient.workerById(`${section}-${stakeWorkerId.toString()}`);
             const stake = data[1] as Balance;
 
             channel.forEach((ch: TextChannel, index: number, values: TextChannel[]) =>

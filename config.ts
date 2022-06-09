@@ -1,3 +1,4 @@
+import { BackOffPolicy, RetryOptions } from "typescript-retry-decorator";
 import { ChannelNames } from "./src/types";
 
 export const wsLocation = "wss://rpc.joystream.org:9944"; 
@@ -265,5 +266,11 @@ export const forumCategoriesToChannels = [
   }, 
 ]
 
+export const globalRetryConfig : RetryOptions = {
+  maxAttempts: 3,
+  backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
+  backOff: 1000,
+  exponentialOption: { maxInterval: 4000, multiplier: 3 }
+}
 
 export const joystreamBlue = "#4038FF"; // official joystream blue, see https://www.joystream.org/brand/guides/
