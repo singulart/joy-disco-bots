@@ -16,6 +16,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectDiscordClient, Once } from "@discord-nestjs/core";
 import { Client } from 'discord.js';
 import { ConfigService } from '@nestjs/config';
+import { RetryableGraphQLClient } from 'src/gql/graphql.client';
 
 
 @Injectable()
@@ -25,7 +26,8 @@ export class WorkingGroupService {
   constructor(
     @InjectDiscordClient()
     private readonly client: Client,
-    private readonly configService: ConfigService)
+    private readonly configService: ConfigService,
+    private readonly queryNodeClient: RetryableGraphQLClient)
     { }
 
   @Once('ready')
@@ -43,7 +45,7 @@ export class WorkingGroupService {
     api.rpc.chain.subscribeFinalizedHeads(async (header: Header) => {
       const hash = await getBlockHash(api, +header.number);
       const events = await getEvents(api, hash);
-      processGroupEvents(+header.number, events, channels);
+      processGroupEvents(+header.number, events, channels, this.queryNodeClient);
     });
   }
 

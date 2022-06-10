@@ -1,3 +1,4 @@
+import { BackOffPolicy, RetryOptions } from "typescript-retry-decorator";
 import { ChannelNames } from "./src/types";
 
 export const wsLocation = "wss://rpc.joystream.org:9944"; 
@@ -13,12 +14,6 @@ export const createdAgoUnit = "minutes";
 
 // wg bot
 export const channelNames: ChannelNames = {
-  council: "council",
-  proposals: "proposals",
-  forum: "forum",
-  tokenomics: "tokenomics",
-  videos: "video-bot",
-  general: "general",
 
   // groups https://github.com/Joystream/joystream/blob/c57054eebe5da4f683134dbdaaecf50263ec7336/cli/src/Types.ts#L53-L63
   contentWorkingGroup: "▶｜content-curator",
@@ -29,7 +24,15 @@ export const channelNames: ChannelNames = {
   gatewayWorkingGroup: "gateway",
   operationsWorkingGroupAlpha: "👷｜builders",
   operationsWorkingGroupGamma: "📈｜marketing",
-  operationsWorkingGroupBeta: "👨｜human-resources"
+  operationsWorkingGroupBeta: "👨｜human-resources",
+
+  general: "💬｜general",
+  council: "🏛｜council",
+  contentCreator: "💻｜content-creator",
+  techSupport: "💻｜tech-support",
+  atlasFeedback: "🛫｜atlas-testing",
+  validators: "✅｜validator",
+  bounties: "💻｜active-bounties"
 };
 
 export const identityValidatedRole = 'on-chain identity verified';
@@ -78,5 +81,196 @@ export const wgEvents = [
   "WorkerExited",
   "WorkerRewardAmountUpdated",
 ];
+
+export const forumCategoriesToChannels = [
+  {
+    category: {
+      id: 1,
+      name: 'Bounties'
+    }, 
+    channels: [
+      channelNames.bounties
+    ]
+  }, 
+  {
+    category: {
+      id: 3,
+      name: 'Governance'
+    }, 
+    channels: [
+      channelNames.council
+    ]
+  }, 
+  {
+    category: {
+      id: 9,
+      name: 'Forum WG'
+    }, 
+    channels: [
+      channelNames.forum
+    ]
+  }, 
+  {
+    category: {
+      id: 11,
+      name: 'Content WG'
+    }, 
+    channels: [
+      channelNames.contentWorkingGroup, channelNames.council
+    ]
+  }, 
+  {
+    category: {
+      id: 12,
+      name: 'Builders WG'
+    }, 
+    channels: [
+      channelNames.operationsWorkingGroupAlpha, channelNames.council
+    ]
+  }, 
+  {
+    category: {
+      id: 13,
+      name: 'SP WG'
+    }, 
+    channels: [
+      channelNames.storageWorkingGroup, channelNames.council
+    ]
+  }, 
+  {
+    category: {
+      id: 14,
+      name: 'Marketing WG'
+    }, 
+    channels: [
+      channelNames.operationsWorkingGroupGamma, channelNames.council
+    ]
+  }, 
+  {
+    category: {
+      id: 15,
+      name: 'Distribution WG'
+    }, 
+    channels: [
+      channelNames.distributionWorkingGroup, channelNames.council
+    ]
+  }, 
+  {
+    category: {
+      id: 16,
+      name: 'HR WG'
+    }, 
+    channels: [
+      channelNames.operationsWorkingGroupBeta, channelNames.council
+    ]
+  }, 
+  {
+    category: {
+      id: 18,
+      name: 'Content Creators'
+    }, 
+    channels: [
+      channelNames.contentCreator
+    ]
+  }, 
+  {
+    category: {
+      id: 19,
+      name: 'Validators'
+    }, 
+    channels: [
+      channelNames.validators
+    ]
+  }, 
+  {
+    category: {
+      id: 23,
+      name: 'Discussion'
+    }, 
+    channels: [
+      channelNames.general
+    ]
+  }, 
+  {
+    category: {
+      id: 25,
+      name: 'Help & Support'
+    }, 
+    channels: [
+      channelNames.general,
+      channelNames.techSupport
+    ]
+  }, 
+  {
+    category: {
+      id: 28,
+      name: 'Creatives'
+    }, 
+    channels: [
+      channelNames.general
+    ]
+  }, 
+  {
+    category: {
+      id: 29,
+      name: 'Marketing'
+    }, 
+    channels: [
+      channelNames.operationsWorkingGroupGamma
+    ]
+  }, 
+  {
+    category: {
+      id: 30,
+      name: 'Development'
+    }, 
+    channels: [
+      channelNames.operationsWorkingGroupAlpha
+    ]
+  }, 
+  {
+    category: {
+      id: 31,
+      name: 'Atlas Feedback'
+    }, 
+    channels: [
+      channelNames.atlasFeedback
+    ]
+  }, 
+  {
+    category: {
+      id: 32,
+      name: 'Education'
+    }, 
+    channels: [
+      channelNames.general
+    ]
+  }, 
+  {
+    category: {
+      id: 33,
+      name: 'Grants'
+    }, 
+    channels: [
+      channelNames.general
+    ]
+  }, 
+  {
+    category: {
+      id: 35,
+      name: 'Lounge'
+    }, 
+    channels: [
+      channelNames.general
+    ]
+  }, 
+]
+
+export const globalRetryConfig : RetryOptions = {
+  maxAttempts: 3,
+  backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
+  backOff: 1000,
+  exponentialOption: { maxInterval: 4000, multiplier: 3 }
+}
 
 export const joystreamBlue = "#4038FF"; // official joystream blue, see https://www.joystream.org/brand/guides/

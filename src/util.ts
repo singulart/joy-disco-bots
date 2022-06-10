@@ -37,7 +37,7 @@ export const getDiscordChannels = async (
   let discordChannels: DiscordChannels = {};
   Object.keys(channelNames).map(async (c) => {
     const channel = findDiscordChannel(client, channelNames[c]);
-    if (channel) discordChannels[c] = channel;
+    if (channel && channel.length > 0) discordChannels[c] = channel;
     else {
       console.warn(`Channel '${channelNames[c]}' not found on this server`);
     }
