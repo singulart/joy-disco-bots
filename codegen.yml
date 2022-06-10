@@ -36,6 +36,13 @@ documents:
         stakeAccount
       }
     }
+
+    fragment ForumCategoryFields on ForumCategory {
+      id
+      parentId
+      title
+    }
+
     fragment MemberFields on Membership {
       handle
       id    
@@ -62,6 +69,7 @@ documents:
         isLead
       }
     }
+
   - > 
     query applicationById($applicationId: ID!) {
       workingGroupApplicationByUniqueInput(where: {id: $applicationId}) {
@@ -78,18 +86,53 @@ documents:
         ...MemberFields
       }
     }
+
   - > 
     query memberByHandle($handle: String) {
       memberships(where: {handle_eq: $handle}) {
         ...MemberFields
       }
     }
+
   - > 
     query activeCouncilMembers {
       electedCouncils(where: {endedAtBlock_eq: null}) {
         councilMembers {
           member {
             ...MemberFields
+          }
+        }
+      }
+    }
+
+  - >
+    query forumThreadById($threadId: ID!) {
+      forumThreadByUniqueInput(where: {id: $threadId}) {
+        id
+        title
+        author {
+          ...MemberFields
+        }
+        category {
+          ...ForumCategoryFields
+        }
+      }
+    }
+
+  - >
+    query postById($postId: ID!) {
+      forumPostByUniqueInput(where: {id: $postId}) {
+        id
+        author {
+          ...MemberFields
+        }
+        thread {
+          title
+          author {
+            ...MemberFields
+          }
+          category {
+            ...ForumCategoryFields
           }
         }
       }

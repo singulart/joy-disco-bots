@@ -43,7 +43,7 @@ export const getOpeningFilledEmbed = (opening: OpeningByIdQuery, member: WorkerB
     , blockNumber, event);
 }
 
-export const getAppliedOnOpeningEmbed = (applicationId: ApplicationId, application: ApplicationByIdQuery,
+export const getAppliedOnOpeningEmbed = (applicationId: ApplicationId,
   opening: OpeningByIdQuery, applicant: MemberByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()

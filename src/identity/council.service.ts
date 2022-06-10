@@ -1,22 +1,17 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { GraphQLClient } from "graphql-request";
-import { getSdk } from "src/qntypes";
-import { hydraLocation as queryNodeUrl } from "../../config";
+import { Injectable } from "@nestjs/common";
+import { RetryableGraphQLClient } from "src/gql/graphql.client";
 
 /**
- * Cron-based syncing of Joystream on-chain roles with Discord server roles.
- * On-chain roles are fetched from Query node for all Discord users who claimed their Joystream memberships.
+ * Public service that other modules may want to use to get Council information
  */
  @Injectable()
  export class CouncilService {
-   private readonly logger = new Logger(CouncilService.name);
  
    constructor(
+      private readonly queryNodeClient: RetryableGraphQLClient,
    ) { }
 
    async fetchCurrentCouncilMembers() {
-      this.logger.debug('Fetching CMs from Query node...');
-      const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));
-      return await queryNodeClient.activeCouncilMembers();
+      return await this.queryNodeClient.activeCouncilMembers();
    }
 }

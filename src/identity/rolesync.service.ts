@@ -3,13 +3,12 @@ import { Cron, CronExpression } from "@nestjs/schedule";
 import { DaoMembership } from "src/db/daomembership.entity";
 import { DaoRole } from "src/db/daorole.entity";
 import { Op } from "sequelize";
-import { getSdk } from "src/qntypes";
-import { GraphQLClient } from "graphql-request";
-import { hydraLocation as queryNodeUrl, wgToRoleMap } from "../../config";
+import { wgToRoleMap } from "../../config";
 import { ConfigService } from "@nestjs/config";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Client, Role } from 'discord.js';
 import { findServerRole } from "src/util";
+import { RetryableGraphQLClient } from "src/gql/graphql.client";
 
 
 const CM_ROLE = 'councilMemberRole';
@@ -29,13 +28,13 @@ export class RoleSyncService {
     private readonly daoRoleRepository: typeof DaoRole,
     @InjectDiscordClient()
     private readonly client: Client,
-    private readonly configService: ConfigService 
+    private readonly configService: ConfigService,
+    private readonly queryNodeClient: RetryableGraphQLClient,
   ) { }
 
   @Cron(CronExpression.EVERY_30_MINUTES)
   async syncOnChainRoles() {
     this.logger.debug('Syncing on-chain roles');
-    const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));
     const totalVerifiedMembersCount = await this.daoMembershipRepository.count();
     let page = 0;
     const pageSize = 10;
@@ -44,7 +43,7 @@ export class RoleSyncService {
       for(let i = 0; i < memberships.length; i++) {
         const ithMember = memberships[i];
         // Query Node call to get the on-chain roles
-        const queryNodeMember = await queryNodeClient.memberByHandle({handle: ithMember.membership});
+        const queryNodeMember = await this.queryNodeClient.memberByHandle(ithMember.membership);
 
         // Keep only active roles, filter the others out
         const onChainRoles = queryNodeMember.memberships[0].roles.filter((role: any) => role.status.__typename === 'WorkerStatusActive');
@@ -63,7 +62,7 @@ export class RoleSyncService {
         }
 
         // assign council member role if needed
-        const activeCouncilMembers = await queryNodeClient.activeCouncilMembers();
+        const activeCouncilMembers = await this.queryNodeClient.activeCouncilMembers();
         const isUserInCouncilCurrently = activeCouncilMembers.electedCouncils[0].councilMembers.find(
           (cm: any) => cm.member.handle === ithMember.membership
         ) !== undefined;
