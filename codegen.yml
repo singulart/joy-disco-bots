@@ -127,6 +127,7 @@ documents:
           ...MemberFields
         }
         thread {
+          id
           title
           author {
             ...MemberFields
