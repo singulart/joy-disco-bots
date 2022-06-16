@@ -32,7 +32,7 @@ export const processGroupEvents = (
   queryNodeClient: RetryableGraphQLClient
 ) =>
   events.forEach(
-    async (value: EventRecord, index: number, array: EventRecord[]) => {
+    async (value: EventRecord) => {
       let { section, method, data } = value.event;
       if (
         wgEvents.includes(method) && Object.keys(channelNames).includes(section)

@@ -7,6 +7,7 @@ import { Intents, Message } from 'discord.js';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ForumModule } from './forum/forum.module';
 import { GraphQLModule } from './gql/gql.module';
+import { BlockchainModule } from './blockchain/blockchain.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { GraphQLModule } from './gql/gql.module';
       } as DiscordModuleOption),
       inject: [ConfigService],
     }),
+    BlockchainModule,
     WgModule,
     IdentityModule,
     ForumModule
