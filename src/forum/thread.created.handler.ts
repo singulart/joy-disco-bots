@@ -12,7 +12,7 @@ export class ThreadCreatedHandler extends BaseEventHandler {
   private readonly logger = new Logger(ThreadCreatedHandler.name);
 
   @OnEvent('forum.ThreadCreated')
-  async handleOrderCreatedEvent(payload: EventWithBlock) {
+  async handleThreadCreatedEvent(payload: EventWithBlock) {
     let { data } = payload.event.event;
     const threadId = data[1] as ThreadId;
     const thread = await this.queryNodeClient.forumThreadById(threadId.toString());

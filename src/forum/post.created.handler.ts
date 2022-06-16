@@ -12,7 +12,7 @@ export class PostCreatedHandler extends BaseEventHandler {
   private readonly logger = new Logger(PostCreatedHandler.name);
 
   @OnEvent('forum.PostAdded')
-  async handleOrderCreatedEvent(payload: EventWithBlock) {
+  async handlePostCreatedEvent(payload: EventWithBlock) {
     let { data } = payload.event.event;
     const postId = data[0] as PostId;
     const post = await this.queryNodeClient.postById(postId.toString());
