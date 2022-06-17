@@ -1,5 +1,6 @@
+import { EventEmitterModuleOptions } from "@nestjs/event-emitter/dist/interfaces";
 import { BackOffPolicy, RetryOptions } from "typescript-retry-decorator";
-import { ChannelNames } from "./src/types";
+import { ChannelNames, Licenses } from "./src/types";
 
 export const wsLocation = "wss://rpc.joystream.org:9944"; 
 export const database = "joy_dao";
@@ -8,10 +9,7 @@ export const database = "joy_dao";
 export const channelId = "938526399801729024";
 export const pioneerApi = "https://query.joystream.org/graphql";
 export const atlasApi = "https://orion.joystream.org/graphql";
-export const waitFor = 60;
-export const waitTimeUnit = "seconds";
-export const createdAgo = 30;
-export const createdAgoUnit = "minutes";
+//export const assetDistributorNode = "https://antonm.cryptostarter.info/distributor/api/v1/assets/";
 
 // wg bot
 export const channelNames: ChannelNames = {
@@ -33,7 +31,8 @@ export const channelNames: ChannelNames = {
   techSupport: "💻｜tech-support",
   atlasFeedback: "🛫｜atlas-testing",
   validators: "✅｜validator",
-  bounties: "💻｜active-bounties"
+  bounties: "💻｜active-bounties",
+  videos: "temp_video_chan"
 };
 
 export const identityValidatedRole = 'on-chain identity verified';
@@ -82,6 +81,19 @@ export const wgEvents = [
   "WorkerExited",
   "WorkerRewardAmountUpdated",
 ];
+
+export const licenses: Licenses = 
+{
+	"1000": "Custom",
+	"1001": "PDM",
+	"1002": "CC0",
+	"1003": "CC_BY",
+	"1004": "CC_BY_SA",
+	"1005": "CC_BY_ND",
+	"1006": "CC_BY_NC",
+	"1007": "CC_BY_NC_SA",
+	"1008": "CC_BY_NC_ND"
+}
 
 export const forumCategoriesToChannels = [
   {
@@ -272,6 +284,11 @@ export const globalRetryConfig : RetryOptions = {
   backOffPolicy: BackOffPolicy.ExponentialBackOffPolicy,
   backOff: 1000,
   exponentialOption: { maxInterval: 4000, multiplier: 3 }
+}
+
+export const globalEventingConfig : EventEmitterModuleOptions = {
+  wildcard: true,
+  maxListeners: 32
 }
 
 export const joystreamBlue = "#4038FF"; // official joystream blue, see https://www.joystream.org/brand/guides/

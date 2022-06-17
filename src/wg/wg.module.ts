@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { DiscordModule } from '@discord-nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { PioneerGraphQLModule } from 'src/gql/pioneer.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ApplicationWithdrawnHandler } from './application.withdrawn.handler';
 import { OpeningAddedOrCancelledHandler } from './opening.added.or.cancelled.handler';
 import { ApplicationCreatedHandler } from './application.created.handler';
@@ -21,11 +20,6 @@ import { WorkingGroupService } from './wg.service';
   imports: [
     DiscordModule.forFeature(), 
     ConfigModule.forRoot(), 
-    EventEmitterModule.forRoot(
-      {
-        wildcard: true
-      }
-    ),
     PioneerGraphQLModule
   ],
   providers: [
