@@ -161,6 +161,7 @@ documents:
       }
       category {
         id
+        name
         __typename
       }
       views
@@ -248,6 +249,7 @@ documents:
     fragment BasicMembershipFields on Membership {
       id
       handle
+      controllerAccount
       metadata {
         avatar {
           ... on AvatarObject {
@@ -400,8 +402,34 @@ documents:
         __typename
       }
       __typename
-    }  
+    }
+    
+  - >
+    query getDistributionBucketsWithOperators {
+      distributionBuckets(limit: 50, where: {distributing_eq: true}) {
+        id
+        bags {
+          id
+          __typename
+        }
+        operators {
+          ...DistributionBucketOperatorField
+          __typename
+        }
+        __typename
+      }
+    }
 
+    fragment DistributionBucketOperatorField on DistributionBucketOperator {
+      id
+      metadata {
+        nodeEndpoint
+        __typename
+      }
+      status
+      __typename
+    }
+    
 generates:
   ./src/qntypes.ts:
     plugins:

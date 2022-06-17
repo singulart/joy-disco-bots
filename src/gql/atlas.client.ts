@@ -24,4 +24,14 @@ export class RetryableAtlasClient {
     }
     return video;
   }
+
+  @Retryable(globalRetryConfig)
+  async getDistributionBucketsWithOperators() {
+    this.logger.debug(`Fetching distributor buckets`);
+    const buckets = await this.atlas.getDistributionBucketsWithOperators();
+    if(!buckets.distributionBuckets || buckets.distributionBuckets.length === 0) {
+      throw new Error();
+    }
+    return buckets;
+  }
 }
