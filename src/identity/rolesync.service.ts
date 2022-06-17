@@ -8,7 +8,7 @@ import { ConfigService } from "@nestjs/config";
 import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Client, Role } from 'discord.js';
 import { findServerRole } from "src/util";
-import { RetryableGraphQLClient } from "src/gql/graphql.client";
+import { RetryablePioneerClient } from "src/gql/pioneer.client";
 
 
 const CM_ROLE = 'councilMemberRole';
@@ -29,7 +29,7 @@ export class RoleSyncService {
     @InjectDiscordClient()
     private readonly client: Client,
     private readonly configService: ConfigService,
-    private readonly queryNodeClient: RetryableGraphQLClient,
+    private readonly queryNodeClient: RetryablePioneerClient,
   ) { }
 
   @Cron(CronExpression.EVERY_30_MINUTES)

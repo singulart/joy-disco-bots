@@ -15,8 +15,8 @@ export class OpeningAddedOrCancelledHandler extends BaseEventHandler {
     await this.handle(payload);
   }
 
-  @OnEvent('*.OpeningCancelled')
-  async handleOpeningCancelledEvent(payload: EventWithBlock) {
+  @OnEvent('*.OpeningCanceled')
+  async handleOpeningCanceledEvent(payload: EventWithBlock) {
     await this.handle(payload);
   }
 

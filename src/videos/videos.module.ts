@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
 import { DiscordModule } from '@discord-nestjs/core';
 import { ConfigModule } from '@nestjs/config';
-import { PioneerGraphQLModule } from 'src/gql/pioneer.module';
-import { ThreadCreatedHandler } from './thread.created.handler';
-import { PostCreatedHandler } from './post.created.handler';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { VideoCreatedHandler } from './video.created.handler';
+import { AtlasGraphQLModule } from 'src/gql/atlas.module';
 
 @Module({
   imports: [
     DiscordModule.forFeature(), 
     EventEmitterModule.forRoot(),
     ConfigModule.forRoot(),
-    PioneerGraphQLModule
+    AtlasGraphQLModule
   ],
-  providers: [ThreadCreatedHandler, PostCreatedHandler],
+  providers: [VideoCreatedHandler],
 })
-export class ForumModule {}
+export class VideoModule {}

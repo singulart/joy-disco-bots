@@ -6,7 +6,8 @@ export const database = "joy_dao";
 
 // video bot
 export const channelId = "938526399801729024";
-export const hydraLocation = "https://query.joystream.org/graphql";
+export const pioneerApi = "https://query.joystream.org/graphql";
+export const atlasApi = "https://orion.joystream.org/graphql";
 export const waitFor = 60;
 export const waitTimeUnit = "seconds";
 export const createdAgo = 30;
