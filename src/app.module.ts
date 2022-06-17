@@ -6,14 +6,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents, Message } from 'discord.js';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ForumModule } from './forum/forum.module';
-import { GraphQLModule } from './gql/gql.module';
+import { PioneerGraphQLModule } from './gql/pioneer.module';
 import { BlockchainModule } from './blockchain/blockchain.module';
+import { VideoModule } from './videos/videos.module';
+import { AtlasGraphQLModule } from './gql/atlas.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
-    GraphQLModule,
+    PioneerGraphQLModule,
+    AtlasGraphQLModule,
     DiscordModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -35,7 +38,8 @@ import { BlockchainModule } from './blockchain/blockchain.module';
     BlockchainModule,
     WgModule,
     IdentityModule,
-    ForumModule
+    ForumModule,
+    VideoModule
   ],
   providers: [],
 })

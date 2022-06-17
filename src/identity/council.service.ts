@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { RetryableGraphQLClient } from "src/gql/graphql.client";
+import { RetryablePioneerClient } from "src/gql/pioneer.client";
 
 /**
  * Public service that other modules may want to use to get Council information
@@ -8,7 +8,7 @@ import { RetryableGraphQLClient } from "src/gql/graphql.client";
  export class CouncilService {
  
    constructor(
-      private readonly queryNodeClient: RetryableGraphQLClient,
+      private readonly queryNodeClient: RetryablePioneerClient,
    ) { }
 
    async fetchCurrentCouncilMembers() {

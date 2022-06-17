@@ -4,13 +4,13 @@ import { Client, TextChannel } from "discord.js";
 import { DiscordChannels } from "src/types";
 import { forumCategoriesToChannels } from "config";
 import { getDiscordChannels } from "src/util";
-import { RetryableGraphQLClient } from "src/gql/graphql.client";
+import { RetryablePioneerClient } from "src/gql/pioneer.client";
 
 @Injectable()
 export abstract class BaseEventHandler {
 
   constructor(
-    protected readonly queryNodeClient: RetryableGraphQLClient,
+    protected readonly queryNodeClient: RetryablePioneerClient,
     @InjectDiscordClient()
     protected readonly client: Client,
     @Optional()

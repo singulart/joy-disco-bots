@@ -11,9 +11,7 @@ import { CacheType, CommandInteraction, ContextMenuInteraction } from 'discord.j
 import { PendingVerification } from 'src/db/pendingverification.entity';
 import { ClaimDto } from './claim.dto';
 import { nanoid } from 'nanoid';
-import { getSdk } from 'src/qntypes';
-import { GraphQLClient } from 'graphql-request';
-import { hydraLocation as queryNodeUrl } from "../../config";
+import { RetryablePioneerClient } from 'src/gql/pioneer.client';
 
 @Command({
   name: 'claim',
@@ -26,14 +24,14 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
   constructor(
     @Inject('PENDING_VERIFICATION_REPOSITORY')
     private readonly pendingVerificationRepository: typeof PendingVerification,
+    private readonly queryNodeClient: RetryablePioneerClient,
   ) {}
 
   async handler(@Payload() dto: ClaimDto, context: TransformedCommandExecutionContext) {
     this.logger.log(`${this.buildHandle(context.interaction)} claiming on-chain identity '${dto.username}' (${dto.wallet})`);
 
     // verify that the address really belongs to the claimed membership
-    const queryNodeClient = getSdk(new GraphQLClient(queryNodeUrl));
-    const queryNodeMember = await queryNodeClient.memberByHandle({handle: dto.username});
+    const queryNodeMember = await this.queryNodeClient.memberByHandle(dto.username);
     if(queryNodeMember.memberships.length > 0 && 
       (queryNodeMember.memberships[0].controllerAccount === dto.wallet || 
         queryNodeMember.memberships[0].rootAccount === dto.wallet)) {

@@ -10,7 +10,7 @@ import { OpeningId, WorkerId } from "@joystream/types/augment/all/types";
 export class OpeningFilledHandler extends BaseEventHandler {
 
   @OnEvent('*.OpeningFilled')
-  async handleBudgetUpdatedEvent(payload: EventWithBlock) {
+  async handleOpeningFilledEvent(payload: EventWithBlock) {
     let { section, data } = payload.event.event;
     if (!this.checkChannel(section)) {
       return;
