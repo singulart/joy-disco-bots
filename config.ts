@@ -2,14 +2,11 @@ import { EventEmitterModuleOptions } from "@nestjs/event-emitter/dist/interfaces
 import { BackOffPolicy, RetryOptions } from "typescript-retry-decorator";
 import { ChannelNames, Licenses } from "./src/types";
 
+export const pioneerApi = "https://query.joystream.org/graphql";
+export const atlasApi = "https://orion.joystream.org/graphql";
 export const wsLocation = "wss://rpc.joystream.org:9944"; 
 export const database = "joy_dao";
 
-// video bot
-export const channelId = "938526399801729024";
-export const pioneerApi = "https://query.joystream.org/graphql";
-export const atlasApi = "https://orion.joystream.org/graphql";
-//export const assetDistributorNode = "https://antonm.cryptostarter.info/distributor/api/v1/assets/";
 
 // wg bot
 export const channelNames: ChannelNames = {
@@ -18,9 +15,7 @@ export const channelNames: ChannelNames = {
   contentWorkingGroup: "▶｜content-curator",
   storageWorkingGroup: "💿｜storage-provider",
   forumWorkingGroup: "📋｜forum",
-  membershipWorkingGroup: "membership",
   distributionWorkingGroup: "🔌｜distributors",
-  gatewayWorkingGroup: "gateway",
   operationsWorkingGroupAlpha: "👷｜builders",
   operationsWorkingGroupGamma: "📈｜marketing",
   operationsWorkingGroupBeta: "👨｜human-resources",
@@ -32,7 +27,7 @@ export const channelNames: ChannelNames = {
   atlasFeedback: "🛫｜atlas-testing",
   validators: "✅｜validator",
   bounties: "💻｜active-bounties",
-  videos: "temp_video_chan"
+  videos: "🤖｜tokenomics" // TODO 
 };
 
 export const identityValidatedRole = 'on-chain identity verified';
@@ -50,7 +45,7 @@ export const wgToRoleMap: ChannelNames = {
   councilMemberRole: councilMemberRole
 };
 
-//same as above, just for lead
+//same as above, just for lead [this is not yet implemented!]
 export const wgLeadToRoleMap: ChannelNames = {
   contentWorkingGroup: "Content Lead",
   storageWorkingGroup: "Storage Lead",
