@@ -8,14 +8,14 @@ import { ConfigModule } from '@nestjs/config';
 import { PendingVerificationCleaner } from './pendingverificationcleaner';
 import { RoleSyncService } from './rolesync.service';
 import { CouncilService } from './council.service';
-import { GraphQLModule } from 'src/gql/gql.module';
+import { PioneerGraphQLModule } from 'src/gql/pioneer.module';
 
 @Module({
   imports: [
     DatabaseModule,
     DiscordModule.forFeature(),
     ConfigModule.forRoot(),
-    GraphQLModule
+    PioneerGraphQLModule
   ], 
   providers: [
     IdentityClaimCommand, 
