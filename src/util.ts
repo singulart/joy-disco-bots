@@ -1,4 +1,4 @@
-import { AnyChannel, Client, Collection, Role, TextChannel } from "discord.js";
+import { AnyChannel, Client, Role, TextChannel } from "discord.js";
 import { channelNames } from "../config";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Hash, EventRecord } from "@polkadot/types/interfaces";
@@ -51,7 +51,7 @@ export const findDiscordChannel = (
 ): TextChannel[] =>
   client.channels.cache.filter(
     (channel: any) => channel.name === name
-  ).map((value: AnyChannel, key: string, collection: Collection<string, AnyChannel>) => value as TextChannel);
+  ).map((value: AnyChannel) => value as TextChannel);
 
 export const findServerRole = async (
   client: Client,

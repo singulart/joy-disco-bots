@@ -1,6 +1,8 @@
 # Run codegen using: npm run generate
-# Make sure the schema endpoint is accessible! 
-schema: https://query.joystream.org/graphql
+# Make sure schema endpoints are accessible! 
+schema: 
+  - https://query.joystream.org/graphql # Pioneer 
+  - https://orion.joystream.org/graphql # Atlas
 documents:
   - >
     query openingById($openingId: ID!) {
@@ -138,6 +140,296 @@ documents:
         }
       }
     }
+
+  - > 
+    query getVideoById($videoId: ID!) {
+      videoByUniqueInput(where: {id: $videoId}) {
+            ...VideoFields        
+      }
+    }
+
+    fragment VideoFields on Video {
+      id
+      title
+      description
+      reactions {
+        id
+        createdAt
+        reaction
+        memberId
+        __typename
+      }
+      category {
+        id
+        name
+        __typename
+      }
+      views
+      duration
+      createdAt
+      isPublic
+      isExplicit
+      isFeatured
+      hasMarketing
+      isCensored
+      isCommentSectionEnabled
+      commentsCount
+      language {
+        iso
+        __typename
+      }
+      publishedBeforeJoystream
+      mediaMetadata {
+        ...VideoMediaMetadataFields
+        __typename
+      }
+      media {
+        ...StorageDataObjectFields
+        __typename
+      }
+      thumbnailPhoto {
+        ...StorageDataObjectFields
+        __typename
+      }
+      channel {
+        ...BasicChannelFields
+        __typename
+      }
+      license {
+        ...LicenseFields
+        __typename
+      }
+      nft {
+        ...AllNftFields
+        __typename
+      }
+      __typename
+    }
+
+    fragment VideoMediaMetadataFields on VideoMediaMetadata {
+      id
+      pixelHeight
+      pixelWidth
+      __typename
+    }
+
+    fragment StorageDataObjectFields on StorageDataObject {
+      id
+      createdAt
+      size
+      isAccepted
+      ipfsHash
+      storageBag {
+        id
+        __typename
+      }
+      type {
+        __typename
+      }
+      __typename
+    }
+
+    fragment BasicChannelFields on Channel {
+      id
+      title
+      createdAt
+      views
+      follows
+      avatarPhoto {
+        ...StorageDataObjectFields
+        __typename
+      }
+      ownerMember {
+        ...BasicMembershipFields
+        __typename
+      }
+      __typename
+    }
+
+    fragment BasicMembershipFields on Membership {
+      id
+      handle
+      controllerAccount
+      metadata {
+        avatar {
+          ... on AvatarObject {
+            avatarObject {
+              ...StorageDataObjectFields
+              __typename
+            }
+            __typename
+          }
+          ... on AvatarUri {
+            avatarUri
+            __typename
+          }
+          __typename
+        }
+        about
+        __typename
+      }
+      __typename
+    }
+
+    fragment LicenseFields on License {
+      id
+      code
+      attribution
+      customText
+      __typename
+    }
+
+    fragment AllNftFields on OwnedNft {
+      id
+      createdAt
+      creatorRoyalty
+      lastSaleDate
+      lastSalePrice
+      ownerMember {
+        ...BasicMembershipFields
+        __typename
+      }
+      creatorChannel {
+        ...BasicChannelFields
+        __typename
+      }
+      transactionalStatusAuction {
+        id
+        auctionType {
+          __typename
+          ... on AuctionTypeEnglish {
+            duration
+            extensionPeriod
+            minimalBidStep
+            plannedEndAtBlock
+            __typename
+          }
+          ... on AuctionTypeOpen {
+            bidLockDuration
+            __typename
+          }
+        }
+        isCompleted
+        initialOwner {
+          ...BasicMembershipFields
+          __typename
+        }
+        buyNowPrice
+        startingPrice
+        startsAtBlock
+        endedAtBlock
+        topBid {
+          ...BasicBidFields
+          __typename
+        }
+        bids {
+          ...BasicBidFields
+          __typename
+        }
+        whitelistedMembers {
+          ...BasicMembershipFields
+          __typename
+        }
+        __typename
+      }
+      transactionalStatus {
+        __typename
+        ... on TransactionalStatusIdle {
+          dummy
+          __typename
+        }
+        ... on TransactionalStatusBuyNow {
+          price
+          __typename
+        }
+      }
+      video {
+        ...BasicVideoFields
+        __typename
+      }
+      __typename
+    }
+
+    fragment BasicBidFields on Bid {
+      bidder {
+        ...BasicMembershipFields
+        __typename
+      }
+      amount
+      createdAt
+      isCanceled
+      createdInBlock
+      id
+      __typename
+    }
+
+    fragment BasicVideoFields on Video {
+      id
+      title
+      views
+      createdAt
+      duration
+      title
+      isPublic
+      media {
+        ...StorageDataObjectFields
+        __typename
+      }
+      channel {
+        ...BasicChannelFields
+        __typename
+      }
+      thumbnailPhoto {
+        ...StorageDataObjectFields
+        __typename
+      }
+      nft {
+        ...BasicNftFields
+        __typename
+      }
+      __typename
+    }
+
+    fragment BasicNftFields on OwnedNft {
+      id
+      createdAt
+      creatorRoyalty
+      ownerMember {
+        ...BasicMembershipFields
+        __typename
+      }
+      transactionalStatus {
+        __typename
+      }
+      __typename
+    }
+    
+  - >
+    query getDistributionBucketsWithOperators {
+      distributionBuckets(limit: 50, where: {distributing_eq: true}) {
+        id
+        bags {
+          id
+          __typename
+        }
+        operators {
+          ...DistributionBucketOperatorField
+          __typename
+        }
+        __typename
+      }
+    }
+
+    fragment DistributionBucketOperatorField on DistributionBucketOperator {
+      id
+      metadata {
+        nodeEndpoint
+        __typename
+      }
+      status
+      __typename
+    }
+    
 generates:
   ./src/qntypes.ts:
     plugins:
