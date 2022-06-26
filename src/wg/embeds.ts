@@ -4,7 +4,7 @@ import { EventRecord } from '@polkadot/types/interfaces';
 import Discord from 'discord.js';
 import { OpeningId, ApplicationId } from "@joystream/types/working-group";
 import { Balance } from '@joystream/types/common';
-import { OpeningByIdQuery, WorkerByIdQuery, ApplicationByIdQuery, MemberByIdQuery } from '../qntypes';
+import { OpeningByIdQuery, WorkerByIdQuery, ApplicationByIdQuery, MemberByIdQuery, WorkersByAccountQuery } from '../qntypes';
 
 
 export const getBudgetSetEmbed = (balanceSet: number, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
@@ -65,6 +65,28 @@ export const getWorkerRewardAmountUpdatedEmbed = (reward: Balance, member: Worke
       { name: 'Salary', value: formatBalance(reward.toString(), { withUnit: 'tJOY' }), inline: true }
     ), blockNumber, event);
 }
+
+export const getDiscretionarySpendingEmbed = (spending: Balance, recipient: WorkersByAccountQuery,
+  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+
+  return addCommonProperties(new Discord.MessageEmbed()
+    .setTitle(`💰💰💰 User ${recipient.workers[0].membership.handle} was paid via discretionary budget spending`)
+    .addFields(
+      { name: 'Amount paid', value: formatBalance(spending.toString(), { withUnit: 'tJOY' }), inline: true }
+    ), blockNumber, event);
+}
+
+export const getDiscretionarySpendingToNonWorkerAddressEmbed = (spending: Balance, recipientAddress: string,
+  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+
+  return addCommonProperties(new Discord.MessageEmbed()
+    .setTitle(`💰💰💰 Discretionary budget spending was made`)
+    .addFields(
+      { name: 'Amount paid', value: formatBalance(spending.toString(), { withUnit: 'tJOY' }), inline: true },
+      { name: 'Recipient', value: recipientAddress, inline: true }
+    ), blockNumber, event);
+}
+
 
 export const getWorkerRewardedEmbed = (reward: Balance, member: WorkerByIdQuery, missed: boolean,
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
