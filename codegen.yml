@@ -97,6 +97,16 @@ documents:
     }
 
   - > 
+    query workersByAccount($account: String!) {
+      workers(where: {rewardAccount_eq: $account}) {
+        id
+        membership {
+          ...MemberFields
+        }
+      }
+    }
+
+  - > 
     query activeCouncilMembers {
       electedCouncils(where: {endedAtBlock_eq: null}) {
         councilMembers {

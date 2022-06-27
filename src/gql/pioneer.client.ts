@@ -56,6 +56,16 @@ export class RetryablePioneerClient {
   }
 
   @Retryable(globalRetryConfig)
+  async workersByAccount(account: string) {
+    this.logger.debug(`Fetching worker[${account}]...`);
+    const members = await this.pioneerApi.workersByAccount({account: account});
+    if(!members.workers || members.workers.length === 0) {
+      throw new Error();
+    }
+    return members;
+  }
+
+  @Retryable(globalRetryConfig)
   async applicationById(applicationId: string) {
     this.logger.debug(`Fetching application[${applicationId}]...`);
     const application = await this.pioneerApi.applicationById({applicationId: applicationId});
