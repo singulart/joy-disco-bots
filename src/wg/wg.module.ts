@@ -15,6 +15,7 @@ import { StakeHandler } from './stake.handler';
 import { TerminationHandler } from './termination.handler';
 import { WorkerExitedHandler } from './worker.exited.handler';
 import { WorkingGroupService } from './wg.service';
+import { BudgetSpendingHandler } from './budget.spending.handler';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { WorkingGroupService } from './wg.service';
   providers: [
     BudgetSetHandler,
     BudgetUpdatedHandler,
+    BudgetSpendingHandler,
     ApplicationCreatedHandler,
     ApplicationWithdrawnHandler, 
     OpeningAddedOrCancelledHandler,
