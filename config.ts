@@ -288,7 +288,7 @@ export const globalEventingConfig : EventEmitterModuleOptions = {
 }
 
 export const axiosConfig: AxiosRequestConfig = {
-  timeout: 250 //milliseconds
+  timeout: 10000 // 10 sec in milliseconds
 }
 
 export const joystreamBlue = "#4038FF"; // official joystream blue, see https://www.joystream.org/brand/guides/
