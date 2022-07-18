@@ -1,4 +1,5 @@
 import { EventEmitterModuleOptions } from "@nestjs/event-emitter/dist/interfaces";
+import { AxiosRequestConfig } from "axios";
 import { BackOffPolicy, RetryOptions } from "typescript-retry-decorator";
 import { ChannelNames, Licenses } from "./src/types";
 
@@ -284,6 +285,10 @@ export const globalRetryConfig : RetryOptions = {
 export const globalEventingConfig : EventEmitterModuleOptions = {
   wildcard: true,
   maxListeners: 32
+}
+
+export const axiosConfig: AxiosRequestConfig = {
+  timeout: 250 //milliseconds
 }
 
 export const joystreamBlue = "#4038FF"; // official joystream blue, see https://www.joystream.org/brand/guides/

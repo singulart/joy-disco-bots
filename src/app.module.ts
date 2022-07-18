@@ -10,6 +10,7 @@ import { PioneerGraphQLModule } from './gql/pioneer.module';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { VideoModule } from './videos/videos.module';
 import { AtlasGraphQLModule } from './gql/atlas.module';
+import { StorageProvidersModule } from './storage-providers/sp.module';
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { AtlasGraphQLModule } from './gql/atlas.module';
     WgModule,
     IdentityModule,
     ForumModule,
-    VideoModule
+    VideoModule,
+    StorageProvidersModule
   ],
   providers: [],
 })

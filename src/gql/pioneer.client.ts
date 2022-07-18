@@ -104,4 +104,15 @@ export class RetryablePioneerClient {
     }
     return opening;
   }
+
+  @Retryable(globalRetryConfig)
+  async getStorageNodes() {
+    this.logger.debug(`Fetching storage nodes`);
+    const nodes = await this.pioneerApi.getStorageNodes();
+    let endpoints: string[] = [];
+    for(let i = 0; i < nodes.storageBuckets.length; i++) {
+      endpoints.push(nodes.storageBuckets[i].operatorMetadata?.nodeEndpoint as string);
+    }
+    return endpoints;
+  }
 }
