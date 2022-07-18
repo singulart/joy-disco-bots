@@ -1,18 +1,27 @@
-import { CacheInterceptor, Injectable, Logger, UseInterceptors } from "@nestjs/common";
+import { CACHE_MANAGER, Inject, Injectable, Logger } from "@nestjs/common";
 import { RetryablePioneerClient } from "src/gql/pioneer.client";
+import { Cache } from 'cache-manager';
 
+const CACHE_KEY = 'sp-nodes-key';
 
 @Injectable()
-@UseInterceptors(CacheInterceptor)
 export class StorageNodeEndpointProvider {
   private readonly logger = new Logger(StorageNodeEndpointProvider.name);
 
   constructor(
-    protected readonly pioneerClient: RetryablePioneerClient
+    protected readonly pioneerClient: RetryablePioneerClient,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) { }
 
   async getStorageNodeEndpoints(): Promise<string[]> {
-    this.logger.debug("Loading storage node data from QN...");
-    return await this.pioneerClient.getStorageNodes();
+    const cached: string[] | undefined = await this.cacheManager.get(CACHE_KEY);
+    if (cached) { // hit 
+      return cached; 
+    } else { // miss
+      this.logger.debug("Loading storage node data from QN...");
+      const qnResult = await this.pioneerClient.getStorageNodes();  
+      this.cacheManager.set(CACHE_KEY, qnResult);
+      return qnResult;
+    }
   }
 }
