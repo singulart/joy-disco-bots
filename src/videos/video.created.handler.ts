@@ -5,7 +5,7 @@ import { EventWithBlock } from "src/types";
 import { OnEvent } from "@nestjs/event-emitter";
 import { VideoId } from "@joystream/types/content";
 import { RetryableAtlasClient } from "src/gql/atlas.client";
-import { GetDistributionBucketsWithOperatorsQuery } from "src/qntypes";
+import { GetDistributionBucketsWithOperatorsQuery } from "src/qntypes-atlas";
 import { getVideoEmbed } from "./video.embeds";
 import { findDiscordChannel } from "src/util";
 import { channelNames } from "../../config";
@@ -40,7 +40,7 @@ export class VideoCreatedHandler {
     const bag = video.videoByUniqueInput?.media?.storageBag.id;
     const cdnUrl = this.getDistributorUrl(bag || ' ');
     if(cdnUrl) {
-      const channelToUse = await findDiscordChannel(this.client, channelNames[VIDEOS_CHANNEL_KEY])[0];
+      const channelToUse = findDiscordChannel(this.client, channelNames[VIDEOS_CHANNEL_KEY])[0];
       channelToUse.send({
         embeds: [
           getVideoEmbed(video, cdnUrl),
