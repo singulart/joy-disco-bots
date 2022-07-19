@@ -5,6 +5,7 @@ import { DaoRole } from './daorole.entity';
 import { Logger } from '@nestjs/common';
 import { database } from '../../config';
 import { PendingVerification } from './pendingverification.entity';
+import { UnhealthyStorageProvider } from './unhealthy-storage.entity';
 
 const logger = new Logger('DB');
 const dbUrl = process.env.DATABASE_URL || `postgres://localhost:5432/${database}`;
@@ -30,7 +31,7 @@ export const databaseProviders = [
           }
         } : {}
       });
-      sequelize.addModels([DaoMembership, DaoRole, PendingVerification]);
+      sequelize.addModels([DaoMembership, DaoRole, PendingVerification, UnhealthyStorageProvider]);
       await sequelize.sync();
       return sequelize;
     },
@@ -46,6 +47,10 @@ export const databaseProviders = [
   {
     provide: 'PENDING_VERIFICATION_REPOSITORY',
     useValue: PendingVerification,
+  },
+  {
+    provide: 'UNHEALTHY_STORAGE_PROVIDER_REPOSITORY',
+    useValue: UnhealthyStorageProvider,
   },
 ];
 

@@ -1,6 +1,6 @@
 import { GraphQLClientInject, GraphQLRequestModule } from '@golevelup/nestjs-graphql-request';
 import { Module } from '@nestjs/common';
-import { getSdk } from '../qntypes';
+import { getSdk } from '../qntypes-atlas';
 import { atlasApi } from '../../config';
 import { GraphQLClient } from 'graphql-request';
 import { RetryableAtlasClient } from './atlas.client';
