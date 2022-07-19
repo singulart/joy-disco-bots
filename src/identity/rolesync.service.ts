@@ -35,9 +35,10 @@ export class RoleSyncService {
   @Cron(CronExpression.EVERY_30_MINUTES)
   async syncOnChainRoles() {
     this.logger.debug('Syncing on-chain roles');
+    const activeCouncilMembers = await this.queryNodeClient.activeCouncilMembers();
     const totalVerifiedMembersCount = await this.daoMembershipRepository.count();
     let page = 0;
-    const pageSize = 10;
+    const pageSize = 50;
     while(page * pageSize < totalVerifiedMembersCount) {
       const memberships = await this.getPageOfMemberships(pageSize, page);
       for(let i = 0; i < memberships.length; i++) {
@@ -62,7 +63,6 @@ export class RoleSyncService {
         }
 
         // assign council member role if needed
-        const activeCouncilMembers = await this.queryNodeClient.activeCouncilMembers();
         const isUserInCouncilCurrently = activeCouncilMembers.electedCouncils[0].councilMembers.find(
           (cm: any) => cm.member.handle === ithMember.membership
         ) !== undefined;

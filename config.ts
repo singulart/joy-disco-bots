@@ -28,7 +28,7 @@ export const channelNames: ChannelNames = {
   atlasFeedback: "🛫｜atlas-testing",
   validators: "✅｜validator",
   bounties: "💻｜active-bounties",
-  videos: "🤖｜tokenomics" // TODO 
+  videos: "🤖｜video-bot"
 };
 
 export const identityValidatedRole = 'on-chain identity verified';
