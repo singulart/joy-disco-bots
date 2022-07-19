@@ -9,4 +9,6 @@ Techniques used in this project
 7. Sequelize `declare` trick, see https://github.com/sequelize/sequelize/issues/11032#issuecomment-1002940929 
 8. Discord role assigning
 9. Sequelize on Heroku: SSL ;) 
-10. Two GraphQL APIs consumed. 
+10. Two GraphQL APIs consumed. Due to a [bug](https://github.com/Joystream/joystream/issues/4032), I had to split them in separate files.
+11. Caching introduced
+12. Discord API: Mention server role in embed description 

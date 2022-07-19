@@ -1,5 +1,5 @@
 import { joystreamBlue, licenses } from "config";
-import { GetVideoByIdQuery } from "src/qntypes";
+import { GetVideoByIdQuery } from "src/qntypes-atlas";
 import Discord, { EmbedAuthorData } from 'discord.js';
 import { humanFileSize } from "./sizeformat";
 import moment from "moment";

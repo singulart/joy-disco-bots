@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { globalRetryConfig } from "config";
-import { Sdk } from "src/qntypes";
+import { Sdk } from "src/qntypes-atlas";
 import { Retryable } from 'typescript-retry-decorator';
 
 

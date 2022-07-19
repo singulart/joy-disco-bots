@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { globalRetryConfig } from "config";
-import { Sdk } from "src/qntypes";
+import { GetStorageNodesQuery, Sdk } from "src/qntypes";
 import { Retryable } from 'typescript-retry-decorator';
 
 
@@ -103,5 +103,15 @@ export class RetryablePioneerClient {
       throw new Error();
     }
     return opening;
+  }
+
+  @Retryable(globalRetryConfig)
+  async getStorageNodes(): Promise<string[]> {
+    this.logger.debug(`Fetching storage nodes`);
+    const nodes: GetStorageNodesQuery = await this.pioneerApi.getStorageNodes();
+    if(!nodes.storageBuckets) {
+      throw new Error();
+    }
+    return nodes.storageBuckets.map((n) => n.operatorMetadata?.nodeEndpoint as string);
   }
 }
