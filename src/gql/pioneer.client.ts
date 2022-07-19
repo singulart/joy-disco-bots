@@ -106,12 +106,12 @@ export class RetryablePioneerClient {
   }
 
   @Retryable(globalRetryConfig)
-  async getStorageNodes() {
+  async getStorageNodes(): Promise<string[]> {
     this.logger.debug(`Fetching storage nodes`);
     const nodes: GetStorageNodesQuery = await this.pioneerApi.getStorageNodes();
     if(!nodes.storageBuckets) {
       throw new Error();
     }
-    return nodes.storageBuckets.map((n) => n.operatorMetadata?.nodeEndpoint);
+    return nodes.storageBuckets.map((n) => n.operatorMetadata?.nodeEndpoint as string);
   }
 }
