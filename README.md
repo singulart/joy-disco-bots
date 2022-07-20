@@ -1,11 +1,12 @@
 # Joystream Discord Bots
 
 An ongoing initiative to unify the various Joystream Discord tools into one monorepo. This is planned as a home for 
-1. Working Groups bot
-2. Roles and Identities not
-3. Forum bot
-4. Atlas videos bot
-5. Governance bot
+1. [Working Groups bot](./src/wg/README.md)
+2. [Roles and Identities bot](./src/identity/)
+3. [Forum bot](./src/forum/)
+4. [Atlas videos bot](./src/videos/)
+5. [Governance bot](./src/governance)
+6. [Storage Providers Health Check](./src/storage-providers/)
 
 # Running locally
 
