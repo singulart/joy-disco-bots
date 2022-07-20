@@ -1,5 +1,5 @@
 # Run codegen using: npm run generate
-# Make sure schema endpoints are accessible! 
+# Make sure schema endpoint is accessible! 
 schema: 
   - https://query.joystream.org/graphql # Pioneer 
   
