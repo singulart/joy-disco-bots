@@ -92,9 +92,9 @@ export const getWorkerRewardedEmbed = (reward: Balance, member: WorkerByIdQuery,
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
-    .setTitle(`💰💰💰 Remuneration for ${member.workerByUniqueInput?.membership.handle} ${missed ? 'FAILED!' : 'paid successfully'}`)
+    .setTitle(`💰💰💰 Remuneration ${missed ? 'debt' : ''} for ${member.workerByUniqueInput?.membership.handle} paid successfully`)
     .addFields(
-      { name: `Amount ${missed ? 'missed' : 'paid'}`, value: formatBalance(reward.toString(), { withUnit: 'tJOY' }), inline: true }
+      { name: `Amount paid`, value: formatBalance(reward.toString(), { withUnit: 'tJOY' }), inline: true }
     ), blockNumber, event);
 }
 
