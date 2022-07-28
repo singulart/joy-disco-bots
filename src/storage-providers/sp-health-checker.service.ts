@@ -51,20 +51,22 @@ export class StorageProviderHealthChecker {
   async registerFaultyNodes() {
     let endpoints = await this.endpointProvider.getStorageNodeEndpoints();
     let healthyNodes: string[] = [];
-    endpoints.forEach(async (endpoint: string) => {
-      try {
-        const pingResponse = await axios.get(`${endpoint}api/v1/state/data`, axiosConfig);
-        if (pingResponse.status !== 200) {
-          this.logger.warn(`Node ${endpoint} health check failed. HTTP status: ${pingResponse.status}`);
+    await Promise.all(
+      endpoints.map(async (endpoint: string) => {
+        try {
+          const pingResponse = await axios.get(`${endpoint}api/v1/state/data`, axiosConfig);
+          if (pingResponse.status !== 200) {
+            this.logger.warn(`Node ${endpoint} health check failed. HTTP status: ${pingResponse.status}`);
+            await this.storeFaultyNode(endpoint);
+          } else {
+            healthyNodes.push(endpoint);
+          }
+        } catch (e) {
+          this.logger.warn(`Node ${endpoint} health check failed`, e);
           await this.storeFaultyNode(endpoint);
-        } else {
-          healthyNodes.push(endpoint);
         }
-      } catch (e) {
-        this.logger.warn(`Node ${endpoint} health check failed`, e);
-        await this.storeFaultyNode(endpoint);
-      }
-    });
+      })
+    );
     healthyNodes = healthyNodes.length ? healthyNodes : ['bogus endpoint'];
     endpoints = endpoints.length ? endpoints : ['bogus endpoint'];
     await this.unhealthyStorageProviderRepository.destroy(
