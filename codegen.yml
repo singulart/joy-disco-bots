@@ -152,7 +152,7 @@ documents:
     }
   - > 
     query getStorageNodes {
-      storageBuckets {
+      storageBuckets(where: {dataObjectsCount_gt: 0}) {
         operatorMetadata {
           nodeEndpoint
         }
