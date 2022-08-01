@@ -8,7 +8,7 @@ import { StorageProviderHealthChecker } from './sp-health-checker.service';
 
 @Module({
   imports: [
-    CacheModule.register({ttl: 24*60*60}), // cached for 24h
+    CacheModule.register({ttl: 60*60}), // cached for 1h
     DiscordModule.forFeature(),
     ConfigModule.forRoot(),
     DatabaseModule,
