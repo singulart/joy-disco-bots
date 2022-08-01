@@ -21,7 +21,7 @@ export const channelNames: ChannelNames = {
   operationsWorkingGroupGamma: "📈｜marketing",
   operationsWorkingGroupBeta: "👨｜human-resources",
 
-  general: "💬｜general",
+  general: "🤖｜forum-bot",
   council: "🏛｜council",
   contentCreator: "💻｜content-creator",
   techSupport: "💻｜tech-support",
