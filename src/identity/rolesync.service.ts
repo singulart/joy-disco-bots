@@ -9,6 +9,7 @@ import { InjectDiscordClient } from "@discord-nestjs/core";
 import { Client, Role } from 'discord.js';
 import { findServerRole } from "src/util";
 import { RetryablePioneerClient } from "src/gql/pioneer.client";
+import { MemberByHandleQuery } from "src/qntypes";
 
 
 const CM_ROLE = 'councilMemberRole';
@@ -44,8 +45,14 @@ export class RoleSyncService {
       for(let i = 0; i < memberships.length; i++) {
         const ithMember = memberships[i];
         // Query Node call to get the on-chain roles
-        const queryNodeMember = await this.queryNodeClient.memberByHandle(ithMember.membership);
-
+        let queryNodeMember: MemberByHandleQuery | null  =  null;
+        try {
+          queryNodeMember = await this.queryNodeClient.memberByHandle(ithMember.membership);
+        } catch (error) {
+          this.logger.warn(`Member ${ithMember.membership} doesn't exist`);
+          continue;
+        }
+  
         // Keep only active roles, filter the others out
         const onChainRoles = queryNodeMember.memberships[0].roles.filter((role: any) => role.status.__typename === 'WorkerStatusActive');
 
