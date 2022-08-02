@@ -28,7 +28,8 @@ export const channelNames: ChannelNames = {
   atlasFeedback: "🛫｜atlas-testing",
   validators: "✅｜validator",
   bounties: "💻｜active-bounties",
-  videos: "🤖｜video-bot"
+  videos: "🤖｜video-bot",
+  forumspam: "🤖｜forum-bot"
 };
 
 export const identityValidatedRole = 'on-chain identity verified';
@@ -197,7 +198,7 @@ export const forumCategoriesToChannels = [
       name: 'Discussion'
     }, 
     channels: [
-      channelNames.general
+      channelNames.forumspam
     ]
   }, 
   {
@@ -206,7 +207,6 @@ export const forumCategoriesToChannels = [
       name: 'Help & Support'
     }, 
     channels: [
-      channelNames.general,
       channelNames.techSupport
     ]
   }, 
@@ -216,7 +216,7 @@ export const forumCategoriesToChannels = [
       name: 'Creatives'
     }, 
     channels: [
-      channelNames.general
+      channelNames.contentCreator
     ]
   }, 
   {
@@ -252,16 +252,7 @@ export const forumCategoriesToChannels = [
       name: 'Education'
     }, 
     channels: [
-      channelNames.general
-    ]
-  }, 
-  {
-    category: {
-      id: 33,
-      name: 'Grants'
-    }, 
-    channels: [
-      channelNames.general
+      channelNames.forumspam
     ]
   }, 
   {
@@ -270,7 +261,7 @@ export const forumCategoriesToChannels = [
       name: 'Lounge'
     }, 
     channels: [
-      channelNames.general
+      channelNames.forumspam
     ]
   }, 
 ]
