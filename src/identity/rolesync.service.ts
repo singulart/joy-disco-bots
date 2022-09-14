@@ -6,7 +6,7 @@ import { Op } from "sequelize";
 import { wgToRoleMap } from "../../config";
 import { ConfigService } from "@nestjs/config";
 import { InjectDiscordClient } from "@discord-nestjs/core";
-import { Client, Role } from 'discord.js';
+import { Client, GuildMember, Role } from 'discord.js';
 import { findServerRole } from "src/util";
 import { RetryablePioneerClient } from "src/gql/pioneer.client";
 import { MemberByHandleQuery } from "src/qntypes";
@@ -44,6 +44,23 @@ export class RoleSyncService {
       const memberships = await this.getPageOfMemberships(pageSize, page);
       for(let i = 0; i < memberships.length; i++) {
         const ithMember = memberships[i];
+        const mainServer = this.configService.get('DISCORD_SERVER');
+        const serverUser = await this.findUser(mainServer, ithMember);
+        // next "if" block checks whether a user exists in the server and cleans the role data if they left (or changed the nickname)
+        if(!serverUser) {
+          this.logger.warn(`User ${ithMember.discordHandle} not found on this server. Cleaning the data`);
+          this.daoRoleRepository.destroy({
+            where: {
+              membershipId: ithMember.id
+            }
+          });  
+          this.daoMembershipRepository.destroy({
+            where: {
+              id: ithMember.id
+            }
+          });  
+          continue;
+        }
         // Query Node call to get the on-chain roles
         let queryNodeMember: MemberByHandleQuery | null  =  null;
         try {
@@ -59,7 +76,7 @@ export class RoleSyncService {
         // first pass: assigning server roles based on joystream ones
         for(let r = 0; r < onChainRoles.length; r++) {
           const roleInJoystream = onChainRoles[r].groupId;
-          await this.maybeAssignRole(roleInJoystream, ithMember);
+          await this.maybeAssignRole(roleInJoystream, ithMember, serverUser);
         }
 
         // second pass: revokation of server roles that user doesn't have anymore in joystream
@@ -74,7 +91,7 @@ export class RoleSyncService {
           (cm: any) => cm.member.handle === ithMember.membership
         ) !== undefined;
         if(isUserInCouncilCurrently) {
-          await this.maybeAssignRole(CM_ROLE, ithMember);
+          await this.maybeAssignRole(CM_ROLE, ithMember, serverUser);
         }
 
         // revoke council member role if needed
@@ -87,7 +104,7 @@ export class RoleSyncService {
     }
   }
 
-  private async maybeAssignRole(roleInJoystream: string, ithMember: DaoMembership) {
+  private async maybeAssignRole(roleInJoystream: string, ithMember: DaoMembership, serverUser: GuildMember) {
     // Check that user's on-chain role is already stored in our database. 
     // If it's not, user needs to be granted this role, and new DaoRole record created for this user.
     if(!this.hasDbRole(ithMember, roleInJoystream)) {
@@ -98,19 +115,14 @@ export class RoleSyncService {
         wgToRoleMap[roleInJoystream]) as Role;
 
       if(roleToAssign) {
-        const serverUser = await this.findUser(mainServer, ithMember);
-        if(serverUser) {
-          await serverUser.roles.add(roleToAssign.id, 'Assigned as per on-chain role');
-          this.daoRoleRepository.create({
-            role: roleInJoystream,
-            membershipId: ithMember.id
-          });
-          this.logger.debug(
-            `Assigned ${ithMember.discordHandle} server role [${wgToRoleMap[roleInJoystream]}]`
-          );  
-        } else {
-          this.logger.warn(`User ${ithMember.discordHandle} not found on this server`);
-        }
+        await serverUser.roles.add(roleToAssign.id, 'Assigned as per on-chain role');
+        this.daoRoleRepository.create({
+          role: roleInJoystream,
+          membershipId: ithMember.id
+        });
+        this.logger.debug(
+          `Assigned ${ithMember.discordHandle} server role [${wgToRoleMap[roleInJoystream]}]`
+        );  
       } else {
         this.logger.warn(`I was about to assign role ${wgToRoleMap[roleInJoystream]}, but it's gone!`);
       }
