@@ -19,9 +19,10 @@ export class StorageNodeEndpointProvider {
       return cached; 
     } else { // miss
       this.logger.debug("Loading storage node data from QN...");
-      const qnResult = await this.pioneerClient.getStorageNodes();  
-      this.cacheManager.set(CACHE_KEY, qnResult);
-      return qnResult;
+      const qnResult = await this.pioneerClient.getStorageNodes();
+      const endpoints = qnResult.storageBuckets.map((n) => n.operatorMetadata?.nodeEndpoint as string);
+      this.cacheManager.set(CACHE_KEY, endpoints);
+      return endpoints;
     }
   }
 }

@@ -158,7 +158,18 @@ documents:
         }
       }
     }
-    
+  - >
+    query getStorageBagsByNodeEndpoint($nodeEndpoint: String!) {
+      storageBuckets(where: {operatorMetadata: {nodeEndpoint_eq: $nodeEndpoint}}) {
+        bags {
+          storageBuckets {
+            id
+          }
+          id
+        }
+      }
+    }
+
 generates:
   ./src/qntypes.ts:
     plugins:
