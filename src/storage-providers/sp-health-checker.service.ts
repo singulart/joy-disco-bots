@@ -10,6 +10,8 @@ import { getFaultyNodesEmbed } from "./sp.embeds";
 import axios from "axios";
 import { ConfigService } from "@nestjs/config";
 import { Op } from "sequelize";
+import { RetryablePioneerClient } from "src/gql/pioneer.client";
+import { GetStorageBagsByNodeEndpointQuery } from "src/qntypes";
 
 const SP_CHANNEL_KEY = "storageWorkingGroup";
 
@@ -18,6 +20,7 @@ export class StorageProviderHealthChecker {
   private readonly logger = new Logger(StorageProviderHealthChecker.name);
 
   constructor(
+    protected readonly pioneerClient: RetryablePioneerClient,
     protected readonly endpointProvider: StorageNodeEndpointProvider,
     @InjectDiscordClient()
     protected readonly client: Client,
@@ -31,10 +34,13 @@ export class StorageProviderHealthChecker {
     const badNodes = await this.unhealthyStorageProviderRepository.findAll();
     let badNodesSummaryList = '';
     badNodes.forEach(async (badNode: UnhealthyStorageProvider, index: number) => {
-      badNodesSummaryList = badNodesSummaryList.concat(`${index + 1}. ${badNode.endpoint}\n`);
+      const bags = await this.pioneerClient.getStorageBagsByNodeEndpoint(badNode.endpoint);
+      if(!this.allBagsHaveSingleBucket(bags)) {
+        badNodesSummaryList = badNodesSummaryList.concat(`${index + 1}. ${badNode.endpoint}\n`);
+      }
     });
 
-    if (badNodes.length > 0) {
+    if (badNodesSummaryList !== '') {
       const serverToCheck = this.configService.get('DISCORD_SERVER');
       const storageProvidersWorkingGroupRole = await findServerRole(this.client, serverToCheck, wgToRoleMap[SP_CHANNEL_KEY]);
       const channelToUse = findDiscordChannel(this.client, channelNames[SP_CHANNEL_KEY])[0];
@@ -57,7 +63,10 @@ export class StorageProviderHealthChecker {
           const pingResponse = await axios.get(`${endpoint}api/v1/state/data`, axiosConfig);
           if (pingResponse.status !== 200) {
             this.logger.warn(`Node ${endpoint} health check failed. HTTP status: ${pingResponse.status}`);
-            await this.storeFaultyNode(endpoint);
+            const bags = await this.pioneerClient.getStorageBagsByNodeEndpoint(endpoint);
+            if(!this.allBagsHaveSingleBucket(bags)) {
+              await this.storeFaultyNode(endpoint);
+            }
           } else {
             healthyNodes.push(endpoint);
           }
@@ -89,6 +98,11 @@ export class StorageProviderHealthChecker {
           ]
         }
       });
+  }
+
+  allBagsHaveSingleBucket(bags: GetStorageBagsByNodeEndpointQuery): boolean {
+    // this.logger.debug(bags);
+    return bags.storageBuckets.find( sb => sb.bags.find(bag => bag.storageBuckets.length !== 1)) === undefined; 
   }
 
   async storeFaultyNode(endpoint: string) {
