@@ -5,7 +5,7 @@ import { EventWithBlock } from "src/types";
 import { OnEvent } from "@nestjs/event-emitter";
 import { VideoId } from "@joystream/types/content";
 import { RetryableAtlasClient } from "src/gql/atlas.client";
-import { GetDistributionBucketsWithOperatorsQuery } from "src/qntypes-atlas";
+import { GetDistributionBucketsWithOperatorsQuery, GetVideoByIdQuery } from "src/qntypes-atlas";
 import { getVideoEmbed } from "./video.embeds";
 import { findDiscordChannel } from "src/util";
 import { channelNames } from "../../config";
@@ -35,15 +35,25 @@ export class VideoCreatedHandler {
     let { data } = payload.event.event;
     const videoId = (data[2] as VideoId).toString();
     this.logger.debug(videoId);
-    const video = await this.atlasClient.getVideoById(videoId);
-    this.logger.debug(video.videoByUniqueInput?.title);
-    const bag = video.videoByUniqueInput?.media?.storageBag.id;
+
+    let videoQueryNodeResponse: GetVideoByIdQuery | null  =  null;
+    try {
+      videoQueryNodeResponse = await this.atlasClient.getVideoById(videoId);
+      if(!videoQueryNodeResponse) {
+        throw new Error();
+      }
+    } catch (error) {
+      this.logger.warn(`Unable to read video ${videoId} from QN`);
+      return;
+    }
+    this.logger.debug(videoQueryNodeResponse.videoByUniqueInput?.title);
+    const bag = videoQueryNodeResponse.videoByUniqueInput?.media?.storageBag.id;
     const cdnUrl = this.getDistributorUrl(bag || ' ');
     if(cdnUrl) {
       const channelToUse = findDiscordChannel(this.client, channelNames[VIDEOS_CHANNEL_KEY])[0];
       channelToUse.send({
         embeds: [
-          getVideoEmbed(video, cdnUrl),
+          getVideoEmbed(videoQueryNodeResponse, cdnUrl),
         ],
       });
     }

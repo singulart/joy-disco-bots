@@ -46,9 +46,9 @@ export class RetryablePioneerClient {
   }
 
   @Retryable(globalRetryConfig)
-  async memberByHandle(handle: string) {
-    this.logger.debug(`Fetching member[${handle}]...`);
-    const member = await this.pioneerApi.memberByHandle({handle: handle});
+  async membersByHandles(handles: string[]) {
+    this.logger.debug(`Fetching bulk of members...`);
+    const member = await this.pioneerApi.membersByHandles({handles: handles});
     if(!member.memberships || member.memberships.length === 0) {
       throw new Error();
     }
