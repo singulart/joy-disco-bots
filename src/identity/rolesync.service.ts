@@ -35,7 +35,7 @@ export class RoleSyncService {
     private readonly membershipsProvider: CacheableMembershipsProvider
   ) { }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async syncOnChainRoles() {
     this.logger.debug('Syncing on-chain roles');
     const activeCouncilMembers = await this.queryNodeClient.activeCouncilMembers();
