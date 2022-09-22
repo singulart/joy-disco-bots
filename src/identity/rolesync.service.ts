@@ -10,6 +10,7 @@ import { Client, GuildMember, Role } from 'discord.js';
 import { findServerRole } from "src/util";
 import { RetryablePioneerClient } from "src/gql/pioneer.client";
 import { MemberByHandleQuery } from "src/qntypes";
+import { CacheableMembershipsProvider } from "./cacheable-members.provider";
 
 
 const CM_ROLE = 'councilMemberRole';
@@ -31,9 +32,10 @@ export class RoleSyncService {
     private readonly client: Client,
     private readonly configService: ConfigService,
     private readonly queryNodeClient: RetryablePioneerClient,
+    private readonly membershipsProvider: CacheableMembershipsProvider
   ) { }
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_MINUTE)
   async syncOnChainRoles() {
     this.logger.debug('Syncing on-chain roles');
     const activeCouncilMembers = await this.queryNodeClient.activeCouncilMembers();
@@ -42,6 +44,7 @@ export class RoleSyncService {
     const pageSize = 50;
     while(page * pageSize < totalVerifiedMembersCount) {
       const memberships = await this.getPageOfMemberships(pageSize, page);
+      const memberHandles: string[] = memberships.map(m => m.membership);
       for(let i = 0; i < memberships.length; i++) {
         const ithMember = memberships[i];
         const mainServer = this.configService.get('DISCORD_SERVER');
@@ -61,17 +64,15 @@ export class RoleSyncService {
           });  
           continue;
         }
-        // Query Node call to get the on-chain roles
-        let queryNodeMember: MemberByHandleQuery | null  =  null;
-        try {
-          queryNodeMember = await this.queryNodeClient.memberByHandle(ithMember.membership);
-        } catch (error) {
-          this.logger.warn(`Member ${ithMember.membership} doesn't exist`);
+
+        // Bulk Query Node call to get the on-chain roles
+        let queryNodeMember = await this.findMembership(memberHandles, ithMember);
+        if(!queryNodeMember) {
           continue;
         }
   
         // Keep only active roles, filter the others out
-        const onChainRoles = queryNodeMember.memberships[0].roles.filter((role: any) => role.status.__typename === 'WorkerStatusActive');
+        const onChainRoles = queryNodeMember.roles.filter((role: any) => role.status.__typename === 'WorkerStatusActive');
 
         // first pass: assigning server roles based on joystream ones
         for(let r = 0; r < onChainRoles.length; r++) {
@@ -96,11 +97,22 @@ export class RoleSyncService {
 
         // revoke council member role if needed
         const cmRole = ithMember.daoRoles.find((role) => role.role === CM_ROLE);
-        if(cmRole && !queryNodeMember.memberships[0].isCouncilMember) {
+        if(cmRole && !queryNodeMember.isCouncilMember) {
           await this.revokeRole(cmRole, ithMember, onChainRoles);
         }
       }
       page = page + 1;
+    }
+  }
+
+  private async findMembership(memberHandles: string[], member: DaoMembership) {
+    let queryNodeMember: MemberByHandleQuery | null  =  null;
+    try {
+      queryNodeMember = await this.membershipsProvider.getMembers(memberHandles);
+      return queryNodeMember.memberships.find(mm => mm.handle === member.membership);
+    } catch (error) {
+      this.logger.warn(`Member ${member.membership} doesn't exist`);
+      return null;
     }
   }
 
