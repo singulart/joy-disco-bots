@@ -11,8 +11,7 @@ import { CacheType, CommandInteraction, ContextMenuInteraction } from 'discord.j
 import { PendingVerification } from 'src/db/pendingverification.entity';
 import { ClaimDto } from './claim.dto';
 import { nanoid } from 'nanoid';
-import { RetryablePioneerClient } from 'src/gql/pioneer.client';
-import { MemberByHandleQuery } from 'src/qntypes';
+import { MemberByHandleQuery, Sdk } from 'src/qntypes';
 
 @Command({
   name: 'claim',
@@ -25,7 +24,7 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
   constructor(
     @Inject('PENDING_VERIFICATION_REPOSITORY')
     private readonly pendingVerificationRepository: typeof PendingVerification,
-    private readonly queryNodeClient: RetryablePioneerClient,
+    @Inject("PioneerGqlSdk") private readonly pioneerApi: Sdk
   ) {}
 
   async handler(@Payload() dto: ClaimDto, context: TransformedCommandExecutionContext) {
@@ -34,7 +33,8 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
     // verify that the address really belongs to the claimed membership
     let queryNodeMember: MemberByHandleQuery | null  =  null;
     try {
-      queryNodeMember = await this.queryNodeClient.memberByHandle(dto.username);
+      // Note: retryable client isn't used here. Why? Discord command only has 2 seconds to respond to user. Retries take longer :(
+      queryNodeMember = await this.pioneerApi.memberByHandle({handle: dto.username});
     } catch (error) {
       this.logger.warn(`Username ${dto.username} not found`);
     }
