@@ -12,6 +12,7 @@ import { PendingVerification } from 'src/db/pendingverification.entity';
 import { ClaimDto } from './claim.dto';
 import { nanoid } from 'nanoid';
 import { RetryablePioneerClient } from 'src/gql/pioneer.client';
+import { MemberByHandleQuery } from 'src/qntypes';
 
 @Command({
   name: 'claim',
@@ -31,8 +32,14 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
     this.logger.log(`${this.buildHandle(context.interaction)} claiming on-chain identity '${dto.username}' (${dto.wallet})`);
 
     // verify that the address really belongs to the claimed membership
-    const queryNodeMember = await this.queryNodeClient.memberByHandle(dto.username);
-    if(queryNodeMember.memberships.length > 0 && 
+    let queryNodeMember: MemberByHandleQuery | null  =  null;
+    try {
+      queryNodeMember = await this.queryNodeClient.memberByHandle(dto.username);
+    } catch (error) {
+      this.logger.warn(`Username ${dto.username} not found`);
+    }
+    
+    if(queryNodeMember && queryNodeMember.memberships.length > 0 && 
       (queryNodeMember.memberships[0].controllerAccount === dto.wallet || 
         queryNodeMember.memberships[0].rootAccount === dto.wallet)) {
 
@@ -50,7 +57,7 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
         context.interaction.reply({
           content: `You already started to claim on-chain identity. Use \`/solve\` command to finish the process`,
           ephemeral: true
-        })  
+        });
         return
       } else {
         const challenge = nanoid();
@@ -66,13 +73,13 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
           context.interaction.reply({
             content: `Copy the following string and sign it using [Polkadot App](https://polkadot.js.org/apps/?rpc=wss://rpc.joystream.org:9944/#/signing):\n\`${challenge}\`\nThen, use \`/solve\` command to finish the process.`,
             ephemeral: true
-          })
+          });
           return
         } else {
           context.interaction.reply({
             content: `Well, this is embarassing, but I have to ask you to try again later.`,
             ephemeral: true
-          })
+          });
           return
         }
       }
@@ -80,7 +87,7 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
       context.interaction.reply({
         content: `You cannot claim this identity`,
         ephemeral: true
-      })
+      });
     }    
   }
   buildHandle(interaction: CommandInteraction<CacheType> | ContextMenuInteraction<CacheType>): string {
