@@ -27,6 +27,6 @@ import { RetryablePioneerClient } from './pioneer.client';
     },
     RetryablePioneerClient
   ],
-  exports: [RetryablePioneerClient]
+  exports: ['PioneerGqlSdk', RetryablePioneerClient]
 })
 export class PioneerGraphQLModule {}
