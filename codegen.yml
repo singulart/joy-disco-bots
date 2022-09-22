@@ -97,6 +97,13 @@ documents:
     }
 
   - > 
+    query membersByHandles($handles: [String!]) {
+      memberships(where: {handle_in: $handles}) {
+        ...MemberFields
+      }
+    }
+    
+  - > 
     query workersByAccount($account: String!) {
       workers(where: {rewardAccount_eq: $account}) {
         id
