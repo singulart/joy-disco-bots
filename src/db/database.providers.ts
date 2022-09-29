@@ -1,10 +1,10 @@
 import { Sequelize} from 'sequelize-typescript'
 import url from 'url';
-import { DaoMembership } from './daomembership.entity';
-import { DaoRole } from './daorole.entity';
+import { DaoMembership } from './dao-membership.entity';
+import { DaoRole } from './dao-role.entity';
 import { Logger } from '@nestjs/common';
 import { database } from '../../config';
-import { PendingVerification } from './pendingverification.entity';
+import { PendingVerification } from './pending-verification.entity';
 import { UnhealthyStorageProvider } from './unhealthy-storage.entity';
 
 const logger = new Logger('DB');

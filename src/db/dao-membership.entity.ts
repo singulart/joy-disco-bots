@@ -1,6 +1,6 @@
 import { HasMany, Model } from 'sequelize-typescript'
 import { Column, Table } from 'sequelize-typescript'
-import { DaoRole } from './daorole.entity'
+import { DaoRole } from './dao-role.entity'
 
 @Table({
   tableName: 'dao_membership',
