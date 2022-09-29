@@ -274,6 +274,7 @@ export const globalRetryConfig : RetryOptions = {
 }
 
 export const globalEventingConfig : EventEmitterModuleOptions = {
+  global: true,
   wildcard: true,
   maxListeners: 32
 }

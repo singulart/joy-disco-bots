@@ -8,7 +8,7 @@ import {
 } from '@discord-nestjs/core';
 import { Inject, Logger } from '@nestjs/common';
 import { CacheType, CommandInteraction, ContextMenuInteraction } from 'discord.js';
-import { PendingVerification } from 'src/db/pendingverification.entity';
+import { PendingVerification } from 'src/db/pending-verification.entity';
 import { ClaimDto } from './claim.dto';
 import { nanoid } from 'nanoid';
 import { MemberByHandleQuery, Sdk } from 'src/qntypes';

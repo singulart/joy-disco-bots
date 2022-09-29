@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
-import { DaoMembership } from "src/db/daomembership.entity";
-import { DaoRole } from "src/db/daorole.entity";
+import { DaoMembership } from "src/db/dao-membership.entity";
+import { DaoRole } from "src/db/dao-role.entity";
 import { Op } from "sequelize";
 import { wgToRoleMap } from "../../config";
 import { ConfigService } from "@nestjs/config";

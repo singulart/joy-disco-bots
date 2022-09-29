@@ -9,8 +9,8 @@ import {
 } from '@discord-nestjs/core';
 import { Inject, Logger } from '@nestjs/common';
 import { CacheType, Client, CommandInteraction, ContextMenuInteraction, Role } from 'discord.js';
-import { PendingVerification } from 'src/db/pendingverification.entity';
-import { DaoMembership } from 'src/db/daomembership.entity';
+import { PendingVerification } from 'src/db/pending-verification.entity';
+import { DaoMembership } from 'src/db/dao-membership.entity';
 import { SolveDto } from './solve.dto';
 import { signatureVerify } from '@polkadot/util-crypto';
 import { findServerRole } from 'src/util';

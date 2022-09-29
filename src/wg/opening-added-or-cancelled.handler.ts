@@ -3,7 +3,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
 import { EventWithBlock } from "src/types";
-import { BaseEventHandler } from "./base.event.handler";
+import { BaseEventHandler } from "./base-event.handler";
 import { getOpeningAddedEmbed, getOpeningCancelledEmbed } from "./embeds";
 
 @Injectable()

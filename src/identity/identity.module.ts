@@ -5,7 +5,7 @@ import { DiscordModule } from '@discord-nestjs/core';
 import { IdentityClaimCommand } from './claim.command';
 import { SolveChallengeCommand } from './solve.command';
 import { ConfigModule } from '@nestjs/config';
-import { PendingVerificationCleaner } from './pendingverificationcleaner';
+import { PendingVerificationCleaner } from './pending-verification-cleaner.service';
 import { RoleSyncService } from './rolesync.service';
 import { CouncilService } from './council.service';
 import { PioneerGraphQLModule } from 'src/gql/pioneer.module';

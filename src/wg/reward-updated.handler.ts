@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
 import { EventWithBlock } from "src/types";
-import { BaseEventHandler } from "./base.event.handler";
+import { BaseEventHandler } from "./base-event.handler";
 import { WorkerId } from "@joystream/types/augment/all/types";
 import { getWorkerRewardAmountUpdatedEmbed } from "./embeds";
 import { Balance } from "@joystream/types/common";

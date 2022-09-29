@@ -1,5 +1,5 @@
 import { BelongsTo, Column, ForeignKey, Model, Table } from 'sequelize-typescript'
-import { DaoMembership } from './daomembership.entity'
+import { DaoMembership } from './dao-membership.entity'
 
 @Table({
   tableName: 'dao_role',
