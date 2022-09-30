@@ -1,8 +1,7 @@
-import { Balance } from "@joystream/types/common";
-import { WorkerId } from "@joystream/types/working-group";
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
+import { StorageWorkingGroup } from "mappings/generated/types";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getStakeUpdatedEmbed } from "./embeds";
@@ -30,9 +29,10 @@ export class StakeHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const stakeWorkerId = data[0] as WorkerId;
+    const typedEvent = new StorageWorkingGroup.StakeDecreasedEvent(data);
+    const stakeWorkerId = typedEvent.params[0];
     const stakeWorker = await this.queryNodeClient.workerById(`${section}-${stakeWorkerId.toString()}`);
-    const stake = data[1] as Balance;
+    const stake = typedEvent.params[1];
 
     this.channels[section].forEach((ch: TextChannel) =>
       ch.send({

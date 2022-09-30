@@ -1,7 +1,7 @@
-import { WorkerId } from "@joystream/types/working-group";
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
+import { StorageWorkingGroup } from "mappings/generated/types";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getWorkerExitedEmbed } from "./embeds";
@@ -16,7 +16,8 @@ export class WorkerExitedHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const exitedId = data[0] as WorkerId;
+    const typedEvent = new StorageWorkingGroup.WorkerExitedEvent(data);
+    const exitedId = typedEvent.params[0];
     const exitedWorkerKey = `${section}-${exitedId.toString()}`;
     this.logger.debug(exitedWorkerKey);
 

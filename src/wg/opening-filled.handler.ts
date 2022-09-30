@@ -4,7 +4,8 @@ import { TextChannel } from "discord.js";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getOpeningFilledEmbed } from "./embeds";
-import { OpeningId, WorkerId } from "@joystream/types/augment/all/types";
+import { StorageWorkingGroup } from "mappings/generated/types";
+import { u64 } from "@polkadot/types";
 
 @Injectable()
 export class OpeningFilledHandler extends BaseEventHandler {
@@ -15,9 +16,10 @@ export class OpeningFilledHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const filledOpeningId = data[0] as OpeningId;
+    const typedEvent = new StorageWorkingGroup.OpeningFilledEvent(data);
+    const filledOpeningId = typedEvent.params[0];
     const filledOpeningObject = await this.queryNodeClient.openingById(`${section}-${filledOpeningId.toString()}`);
-    const hiredWorkers = Object.values<WorkerId>(JSON.parse(data[1].toString()));
+    const hiredWorkers = Object.values<u64>(JSON.parse(typedEvent.params[2].toString()));
 
     hiredWorkers.map(async (id, index, values) => {
       const hiredWorker = await this.queryNodeClient.workerById(`${section}-${id.toString()}`);

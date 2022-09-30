@@ -1,7 +1,7 @@
-import { WorkerId } from "@joystream/types/working-group";
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
+import { StorageWorkingGroup } from "mappings/generated/types";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getLeaderSetEmbed, getLeaderUnsetEmbed } from "./embeds";
@@ -15,7 +15,8 @@ export class LeadHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const leaderId = data[0] as WorkerId;
+    const typedEvent = new StorageWorkingGroup.LeaderSetEvent(data);
+    const leaderId = typedEvent.params[0];
     const leaderWorker = await this.queryNodeClient.workerById(`${section}-${leaderId.toString()}`);
     this.channels[section].forEach((ch: TextChannel) =>
       ch.send({

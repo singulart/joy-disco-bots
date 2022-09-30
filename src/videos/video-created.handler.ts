@@ -3,12 +3,12 @@ import { Injectable, Logger, Optional } from "@nestjs/common";
 import { Client } from "discord.js";
 import { EventWithBlock } from "src/types";
 import { OnEvent } from "@nestjs/event-emitter";
-import { VideoId } from "@joystream/types/content";
 import { RetryableAtlasClient } from "src/gql/atlas.client";
 import { GetDistributionBucketsWithOperatorsQuery, GetVideoByIdQuery } from "src/qntypes-atlas";
 import { getVideoEmbed } from "./video.embeds";
 import { findDiscordChannel } from "src/util";
 import { channelNames } from "../../config";
+import { Content } from "mappings/generated/types";
 
 const VIDEOS_CHANNEL_KEY = "videos";
 
@@ -33,7 +33,8 @@ export class VideoCreatedHandler {
   @OnEvent('*.VideoCreated')
   async handleVideoCreatedEvent(payload: EventWithBlock) {
     let { data } = payload.event.event;
-    const videoId = (data[2] as VideoId).toString();
+    const typedEvent = new Content.VideoCreatedEvent(data);
+    const videoId = typedEvent.params[2].toString();
     this.logger.debug(videoId);
 
     let videoQueryNodeResponse: GetVideoByIdQuery | null  =  null;

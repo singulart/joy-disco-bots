@@ -16,7 +16,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "hydra-cli": "./node_modules/.bin/hydra-cli",
+    "hydra-typegen": "./node_modules/.bin/hydra-typegen",
+    "codegen": "npm run hydra-cli -- codegen --schema ./schemas/",
+    "codegen:noinstall": "npm run codegen -- --no-install",
+    "typegen": "rm -rf ./mappings/generated && npm run hydra-typegen -- typegen manifest.yml --debug"
   },
   "dependencies": {
     "@discord-nestjs/common": "^3.4.2",
@@ -25,7 +30,10 @@
     "@graphql-codegen/cli": "^2.13.1",
     "@graphql-codegen/typescript-graphql-request": "^4.5.5",
     "@graphql-codegen/typescript-operations": "^2.5.3",
-    "@joystream/types": "0.19.3",
+    "@joystream/hydra-cli": "^4.0.0-alpha.6",
+    "@joystream/hydra-processor": "^4.0.0-alpha.6",
+    "@joystream/hydra-typegen": "^4.0.0-alpha.6",
+    "@joystream/types": "0.20.2",
     "@nestjs/common": "^8.4.7",
     "@nestjs/config": "2.1.0",
     "@nestjs/core": "^8.4.7",
@@ -33,6 +41,7 @@
     "@nestjs/platform-express": "^8.4.7",
     "@nestjs/schedule": "^2.1.0",
     "axios": "^0.27.2",
+    "bn.js": "^5.2.1",
     "cache-manager": "^4.1.0",
     "crypto": "^1.0.1",
     "discord.js": "^13.11.0",

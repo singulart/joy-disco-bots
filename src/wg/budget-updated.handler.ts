@@ -1,11 +1,10 @@
-import { Balance } from "@joystream/types/common";
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getBudgetSetEmbed } from "./embeds";
-import { WorkingGroup } from "@joystream/types/augment/all/types";
+import { JoystreamUtility } from "mappings/generated/types";
 
 @Injectable()
 export class BudgetUpdatedHandler extends BaseEventHandler {
@@ -17,8 +16,9 @@ export class BudgetUpdatedHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const budgetChange = (data[1] as Balance).toNumber();
-    const wg: WorkingGroup = data[0] as WorkingGroup;
+    const typedEvent = new JoystreamUtility.UpdatedWorkingGroupBudgetEvent(data);
+    const budgetChange = typedEvent.params[1].toNumber();
+    const wg = typedEvent.params[0];
     console.log(wg.toHuman());
     let dynamicChannels: TextChannel[] = [];
 

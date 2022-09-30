@@ -1,7 +1,7 @@
-import { OpeningId } from "@joystream/types/working-group";
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
+import { StorageWorkingGroup } from "mappings/generated/types";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getOpeningAddedEmbed, getOpeningCancelledEmbed } from "./embeds";
@@ -25,7 +25,8 @@ export class OpeningAddedOrCancelledHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const openingId = data[0] as OpeningId;
+    const typedEvent = new StorageWorkingGroup.OpeningAddedEvent(data);
+    const openingId = typedEvent.params[0];
     const openingIdKey = `${section}-${openingId.toString()}`;
     this.logger.debug(openingIdKey);
 

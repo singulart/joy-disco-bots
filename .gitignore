@@ -1,5 +1,6 @@
 src/qntype*
 .DS_Store
+generated
 node_modules
 lib
 dist

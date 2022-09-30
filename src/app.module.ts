@@ -11,6 +11,7 @@ import { BlockchainModule } from './blockchain/blockchain.module';
 import { VideoModule } from './videos/videos.module';
 import { AtlasGraphQLModule } from './gql/atlas.module';
 import { StorageProvidersModule } from './storage-providers/sp.module';
+import { GovernanceModule } from './governance/governance.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { StorageProvidersModule } from './storage-providers/sp.module';
       inject: [ConfigService],
     }),
     BlockchainModule,
+    GovernanceModule,
     WgModule,
     IdentityModule,
     ForumModule,

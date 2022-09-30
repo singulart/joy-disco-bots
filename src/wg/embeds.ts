@@ -2,9 +2,8 @@ import { joystreamBlue } from '../../config'
 import { formatBalance } from '@polkadot/util';
 import { EventRecord } from '@polkadot/types/interfaces';
 import Discord from 'discord.js';
-import { OpeningId, ApplicationId } from "@joystream/types/working-group";
-import { Balance } from '@joystream/types/common';
 import { OpeningByIdQuery, WorkerByIdQuery, ApplicationByIdQuery, MemberByIdQuery, WorkersByAccountQuery } from '../qntypes';
+import { u64, u128 } from "@polkadot/types";
 
 
 export const getBudgetSetEmbed = (balanceSet: number, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
@@ -14,7 +13,7 @@ export const getBudgetSetEmbed = (balanceSet: number, blockNumber: number, event
     , blockNumber, event);
 }
 
-export const getOpeningAddedEmbed = (id: OpeningId, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export const getOpeningAddedEmbed = (id: u64, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
   const openingData = opening.workingGroupOpeningByUniqueInput;
   const description = openingData?.metadata.description ?
     openingData.metadata.description : openingData?.metadata.shortDescription;
@@ -28,7 +27,7 @@ export const getOpeningAddedEmbed = (id: OpeningId, opening: OpeningByIdQuery, b
     ), blockNumber, event);
 }
 
-export const getOpeningCancelledEmbed = (id: OpeningId, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export const getOpeningCancelledEmbed = (id: u64, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`⛩ Opening ${safeOpeningTitle(opening, id.toString())} was cancelled⛩`)
     , blockNumber, event);
@@ -43,7 +42,7 @@ export const getOpeningFilledEmbed = (opening: OpeningByIdQuery, member: WorkerB
     , blockNumber, event);
 }
 
-export const getAppliedOnOpeningEmbed = (applicationId: ApplicationId,
+export const getAppliedOnOpeningEmbed = (applicationId: u64,
   opening: OpeningByIdQuery, applicant: MemberByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
@@ -56,7 +55,7 @@ export const getAppliedOnOpeningEmbed = (applicationId: ApplicationId,
 }
 
 
-export const getWorkerRewardAmountUpdatedEmbed = (reward: Balance, member: WorkerByIdQuery,
+export const getWorkerRewardAmountUpdatedEmbed = (reward: u128, member: WorkerByIdQuery,
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
@@ -66,7 +65,7 @@ export const getWorkerRewardAmountUpdatedEmbed = (reward: Balance, member: Worke
     ), blockNumber, event);
 }
 
-export const getDiscretionarySpendingEmbed = (spending: Balance, recipient: WorkersByAccountQuery,
+export const getDiscretionarySpendingEmbed = (spending: u128, recipient: WorkersByAccountQuery,
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
@@ -76,7 +75,7 @@ export const getDiscretionarySpendingEmbed = (spending: Balance, recipient: Work
     ), blockNumber, event);
 }
 
-export const getDiscretionarySpendingToNonWorkerAddressEmbed = (spending: Balance, recipientAddress: string,
+export const getDiscretionarySpendingToNonWorkerAddressEmbed = (spending: u128, recipientAddress: string,
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
@@ -88,7 +87,7 @@ export const getDiscretionarySpendingToNonWorkerAddressEmbed = (spending: Balanc
 }
 
 
-export const getWorkerRewardedEmbed = (reward: Balance, member: WorkerByIdQuery, missed: boolean,
+export const getWorkerRewardedEmbed = (reward: u128, member: WorkerByIdQuery, missed: boolean,
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
@@ -126,7 +125,7 @@ export const getWorkerExitedOrTerminatedEmbed = (action: string, member: WorkerB
     , blockNumber, event);
 }
 
-export const getApplicationWithdrawnEmbed = (applicationId: ApplicationId, application: ApplicationByIdQuery,
+export const getApplicationWithdrawnEmbed = (applicationId: u64, application: ApplicationByIdQuery,
   blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
@@ -137,7 +136,7 @@ export const getApplicationWithdrawnEmbed = (applicationId: ApplicationId, appli
     ), blockNumber, event);
 }
 
-export const getStakeUpdatedEmbed = (stake: Balance | null, member: WorkerByIdQuery, action: string, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export const getStakeUpdatedEmbed = (stake: u128, member: WorkerByIdQuery, action: string, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
 
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 ${member.workerByUniqueInput?.membership.handle}'s stake has been ${action}`)

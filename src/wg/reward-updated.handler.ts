@@ -3,10 +3,11 @@ import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
-import { WorkerId } from "@joystream/types/augment/all/types";
 import { getWorkerRewardAmountUpdatedEmbed } from "./embeds";
-import { Balance } from "@joystream/types/common";
-import type { Option } from '@polkadot/types';
+import { StorageWorkingGroup } from "mappings/generated/types";
+import { u128 } from "@polkadot/types";
+
+// import BN from "bn.js";
 
 @Injectable()
 export class RewardUpdatedHandler extends BaseEventHandler {
@@ -17,9 +18,10 @@ export class RewardUpdatedHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const workerId = data[0] as WorkerId;
+    const typedEvent = new StorageWorkingGroup.WorkerRewardAmountUpdatedEvent(data);
+    const workerId = typedEvent.params[0];
     const workerAffected = await this.queryNodeClient.workerById(`${section}-${workerId.toString()}`);
-    const reward = (data[1] as Option<Balance>).unwrapOr(0 as unknown as Balance);
+    const reward = typedEvent.params[1].unwrapOr(0 as u128);
     this.channels[section].forEach((ch: TextChannel) =>
       ch.send({
         embeds: [

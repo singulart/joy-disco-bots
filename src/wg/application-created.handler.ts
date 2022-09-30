@@ -1,7 +1,7 @@
-import { ApplicationId, ApplyOnOpeningParameters } from "@joystream/types/working-group";
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
+import { StorageWorkingGroup } from "mappings/generated/types";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getAppliedOnOpeningEmbed } from "./embeds";
@@ -15,9 +15,10 @@ export class ApplicationCreatedHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const applicationOpeningId = (data[0] as ApplyOnOpeningParameters).opening_id;
-    const applicantId = (data[0] as ApplyOnOpeningParameters).member_id;
-    const applicationId = data[1] as ApplicationId;
+    const applied = new StorageWorkingGroup.AppliedOnOpeningEvent(data);
+    const applicationOpeningId = applied.params[0].openingId;
+    const applicantId = applied.params[0].memberId;
+    const applicationId = applied.params[1];
     const openingObject = await this.queryNodeClient.openingById(`${section}-${applicationOpeningId.toString()}`);
     const applicant = await this.queryNodeClient.memberById(applicantId.toString());
     this.channels[section].forEach((ch: TextChannel) =>

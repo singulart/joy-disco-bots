@@ -1,7 +1,7 @@
-import { Balance } from "@joystream/types/common";
 import { Injectable} from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
+import { StorageWorkingGroup } from "mappings/generated/types";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getDiscretionarySpendingEmbed, getDiscretionarySpendingToNonWorkerAddressEmbed } from "./embeds";
@@ -15,8 +15,9 @@ export class BudgetSpendingHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const payee = data[0].toString();
-    const spendingAmount = data[1] as Balance
+    const typedEvent = new StorageWorkingGroup.BudgetSpendingEvent(data);
+    const payee = typedEvent.params[0].toString();
+    const spendingAmount = typedEvent.params[1];
     try {
       const payeeWorker = await this.queryNodeClient.workersByAccount(payee);
       this.channels[section].forEach((ch: TextChannel) =>

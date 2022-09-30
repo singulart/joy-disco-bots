@@ -3,9 +3,8 @@ import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
-import { RewardPaymentType, WorkerId } from "@joystream/types/augment/all/types";
 import { getWorkerRewardedEmbed } from "./embeds";
-import { Balance } from "@joystream/types/common";
+import { StorageWorkingGroup } from "mappings/generated/types";
 
 @Injectable()
 export class RewardPaidHandler extends BaseEventHandler {
@@ -16,10 +15,11 @@ export class RewardPaidHandler extends BaseEventHandler {
     if (!this.checkChannel(section)) {
       return;
     }
-    const paidWorkerId = data[0] as WorkerId;
+    const typedEvent = new StorageWorkingGroup.RewardPaidEvent(data);
+    const paidWorkerId = typedEvent.params[0];
     const paidWorkerAffected = await this.queryNodeClient.workerById(`${section}-${paidWorkerId.toString()}`);
-    const paidReward = data[2] as Balance;
-    const isRewardMissed = (data[3] as RewardPaymentType).isMissedReward;
+    const paidReward = typedEvent.params[2];
+    const isRewardMissed = typedEvent.params[3].isMissedReward;
     this.channels[section].forEach((ch: TextChannel) =>
       ch.send({
         embeds: [

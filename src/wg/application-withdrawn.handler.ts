@@ -1,7 +1,7 @@
-import { ApplicationId } from "@joystream/types/working-group";
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
+import { StorageWorkingGroup } from "mappings/generated/types";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getApplicationWithdrawnEmbed } from "./embeds";
@@ -16,7 +16,8 @@ export class ApplicationWithdrawnHandler extends BaseEventHandler{
     if(!this.checkChannel(section)) {
       return;
     }
-    const withdrawnId = data[0] as ApplicationId;
+    const typedEvent = new StorageWorkingGroup.ApplicationWithdrawnEvent(data);
+    const withdrawnId = typedEvent.params[0];
     const withdrawnApplicationKey = `${section}-${withdrawnId.toString()}`;
     this.logger.debug(withdrawnApplicationKey);
     const withdrawnApplication = await this.queryNodeClient.applicationById(withdrawnApplicationKey);
