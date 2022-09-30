@@ -2,8 +2,8 @@ import { joystreamBlue } from '../../config'
 import { formatBalance } from '@polkadot/util';
 import { EventRecord } from '@polkadot/types/interfaces';
 import Discord from 'discord.js';
-import { OpeningId, ApplicationId } from "@joystream/types/working-group";
-import { Balance } from '@joystream/types/common';
+import { OpeningId, ApplicationId } from "@joystream/types/primitives";
+import { Balance } from '@polkadot/types/interfaces';
 import { OpeningByIdQuery, WorkerByIdQuery, ApplicationByIdQuery, MemberByIdQuery, WorkersByAccountQuery } from '../qntypes';
 
 

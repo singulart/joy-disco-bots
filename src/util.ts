@@ -2,14 +2,13 @@ import { AnyChannel, Client, Role, TextChannel } from "discord.js";
 import { channelNames } from "../config";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Hash, EventRecord } from "@polkadot/types/interfaces";
-import { BlockNumber } from "@joystream/types/common";
+import { BlockNumber } from '@polkadot/types/interfaces';
 import { Vec } from "@polkadot/types";
-import { types } from "@joystream/types";
 import { DiscordChannels } from "./types";
 
 export const connectApi = async (url: string): Promise<ApiPromise> => {
   const provider = new WsProvider(url);
-  return await ApiPromise.create({ provider, types });
+  return await ApiPromise.create({ provider });
 }
 
 export const getBlockHash = (

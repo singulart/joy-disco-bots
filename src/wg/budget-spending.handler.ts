@@ -1,4 +1,4 @@
-import { Balance } from "@joystream/types/common";
+import { Balance } from '@polkadot/types/interfaces';
 import { Injectable} from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";

@@ -3,9 +3,10 @@ import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
-import { RewardPaymentType, WorkerId } from "@joystream/types/augment/all/types";
+import { WorkerId } from "@joystream/types/primitives";
 import { getWorkerRewardedEmbed } from "./embeds";
-import { Balance } from "@joystream/types/common";
+import { Balance } from '@polkadot/types/interfaces';
+import { PalletWorkingGroupRewardPaymentType } from '@polkadot/types/lookup';
 
 @Injectable()
 export class RewardPaidHandler extends BaseEventHandler {
@@ -19,7 +20,7 @@ export class RewardPaidHandler extends BaseEventHandler {
     const paidWorkerId = data[0] as WorkerId;
     const paidWorkerAffected = await this.queryNodeClient.workerById(`${section}-${paidWorkerId.toString()}`);
     const paidReward = data[2] as Balance;
-    const isRewardMissed = (data[3] as RewardPaymentType).isMissedReward;
+    const isRewardMissed = (data[3] as PalletWorkingGroupRewardPaymentType).isMissedReward;
     this.channels[section].forEach((ch: TextChannel) =>
       ch.send({
         embeds: [
