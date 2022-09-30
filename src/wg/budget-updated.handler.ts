@@ -1,11 +1,11 @@
-import { Balance } from "@joystream/types/common";
+import { Balance } from '@polkadot/types/interfaces';
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
 import { EventWithBlock } from "src/types";
 import { BaseEventHandler } from "./base-event.handler";
 import { getBudgetSetEmbed } from "./embeds";
-import { WorkingGroup } from "@joystream/types/augment/all/types";
+import { PalletCommonWorkingGroup } from "@polkadot/types/lookup";
 
 @Injectable()
 export class BudgetUpdatedHandler extends BaseEventHandler {
@@ -18,7 +18,7 @@ export class BudgetUpdatedHandler extends BaseEventHandler {
       return;
     }
     const budgetChange = (data[1] as Balance).toNumber();
-    const wg: WorkingGroup = data[0] as WorkingGroup;
+    const wg: PalletCommonWorkingGroup = data[0] as PalletCommonWorkingGroup;
     console.log(wg.toHuman());
     let dynamicChannels: TextChannel[] = [];
 

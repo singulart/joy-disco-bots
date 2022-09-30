@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
-import { PostId } from "@joystream/types/common";
+import { u64 } from "@polkadot/types-codec";
 import { getNewPostEmbed } from "./forum.embeds";
 import { PostByIdQuery } from "src/qntypes";
 import { DiscordChannels, EventWithBlock } from "src/types";
@@ -14,7 +14,7 @@ export class PostCreatedHandler extends BaseEventHandler {
   @OnEvent('forum.PostAdded')
   async handlePostCreatedEvent(payload: EventWithBlock) {
     let { data } = payload.event.event;
-    const postId = data[0] as PostId;
+    const postId = data[0] as u64;
     const post = await this.queryNodeClient.postById(postId.toString());
     const serverChannels = this.findChannelsByPost(post, this.channels);
     serverChannels?.forEach((ch: TextChannel) => {

@@ -1,4 +1,4 @@
-import { WorkerId } from "@joystream/types/working-group";
+import { WorkerId } from "@joystream/types/primitives";
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";

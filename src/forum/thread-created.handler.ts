@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { TextChannel } from "discord.js";
-import { ThreadId } from "@joystream/types/common";
+import { u64 } from "@polkadot/types-codec";
 import { getNewThreadEmbed } from "./forum.embeds";
 import { ForumThreadByIdQuery } from "src/qntypes";
 import { DiscordChannels, EventWithBlock } from "src/types";
@@ -14,7 +14,7 @@ export class ThreadCreatedHandler extends BaseEventHandler {
   @OnEvent('forum.ThreadCreated')
   async handleThreadCreatedEvent(payload: EventWithBlock) {
     let { data } = payload.event.event;
-    const threadId = data[1] as ThreadId;
+    const threadId = data[1] as u64;
     const thread = await this.queryNodeClient.forumThreadById(threadId.toString());
     const serverChannels = this.findChannelsByThread(thread, this.channels);
     serverChannels?.forEach((ch: TextChannel) => {
