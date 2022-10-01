@@ -1,10 +1,10 @@
-import { WorkerId } from "@joystream/types/primitives";
-import { Injectable, Logger } from "@nestjs/common";
-import { OnEvent } from "@nestjs/event-emitter";
-import { TextChannel } from "discord.js";
-import { EventWithBlock } from "src/types";
-import { BaseEventHandler } from "./base-event.handler";
-import { getWorkerExitedEmbed } from "./embeds";
+import { WorkerId } from '@joystream/types/primitives';
+import { Injectable, Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { TextChannel } from 'discord.js';
+import { EventWithBlock } from 'src/types';
+import { BaseEventHandler } from './base-event.handler';
+import { getWorkerExitedEmbed } from './embeds';
 
 @Injectable()
 export class WorkerExitedHandler extends BaseEventHandler {

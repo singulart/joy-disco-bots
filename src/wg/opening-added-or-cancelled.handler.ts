@@ -1,10 +1,10 @@
-import { OpeningId } from "@joystream/types/primitives";
-import { Injectable, Logger } from "@nestjs/common";
-import { OnEvent } from "@nestjs/event-emitter";
-import { TextChannel } from "discord.js";
-import { EventWithBlock } from "src/types";
-import { BaseEventHandler } from "./base-event.handler";
-import { getOpeningAddedEmbed, getOpeningCancelledEmbed } from "./embeds";
+import { OpeningId } from '@joystream/types/primitives';
+import { Injectable, Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { TextChannel } from 'discord.js';
+import { EventWithBlock } from 'src/types';
+import { BaseEventHandler } from './base-event.handler';
+import { getOpeningAddedEmbed, getOpeningCancelledEmbed } from './embeds';
 
 @Injectable()
 export class OpeningAddedOrCancelledHandler extends BaseEventHandler {
@@ -33,7 +33,7 @@ export class OpeningAddedOrCancelledHandler extends BaseEventHandler {
     if (!qnOpeningObject || !qnOpeningObject.workingGroupOpeningByUniqueInput) {
       this.logger.log('Opening not found in QN');
     } else {
-      if (method === "OpeningAdded") {
+      if (method === 'OpeningAdded') {
         this.channels[section].forEach((ch: TextChannel) =>
           ch.send({
             embeds: [

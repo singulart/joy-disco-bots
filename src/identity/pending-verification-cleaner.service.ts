@@ -1,8 +1,8 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
-import { Cron, CronExpression } from "@nestjs/schedule";
-import { PendingVerification } from "src/db/pending-verification.entity";
-import moment from "moment";
-import { Op } from "sequelize";
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { PendingVerification } from 'src/db/pending-verification.entity';
+import moment from 'moment';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class PendingVerificationCleaner {

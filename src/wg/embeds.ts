@@ -2,7 +2,7 @@ import { joystreamBlue } from '../../config'
 import { formatBalance } from '@polkadot/util';
 import { EventRecord } from '@polkadot/types/interfaces';
 import Discord from 'discord.js';
-import { OpeningId, ApplicationId } from "@joystream/types/primitives";
+import { OpeningId, ApplicationId } from '@joystream/types/primitives';
 import { Balance } from '@polkadot/types/interfaces';
 import { OpeningByIdQuery, WorkerByIdQuery, ApplicationByIdQuery, MemberByIdQuery, WorkersByAccountQuery } from '../qntypes';
 
@@ -148,7 +148,7 @@ export const getStakeUpdatedEmbed = (stake: Balance | null, member: WorkerByIdQu
 
 const addCommonProperties = (embed: Discord.MessageEmbed, blockNumber: number, event: EventRecord) => {
   return embed.addFields(
-    { name: 'Block', value: blockNumber + "", inline: true },
+    { name: 'Block', value: blockNumber + '', inline: true },
     { name: 'Tx', value: event.hash.toString(), inline: true },
   )
     .setColor(joystreamBlue)

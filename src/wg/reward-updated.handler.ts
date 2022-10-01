@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { OnEvent } from "@nestjs/event-emitter";
-import { TextChannel } from "discord.js";
-import { EventWithBlock } from "src/types";
-import { BaseEventHandler } from "./base-event.handler";
-import { WorkerId } from "@joystream/types/primitives";
-import { getWorkerRewardAmountUpdatedEmbed } from "./embeds";
+import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { TextChannel } from 'discord.js';
+import { EventWithBlock } from 'src/types';
+import { BaseEventHandler } from './base-event.handler';
+import { WorkerId } from '@joystream/types/primitives';
+import { getWorkerRewardAmountUpdatedEmbed } from './embeds';
 import { Balance } from '@polkadot/types/interfaces';
 
 import type { Option } from '@polkadot/types';

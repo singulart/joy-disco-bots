@@ -3,11 +3,11 @@ import {
   wgLeadToRoleMap, 
   wgToRoleMap, 
   councilMemberRole 
-} from "../../config";
-import { findServerRole } from "../util";
-import { banner } from "../banner";
-import { Injectable, Logger } from "@nestjs/common";
-import { InjectDiscordClient, Once } from "@discord-nestjs/core";
+} from '../../config';
+import { findServerRole } from '../util';
+import { banner } from '../banner';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectDiscordClient, Once } from '@discord-nestjs/core';
 import { Client } from 'discord.js';
 import { ConfigService } from '@nestjs/config';
 

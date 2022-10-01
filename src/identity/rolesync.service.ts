@@ -1,16 +1,16 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
-import { Cron, CronExpression } from "@nestjs/schedule";
-import { DaoMembership } from "src/db/dao-membership.entity";
-import { DaoRole } from "src/db/dao-role.entity";
-import { Op } from "sequelize";
-import { wgToRoleMap } from "../../config";
-import { ConfigService } from "@nestjs/config";
-import { InjectDiscordClient } from "@discord-nestjs/core";
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { DaoMembership } from 'src/db/dao-membership.entity';
+import { DaoRole } from 'src/db/dao-role.entity';
+import { Op } from 'sequelize';
+import { wgToRoleMap } from '../../config';
+import { ConfigService } from '@nestjs/config';
+import { InjectDiscordClient } from '@discord-nestjs/core';
 import { Client, GuildMember, Role } from 'discord.js';
-import { findServerRole } from "src/util";
-import { RetryablePioneerClient } from "src/gql/pioneer.client";
-import { MemberByHandleQuery } from "src/qntypes";
-import { CacheableMembershipsProvider } from "./cacheable-members.provider";
+import { findServerRole } from 'src/util';
+import { RetryablePioneerClient } from 'src/gql/pioneer.client';
+import { MemberByHandleQuery } from 'src/qntypes';
+import { CacheableMembershipsProvider } from './cacheable-members.provider';
 
 
 const CM_ROLE = 'councilMemberRole';
@@ -49,7 +49,7 @@ export class RoleSyncService {
         const ithMember = memberships[i];
         const mainServer = this.configService.get('DISCORD_SERVER');
         const serverUser = await this.findUser(mainServer, ithMember);
-        // next "if" block checks whether a user exists in the server and cleans the role data if they left (or changed the nickname)
+        // next 'if' block checks whether a user exists in the server and cleans the role data if they left (or changed the nickname)
         if(!serverUser) {
           this.logger.warn(`User ${ithMember.discordHandle} not found on this server. Cleaning the data`);
           this.daoRoleRepository.destroy({

@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import Discord from 'discord.js';
 import { EventRecord } from '@polkadot/types/interfaces'
 
 export interface ChannelNames {

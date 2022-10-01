@@ -24,7 +24,7 @@ export class IdentityClaimCommand implements DiscordTransformedCommand<ClaimDto>
   constructor(
     @Inject('PENDING_VERIFICATION_REPOSITORY')
     private readonly pendingVerificationRepository: typeof PendingVerification,
-    @Inject("PioneerGqlSdk") private readonly pioneerApi: Sdk
+    @Inject('PioneerGqlSdk') private readonly pioneerApi: Sdk
   ) {}
 
   async handler(@Payload() dto: ClaimDto, context: TransformedCommandExecutionContext) {
