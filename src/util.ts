@@ -1,20 +1,17 @@
-import { AnyChannel, Client, Role, TextChannel } from "discord.js";
-import { channelNames } from "../config";
-import { ApiPromise, WsProvider } from "@polkadot/api";
-import { Hash, EventRecord } from "@polkadot/types/interfaces";
+import { AnyChannel, Client, Role, TextChannel } from 'discord.js';
+import { channelNames } from '../config';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { Hash, EventRecord } from '@polkadot/types/interfaces';
 import { BlockNumber } from '@polkadot/types/interfaces';
-import { Vec } from "@polkadot/types";
-import { DiscordChannels } from "./types";
+import { Vec } from '@polkadot/types';
+import { DiscordChannels } from './types';
 
-export const connectApi = async (url: string): Promise<ApiPromise> => {
+export async function connectApi(url: string): Promise<ApiPromise> {
   const provider = new WsProvider(url);
   return await ApiPromise.create({ provider });
 }
 
-export const getBlockHash = (
-  api: ApiPromise,
-  block: BlockNumber | number
-): Promise<Hash> => {
+export function getBlockHash(api: ApiPromise,  block: BlockNumber | number): Promise<Hash> {
   try {
     return api.rpc.chain.getBlockHash(block);
   } catch (e) {
@@ -22,17 +19,15 @@ export const getBlockHash = (
   }
 };
 
-export const getBestHash = (api: ApiPromise) =>
-  api.rpc.chain.getFinalizedHead();
+export function getBestHash(api: ApiPromise) {
+  return api.rpc.chain.getFinalizedHead();
+}
 
-export const getEvents = (
-    api: ApiPromise,
-    hash: Hash
-  ): Promise<Vec<EventRecord>> => api.query.system.events.at(hash);
+export function getEvents(api: ApiPromise, hash: Hash): Promise<Vec<EventRecord>> {
+  return api.query.system.events.at(hash);
+} 
 
-export const getDiscordChannels = async (
-  client: Client
-): Promise<DiscordChannels> => {
+export async function getDiscordChannels (client: Client): Promise<DiscordChannels> {
   let discordChannels: DiscordChannels = {};
   Object.keys(channelNames).map(async (c) => {
     const channel = findDiscordChannel(client, channelNames[c]);
@@ -44,25 +39,23 @@ export const getDiscordChannels = async (
   return discordChannels;
 };
 
-export const findDiscordChannel = (
-  client: Client,
-  name: string
-): TextChannel[] =>
-  client.channels.cache.filter(
+export function findDiscordChannel(client: Client,  name: string): TextChannel[] {
+  return client.channels.cache.filter(
     (channel: any) => channel.name === name
   ).map((value: AnyChannel) => value as TextChannel);
+}
 
-export const findServerRole = async (
+export async function findServerRole(
   client: Client,
   serverName: string,
   roleName: string
-): Promise<Role | undefined> => {
+): Promise<Role | undefined> {
   
   const server = await client.guilds.fetch(serverName);
   const role = server.roles.cache.find(role => role.name === roleName);
   return role;
 }
   
-export const delay = (milliseconds: number) => {
+export function delay(milliseconds: number) {
   return new Promise( resolve => setTimeout(resolve, milliseconds) );
 }

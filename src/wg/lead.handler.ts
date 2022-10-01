@@ -1,10 +1,10 @@
-import { WorkerId } from "@joystream/types/primitives";
-import { Injectable } from "@nestjs/common";
-import { OnEvent } from "@nestjs/event-emitter";
-import { TextChannel } from "discord.js";
-import { EventWithBlock } from "src/types";
-import { BaseEventHandler } from "./base-event.handler";
-import { getLeaderSetEmbed, getLeaderUnsetEmbed } from "./embeds";
+import { WorkerId } from '@joystream/types/primitives';
+import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { TextChannel } from 'discord.js';
+import { EventWithBlock } from 'src/types';
+import { BaseEventHandler } from './base-event.handler';
+import { getLeaderSetEmbed, getLeaderUnsetEmbed } from './embeds';
 
 @Injectable()
 export class LeadHandler extends BaseEventHandler {

@@ -1,10 +1,10 @@
-import { ApplicationId } from "@joystream/types/primitives";
-import { Injectable } from "@nestjs/common";
-import { OnEvent } from "@nestjs/event-emitter";
-import { TextChannel } from "discord.js";
-import { EventWithBlock } from "src/types";
-import { BaseEventHandler } from "./base-event.handler";
-import { getAppliedOnOpeningEmbed } from "./embeds";
+import { ApplicationId } from '@joystream/types/primitives';
+import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { TextChannel } from 'discord.js';
+import { EventWithBlock } from 'src/types';
+import { BaseEventHandler } from './base-event.handler';
+import { getAppliedOnOpeningEmbed } from './embeds';
 import { PalletWorkingGroupApplyOnOpeningParams } from '@polkadot/types/lookup'
 
 @Injectable()

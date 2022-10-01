@@ -1,7 +1,7 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from "@nestjs/common";
-import { RetryablePioneerClient } from "src/gql/pioneer.client";
+import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { RetryablePioneerClient } from 'src/gql/pioneer.client';
 import { Cache } from 'cache-manager';
-import { MembersByHandlesQuery } from "src/qntypes";
+import { MembersByHandlesQuery } from 'src/qntypes';
 import {createHash as hash} from 'crypto';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class CacheableMembershipsProvider {
     if (cached) { // hit 
       return cached;
     } else { // miss
-      this.logger.debug("Cache miss");
+      this.logger.debug('Cache miss');
       const qnResult = await this.pioneerClient.membersByHandles(handles);
       this.cacheManager.set(cacheKey, qnResult);
       return qnResult;

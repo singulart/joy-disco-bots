@@ -1,19 +1,19 @@
-import { InjectDiscordClient } from "@discord-nestjs/core";
-import { Inject, Injectable, Logger } from "@nestjs/common";
-import { Client } from "discord.js";
-import { Cron, CronExpression } from "@nestjs/schedule";
-import { StorageNodeEndpointProvider } from "./endpoint.provider";
+import { InjectDiscordClient } from '@discord-nestjs/core';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Client } from 'discord.js';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { StorageNodeEndpointProvider } from './endpoint.provider';
 import { axiosConfig, channelNames, wgToRoleMap } from '../../config';
-import { UnhealthyStorageProvider } from "src/db/unhealthy-storage.entity";
-import { findDiscordChannel, findServerRole } from "src/util";
-import { getFaultyNodesEmbed } from "./sp.embeds";
-import axios from "axios";
-import { ConfigService } from "@nestjs/config";
-import { Op } from "sequelize";
-import { RetryablePioneerClient } from "src/gql/pioneer.client";
-import { GetStorageBagsByNodeEndpointQuery } from "src/qntypes";
+import { UnhealthyStorageProvider } from 'src/db/unhealthy-storage.entity';
+import { findDiscordChannel, findServerRole } from 'src/util';
+import { getFaultyNodesEmbed } from './sp.embeds';
+import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
+import { Op } from 'sequelize';
+import { RetryablePioneerClient } from 'src/gql/pioneer.client';
+import { GetStorageBagsByNodeEndpointQuery } from 'src/qntypes';
 
-const SP_CHANNEL_KEY = "storageWorkingGroup";
+const SP_CHANNEL_KEY = 'storageWorkingGroup';
 
 @Injectable()
 export class StorageProviderHealthChecker {

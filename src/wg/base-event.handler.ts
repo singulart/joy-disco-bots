@@ -1,9 +1,9 @@
-import { InjectDiscordClient, Once } from "@discord-nestjs/core";
-import { Injectable, Optional } from "@nestjs/common";
-import { Client } from "discord.js";
-import { DiscordChannels } from "src/types";
-import { getDiscordChannels } from "src/util";
-import { RetryablePioneerClient } from "src/gql/pioneer.client";
+import { InjectDiscordClient, Once } from '@discord-nestjs/core';
+import { Injectable, Optional } from '@nestjs/common';
+import { Client } from 'discord.js';
+import { DiscordChannels } from 'src/types';
+import { getDiscordChannels } from 'src/util';
+import { RetryablePioneerClient } from 'src/gql/pioneer.client';
 
 @Injectable()
 export abstract class BaseEventHandler {
@@ -22,7 +22,7 @@ export abstract class BaseEventHandler {
   }
 
   protected checkChannel(section: string): boolean {
-    if (!this.channels[section] && section !== "joystreamUtility") {
+    if (!this.channels[section] && section !== 'joystreamUtility') {
       console.log(`Channel not configured for [${section}]`);
       return false;
     }

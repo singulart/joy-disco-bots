@@ -1,10 +1,11 @@
-import { DiscordModule } from "@discord-nestjs/core";
-import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { DatabaseModule } from "src/db/database.module";
-import { PioneerGraphQLModule } from "src/gql/pioneer.module";
-import { IdentityModule } from "src/identity/identity.module";
-import { ProposalCreatedHandler } from "./proposal-created.handler";
+import { DiscordModule } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from 'src/db/database.module';
+import { PioneerGraphQLModule } from 'src/gql/pioneer.module';
+import { IdentityModule } from 'src/identity/identity.module';
+import { ProposalCreatedHandler } from './proposal-created.handler';
+import { ProposalDecisionMadeHandler } from './proposal-decision-made.handler';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { ProposalCreatedHandler } from "./proposal-created.handler";
     IdentityModule
   ],
   providers: [
-    ProposalCreatedHandler
+    ProposalCreatedHandler,
+    ProposalDecisionMadeHandler
   ]
 })
 export class JoyGovernanceModule {}
