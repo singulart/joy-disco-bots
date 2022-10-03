@@ -32,8 +32,7 @@ export class TerminationHandler extends BaseEventHandler {
         embeds: [
           getWorkerTerminatedEmbed(
             terminatedIdWorker,
-            payload.block,
-            payload.event
+            payload
           ),
         ],
       }));

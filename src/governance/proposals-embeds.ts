@@ -39,7 +39,7 @@ export function getProposalCreatedEmbed(
   }
 }
 
-export function getSignalProposalCreatedEmbed(
+function getSignalProposalCreatedEmbed(
   proposalId: ProposalId | undefined,
   generalInformation: PalletProposalsCodexGeneralProposalParams | undefined,
   signal: string,
@@ -56,7 +56,7 @@ export function getSignalProposalCreatedEmbed(
     .setTimestamp();
 }
 
-export function getFundingProposalCreatedEmbed(
+function getFundingProposalCreatedEmbed(
   proposalId: ProposalId | undefined,
   generalInformation: PalletProposalsCodexGeneralProposalParams | undefined,
   fundingData: Vec<PalletCommonFundingRequestParameters>,
@@ -76,7 +76,7 @@ export function getFundingProposalCreatedEmbed(
     .setTimestamp();
 }
 
-export function getWgBudgetProposalCreatedEmbed(
+function getWgBudgetProposalCreatedEmbed(
   proposalId: ProposalId | undefined,
   generalInformation: PalletProposalsCodexGeneralProposalParams | undefined,
   budgetData: ITuple<[Balance, PalletCommonWorkingGroup, PalletCommonBalanceKind]>,
@@ -97,6 +97,18 @@ export function getProposalDecidedEmbed(proposalId: ProposalId | undefined, deci
     .setTitle(`Proposal ${proposalId?.toString()} ${decision}`)
     .addFields([
       { name: 'Link', value: proposalUrl(proposalId?.toString() || ''), inline: true },
+    ])
+    .setColor(joystreamBlue)
+    .setTimestamp();
+}
+
+export function getVotedEmbed(proposalId: ProposalId | undefined, voter: string, vote: string, rationale: string): Discord.MessageEmbed {
+  return new Discord.MessageEmbed()
+    .setTitle(`Proposal ${proposalId?.toString()} got ${vote} vote`)
+    .setDescription(rationale)
+    .addFields([
+      { name: 'Link', value: proposalUrl(proposalId?.toString() || ''), inline: true },
+      { name: 'Voter CM', value: voter, inline: true }, 
     ])
     .setColor(joystreamBlue)
     .setTimestamp();

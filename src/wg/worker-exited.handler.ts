@@ -26,8 +26,7 @@ export class WorkerExitedHandler extends BaseEventHandler {
         embeds: [
           getWorkerExitedEmbed(
             exitedMember,
-            payload.block,
-            payload.event
+            payload
           ),
         ],
       }));
