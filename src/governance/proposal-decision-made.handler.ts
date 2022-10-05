@@ -9,7 +9,7 @@ import { getProposalDecidedEmbed } from './proposals-embeds';
 @Injectable()
 export class ProposalDecisionMadeHandler extends BaseEventHandler {
 
-  @OnEvent('*.ProposalDecisionMade')
+  @OnEvent('proposalsEngine.ProposalDecisionMade')
   async handleProposalDecisionMadeEvent(payload: EventWithBlock) {
 
     const [proposalId, decision] = [
