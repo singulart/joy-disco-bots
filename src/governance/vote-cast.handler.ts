@@ -9,7 +9,7 @@ import { getVotedEmbed } from './proposals-embeds';
 @Injectable()
 export class ProposalVotedHandler extends BaseEventHandler {
 
-  @OnEvent('*.ProposalVotedEvent')
+  @OnEvent('proposalsEngine.Voted')
   async handleProposalVotedEvent(payload: EventWithBlock) {
 
     const [voter, proposal, vote, rationale] = [

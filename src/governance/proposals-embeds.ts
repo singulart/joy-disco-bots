@@ -1,4 +1,4 @@
-import { ProposalId } from '@joystream/types/primitives';
+import { ProposalId, ProposalDiscussionPostId, ProposalDiscussionThreadId } from '@joystream/types/primitives';
 import { Vec } from '@polkadot/types';
 import { ITuple } from '@polkadot/types/types';
 import { Balance } from '@polkadot/types/interfaces/runtime';
@@ -109,6 +109,30 @@ export function getVotedEmbed(proposalId: ProposalId | undefined, voter: string,
     .addFields([
       { name: 'Link', value: proposalUrl(proposalId?.toString() || ''), inline: true },
       { name: 'Voter CM', value: voter, inline: true }, 
+    ])
+    .setColor(joystreamBlue)
+    .setTimestamp();
+}
+
+// why is threadId is the same as proposalId? Awkward convention...
+export function getPostCreatedEmbed(proposalId: ProposalDiscussionThreadId | undefined, member: string, postText: string): Discord.MessageEmbed {
+  return new Discord.MessageEmbed()
+    .setTitle(`New post under the proposal ${proposalId?.toString()}`)
+    .setDescription(postText)
+    .addFields([
+      { name: 'Proposal URL', value: proposalUrl(proposalId?.toString() || ''), inline: true },
+      { name: 'Created By', value: member, inline: true }, 
+    ])
+    .setColor(joystreamBlue)
+    .setTimestamp();
+}
+
+export function getPostDeletedEmbed(proposalId: ProposalDiscussionThreadId | undefined, member: string, postId: ProposalDiscussionPostId): Discord.MessageEmbed {
+  return new Discord.MessageEmbed()
+    .setTitle(`Deleted post ${postId.toString()} under the proposal ${proposalId?.toString()}`)
+    .addFields([
+      { name: 'Proposal URL', value: proposalUrl(proposalId?.toString() || ''), inline: true },
+      { name: 'Deleted By', value: member, inline: true }, 
     ])
     .setColor(joystreamBlue)
     .setTimestamp();

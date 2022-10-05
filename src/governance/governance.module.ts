@@ -6,7 +6,9 @@ import { PioneerGraphQLModule } from 'src/gql/pioneer.module';
 import { IdentityModule } from 'src/identity/identity.module';
 import { ProposalCreatedHandler } from './proposal-created.handler';
 import { ProposalDecisionMadeHandler } from './proposal-decision-made.handler';
-// import { ProposalVotedHandler } from './vote-cast.handler';
+import { ProposalPostCreatedHandler } from './proposal-post-created.handler';
+import { ProposalPostDeletedHandler } from './proposal-post-deleted.handler';
+import { ProposalVotedHandler } from './vote-cast.handler';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { ProposalDecisionMadeHandler } from './proposal-decision-made.handler';
   providers: [
     ProposalCreatedHandler,
     ProposalDecisionMadeHandler,
-    // ProposalVotedHandler
+    ProposalVotedHandler,
+    ProposalPostCreatedHandler,
+    ProposalPostDeletedHandler
   ]
 })
 export class JoyGovernanceModule {}
