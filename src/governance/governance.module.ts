@@ -8,6 +8,7 @@ import { ProposalCreatedHandler } from './proposal-created.handler';
 import { ProposalDecisionMadeHandler } from './proposal-decision-made.handler';
 import { ProposalPostCreatedHandler } from './proposal-post-created.handler';
 import { ProposalPostDeletedHandler } from './proposal-post-deleted.handler';
+import { ProposalPostUpdatedHandler } from './proposal-post-updated.handler';
 import { ProposalVotedHandler } from './vote-cast.handler';
 
 @Module({
@@ -23,7 +24,8 @@ import { ProposalVotedHandler } from './vote-cast.handler';
     ProposalDecisionMadeHandler,
     ProposalVotedHandler,
     ProposalPostCreatedHandler,
-    ProposalPostDeletedHandler
+    ProposalPostDeletedHandler,
+    ProposalPostUpdatedHandler,
   ]
 })
 export class JoyGovernanceModule {}
