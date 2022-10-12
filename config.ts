@@ -3,9 +3,9 @@ import { AxiosRequestConfig } from "axios";
 import { BackOffPolicy, RetryOptions } from "typescript-retry-decorator";
 import { ChannelNames, Licenses } from "./src/types";
 
-export const pioneerApi = "https://query.joystream.org/graphql";
-export const atlasApi = "https://orion.joystream.org/graphql";
-export const wsLocation = "wss://rpc.joystream.org:9944"; 
+export const pioneerApi = "https://atlas-next.joystream.org/query-node/server/graphql";
+export const atlasApi = "https://atlas-next.joystream.org/query-node/server/graphql";
+export const wsLocation = "wss://atlas-next.joystream.org/ws-rpc"; 
 export const database = "joy_dao";
 
 
@@ -23,6 +23,7 @@ export const channelNames: ChannelNames = {
 
   general: "💬｜general",
   council: "🏛｜council",
+  proposals: "📋｜proposals",
   contentCreator: "💻｜content-creator",
   techSupport: "💻｜tech-support",
   atlasFeedback: "🛫｜atlas-testing",

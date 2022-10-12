@@ -1,11 +1,11 @@
-import { Once } from "@discord-nestjs/core";
-import { Injectable, Logger } from "@nestjs/common";
-import { wsLocation } from "config";
-import { connectApi, getBlockHash, getEvents } from "src/util";
-import { ApiPromise } from "@polkadot/api";
+import { Once } from '@discord-nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { wsLocation } from 'config';
+import { connectApi, getBlockHash, getEvents } from 'src/util';
+import { ApiPromise } from '@polkadot/api';
 import { Header, EventRecord } from '@polkadot/types/interfaces'
-import { EventEmitter2 } from "@nestjs/event-emitter";
-import { EventWithBlock } from "src/types";
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventWithBlock } from 'src/types';
 
 
 @Injectable()

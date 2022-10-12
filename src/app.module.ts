@@ -11,6 +11,7 @@ import { BlockchainModule } from './blockchain/blockchain.module';
 import { VideoModule } from './videos/videos.module';
 import { AtlasGraphQLModule } from './gql/atlas.module';
 import { StorageProvidersModule } from './storage-providers/sp.module';
+import { JoyGovernanceModule } from './governance/governance.module';
 
 @Module({
   imports: [
@@ -41,7 +42,8 @@ import { StorageProvidersModule } from './storage-providers/sp.module';
     IdentityModule,
     ForumModule,
     VideoModule,
-    StorageProvidersModule
+    StorageProvidersModule,
+    JoyGovernanceModule,
   ],
   providers: [],
 })
