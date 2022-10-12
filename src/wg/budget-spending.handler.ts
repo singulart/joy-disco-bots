@@ -1,10 +1,10 @@
-import { Balance } from "@joystream/types/common";
-import { Injectable} from "@nestjs/common";
-import { OnEvent } from "@nestjs/event-emitter";
-import { TextChannel } from "discord.js";
-import { EventWithBlock } from "src/types";
-import { BaseEventHandler } from "./base-event.handler";
-import { getDiscretionarySpendingEmbed, getDiscretionarySpendingToNonWorkerAddressEmbed } from "./embeds";
+import { Balance } from '@polkadot/types/interfaces';
+import { Injectable} from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { TextChannel } from 'discord.js';
+import { EventWithBlock } from 'src/types';
+import { BaseEventHandler } from './base-event.handler';
+import { getDiscretionarySpendingEmbed, getDiscretionarySpendingToNonWorkerAddressEmbed } from './embeds';
 
 @Injectable()
 export class BudgetSpendingHandler extends BaseEventHandler {

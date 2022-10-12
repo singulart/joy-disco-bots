@@ -1,16 +1,16 @@
-import { InjectDiscordClient, Once } from "@discord-nestjs/core";
-import { Injectable, Logger, Optional } from "@nestjs/common";
-import { Client } from "discord.js";
-import { EventWithBlock } from "src/types";
-import { OnEvent } from "@nestjs/event-emitter";
-import { VideoId } from "@joystream/types/content";
-import { RetryableAtlasClient } from "src/gql/atlas.client";
-import { GetDistributionBucketsWithOperatorsQuery, GetVideoByIdQuery } from "src/qntypes-atlas";
-import { getVideoEmbed } from "./video.embeds";
-import { findDiscordChannel } from "src/util";
-import { channelNames } from "../../config";
+import { InjectDiscordClient, Once } from '@discord-nestjs/core';
+import { Injectable, Logger, Optional } from '@nestjs/common';
+import { Client } from 'discord.js';
+import { EventWithBlock } from 'src/types';
+import { OnEvent } from '@nestjs/event-emitter';
+import { VideoId } from '@joystream/types/primitives';
+import { RetryableAtlasClient } from 'src/gql/atlas.client';
+import { GetDistributionBucketsWithOperatorsQuery, GetVideoByIdQuery } from 'src/qntypes-atlas';
+import { getVideoEmbed } from './video.embeds';
+import { findDiscordChannel } from 'src/util';
+import { channelNames } from '../../config';
 
-const VIDEOS_CHANNEL_KEY = "videos";
+const VIDEOS_CHANNEL_KEY = 'videos';
 
 @Injectable()
 export class VideoCreatedHandler {

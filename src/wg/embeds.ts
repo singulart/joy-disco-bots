@@ -2,19 +2,20 @@ import { joystreamBlue } from '../../config'
 import { formatBalance } from '@polkadot/util';
 import { EventRecord } from '@polkadot/types/interfaces';
 import Discord from 'discord.js';
-import { OpeningId, ApplicationId } from "@joystream/types/working-group";
-import { Balance } from '@joystream/types/common';
+import { OpeningId, ApplicationId } from '@joystream/types/primitives';
+import { Balance } from '@polkadot/types/interfaces';
 import { OpeningByIdQuery, WorkerByIdQuery, ApplicationByIdQuery, MemberByIdQuery, WorkersByAccountQuery } from '../qntypes';
+import { EventWithBlock } from 'src/types';
 
 
-export const getBudgetSetEmbed = (balanceSet: number, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getBudgetSetEmbed(balanceSet: number, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰 💵 💸 💴 💶 ${formatBalance(balanceSet, { withUnit: 'tJOY' })} added to the Treasury 💰 💵 💸 💴 💶 `)
     , blockNumber, event);
 }
 
-export const getOpeningAddedEmbed = (id: OpeningId, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getOpeningAddedEmbed(id: OpeningId, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
   const openingData = opening.workingGroupOpeningByUniqueInput;
   const description = openingData?.metadata.description ?
     openingData.metadata.description : openingData?.metadata.shortDescription;
@@ -28,13 +29,13 @@ export const getOpeningAddedEmbed = (id: OpeningId, opening: OpeningByIdQuery, b
     ), blockNumber, event);
 }
 
-export const getOpeningCancelledEmbed = (id: OpeningId, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getOpeningCancelledEmbed(id: OpeningId, opening: OpeningByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`⛩ Opening ${safeOpeningTitle(opening, id.toString())} was cancelled⛩`)
     , blockNumber, event);
 }
 
-export const getOpeningFilledEmbed = (opening: OpeningByIdQuery, member: WorkerByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getOpeningFilledEmbed(opening: OpeningByIdQuery, member: WorkerByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(
     new Discord.MessageEmbed()
@@ -43,8 +44,8 @@ export const getOpeningFilledEmbed = (opening: OpeningByIdQuery, member: WorkerB
     , blockNumber, event);
 }
 
-export const getAppliedOnOpeningEmbed = (applicationId: ApplicationId,
-  opening: OpeningByIdQuery, applicant: MemberByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getAppliedOnOpeningEmbed(applicationId: ApplicationId,
+  opening: OpeningByIdQuery, applicant: MemberByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`🏛 ${applicant.memberships[0].handle} applied to opening ${safeOpeningTitle(opening, getOpeningId(opening))}`)
@@ -56,8 +57,8 @@ export const getAppliedOnOpeningEmbed = (applicationId: ApplicationId,
 }
 
 
-export const getWorkerRewardAmountUpdatedEmbed = (reward: Balance, member: WorkerByIdQuery,
-  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getWorkerRewardAmountUpdatedEmbed(reward: Balance, member: WorkerByIdQuery,
+  blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 Salary of ${member.workerByUniqueInput?.membership.handle} updated`)
@@ -66,8 +67,8 @@ export const getWorkerRewardAmountUpdatedEmbed = (reward: Balance, member: Worke
     ), blockNumber, event);
 }
 
-export const getDiscretionarySpendingEmbed = (spending: Balance, recipient: WorkersByAccountQuery,
-  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getDiscretionarySpendingEmbed(spending: Balance, recipient: WorkersByAccountQuery,
+  blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 User ${recipient.workers[0].membership.handle} was paid via discretionary budget spending`)
@@ -76,8 +77,8 @@ export const getDiscretionarySpendingEmbed = (spending: Balance, recipient: Work
     ), blockNumber, event);
 }
 
-export const getDiscretionarySpendingToNonWorkerAddressEmbed = (spending: Balance, recipientAddress: string,
-  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getDiscretionarySpendingToNonWorkerAddressEmbed(spending: Balance, recipientAddress: string,
+  blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 Discretionary budget spending was made`)
@@ -88,46 +89,43 @@ export const getDiscretionarySpendingToNonWorkerAddressEmbed = (spending: Balanc
 }
 
 
-export const getWorkerRewardedEmbed = (reward: Balance, member: WorkerByIdQuery, missed: boolean,
-  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getWorkerRewardedEmbed(reward: Balance, member: WorkerByIdQuery, missed: boolean,
+  blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
-    .setTitle(`💰💰💰 Remuneration ${missed ? 'debt' : ''} for ${member.workerByUniqueInput?.membership.handle} paid successfully`)
+    .setTitle(`💰💰💰 Remuneration${missed ? ' debt' : ''} for ${member.workerByUniqueInput?.membership.handle} paid successfully`)
     .addFields(
       { name: `Amount paid`, value: formatBalance(reward.toString(), { withUnit: 'tJOY' }), inline: true }
     ), blockNumber, event);
 }
 
-export const getLeaderSetEmbed = (member: WorkerByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getLeaderSetEmbed(member: WorkerByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed().setTitle(`🏛 ${member.workerByUniqueInput?.membership.handle} is a new Lead`), blockNumber, event);
 }
 
-export const getLeaderUnsetEmbed = (blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getLeaderUnsetEmbed(blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed().setTitle(`🏛 Leader was unset`), blockNumber, event);
 }
 
-export const getWorkerTerminatedEmbed = (member: WorkerByIdQuery,
-  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
-  return getWorkerExitedOrTerminatedEmbed('been terminated', member, blockNumber, event);
+export function getWorkerTerminatedEmbed(member: WorkerByIdQuery, payload: EventWithBlock): Discord.MessageEmbed {
+  return getWorkerExitedOrTerminatedEmbed('been terminated', member, payload);
 }
 
-export const getWorkerExitedEmbed = (member: WorkerByIdQuery,
-  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
-  return getWorkerExitedOrTerminatedEmbed('exited', member, blockNumber, event);
+export function getWorkerExitedEmbed(member: WorkerByIdQuery, payload: EventWithBlock): Discord.MessageEmbed {
+  return getWorkerExitedOrTerminatedEmbed('exited', member, payload);
 }
 
-export const getWorkerExitedOrTerminatedEmbed = (action: string, member: WorkerByIdQuery,
-  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getWorkerExitedOrTerminatedEmbed(action: string, member: WorkerByIdQuery, payload: EventWithBlock): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`🏛 Worker ${member.workerByUniqueInput?.membership.handle} has ${action}`)
-    , blockNumber, event);
+    , payload.block, payload.event);
 }
 
-export const getApplicationWithdrawnEmbed = (applicationId: ApplicationId, application: ApplicationByIdQuery,
-  blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getApplicationWithdrawnEmbed(applicationId: ApplicationId, application: ApplicationByIdQuery,
+  blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`🏛 Application of ${application.workingGroupApplicationByUniqueInput?.applicant.handle} withdrawn`)
@@ -137,7 +135,7 @@ export const getApplicationWithdrawnEmbed = (applicationId: ApplicationId, appli
     ), blockNumber, event);
 }
 
-export const getStakeUpdatedEmbed = (stake: Balance | null, member: WorkerByIdQuery, action: string, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getStakeUpdatedEmbed(stake: Balance | null, member: WorkerByIdQuery, action: string, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 ${member.workerByUniqueInput?.membership.handle}'s stake has been ${action}`)
@@ -146,9 +144,9 @@ export const getStakeUpdatedEmbed = (stake: Balance | null, member: WorkerByIdQu
     ), blockNumber, event);
 }
 
-const addCommonProperties = (embed: Discord.MessageEmbed, blockNumber: number, event: EventRecord) => {
+function addCommonProperties(embed: Discord.MessageEmbed, blockNumber: number, event: EventRecord) {
   return embed.addFields(
-    { name: 'Block', value: blockNumber + "", inline: true },
+    { name: 'Block', value: blockNumber + '', inline: true },
     { name: 'Tx', value: event.hash.toString(), inline: true },
   )
     .setColor(joystreamBlue)

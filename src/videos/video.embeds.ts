@@ -1,11 +1,11 @@
-import { joystreamBlue, licenses } from "config";
-import { GetVideoByIdQuery } from "src/qntypes-atlas";
+import { joystreamBlue, licenses } from 'config';
+import { GetVideoByIdQuery } from 'src/qntypes-atlas';
 import Discord, { EmbedAuthorData } from 'discord.js';
-import { humanFileSize } from "./sizeformat";
-import moment from "moment";
-import "moment-duration-format";
+import { humanFileSize } from './sizeformat';
+import moment from 'moment';
+import 'moment-duration-format';
 
-export const getVideoEmbed = (video: GetVideoByIdQuery, cdnUrl: string): Discord.MessageEmbed => {
+export function getVideoEmbed(video: GetVideoByIdQuery, cdnUrl: string): Discord.MessageEmbed {
   const vid = video.videoByUniqueInput;
   const licenseKey = vid?.license?.code || ' ';
   const exampleEmbed = new Discord.MessageEmbed()
@@ -34,10 +34,10 @@ export const getVideoEmbed = (video: GetVideoByIdQuery, cdnUrl: string): Discord
   return exampleEmbed;
 }
 
-const durationFormat = (duration: number) => {
+function durationFormat(duration: number) {
   if (duration < 60) {
     return `${duration}s.`
   } else {
-     return moment.duration(duration, 'seconds').format("hh:mm:ss")
+     return moment.duration(duration, 'seconds').format('hh:mm:ss')
   }
 }

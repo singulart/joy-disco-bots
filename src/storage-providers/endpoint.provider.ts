@@ -1,5 +1,5 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from "@nestjs/common";
-import { RetryablePioneerClient } from "src/gql/pioneer.client";
+import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { RetryablePioneerClient } from 'src/gql/pioneer.client';
 import { Cache } from 'cache-manager';
 
 const CACHE_KEY = 'sp-nodes-key';
@@ -18,7 +18,7 @@ export class StorageNodeEndpointProvider {
     if (cached) { // hit 
       return cached; 
     } else { // miss
-      this.logger.debug("Loading storage node data from QN...");
+      this.logger.debug('Loading storage node data from QN...');
       const qnResult = await this.pioneerClient.getStorageNodes();
       const endpoints = qnResult.storageBuckets.map((n) => n.operatorMetadata?.nodeEndpoint as string);
       this.cacheManager.set(CACHE_KEY, endpoints);

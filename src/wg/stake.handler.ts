@@ -1,11 +1,11 @@
-import { Balance } from "@joystream/types/common";
-import { WorkerId } from "@joystream/types/working-group";
-import { Injectable } from "@nestjs/common";
-import { OnEvent } from "@nestjs/event-emitter";
-import { TextChannel } from "discord.js";
-import { EventWithBlock } from "src/types";
-import { BaseEventHandler } from "./base-event.handler";
-import { getStakeUpdatedEmbed } from "./embeds";
+import { Balance } from '@polkadot/types/interfaces';
+import { WorkerId } from '@joystream/types/primitives';
+import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { TextChannel } from 'discord.js';
+import { EventWithBlock } from 'src/types';
+import { BaseEventHandler } from './base-event.handler';
+import { getStakeUpdatedEmbed } from './embeds';
 
 @Injectable()
 export class StakeHandler extends BaseEventHandler {
@@ -40,7 +40,7 @@ export class StakeHandler extends BaseEventHandler {
           getStakeUpdatedEmbed(
             stake,
             stakeWorker,
-            method.replace("Stake", ""),
+            method.replace('Stake', ''),
             payload.block,
             payload.event
           ),

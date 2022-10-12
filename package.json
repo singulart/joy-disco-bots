@@ -25,7 +25,7 @@
     "@graphql-codegen/cli": "^2.13.1",
     "@graphql-codegen/typescript-graphql-request": "^4.5.5",
     "@graphql-codegen/typescript-operations": "^2.5.3",
-    "@joystream/types": "0.19.3",
+    "@joystream/types": "0.20.2",
     "@nestjs/common": "^8.4.7",
     "@nestjs/config": "2.1.0",
     "@nestjs/core": "^8.4.7",

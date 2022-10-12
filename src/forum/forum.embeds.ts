@@ -4,7 +4,7 @@ import { joystreamBlue } from '../../config'
 import { ForumThreadByIdQuery, PostByIdQuery } from 'src/qntypes';
 
 
-export const getNewThreadEmbed = (thread: ForumThreadByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getNewThreadEmbed(thread: ForumThreadByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
   const f = thread.forumThreadByUniqueInput;
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`New thread [${f?.title}] by user [${f?.author.handle}] created in [${f?.category.title}]`)
@@ -12,7 +12,7 @@ export const getNewThreadEmbed = (thread: ForumThreadByIdQuery, blockNumber: num
     , blockNumber, event);
 }
 
-export const getNewPostEmbed = (post: PostByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed => {
+export function getNewPostEmbed(post: PostByIdQuery, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
   const p = post.forumPostByUniqueInput;
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`New post by [${p?.author.handle}] created in [${p?.thread.title}]`)
@@ -23,12 +23,16 @@ export const getNewPostEmbed = (post: PostByIdQuery, blockNumber: number, event:
     , blockNumber, event);
 }
 
-const addCommonProperties = (embed: Discord.MessageEmbed, blockNumber: number, event: EventRecord) => {
+function addCommonProperties(embed: Discord.MessageEmbed, blockNumber: number, event: EventRecord) {
   return embed
     .setColor(joystreamBlue)
     .setTimestamp();
 }
 
-const threadUrl = (threadId: string | undefined) => `https://dao.joystream.org/#/forum/thread/${threadId}`
+function threadUrl(threadId: string | undefined){ 
+  return `https://dao.joystream.org/#/forum/thread/${threadId}`;
+}
 
-const postUrl = (threadId: string | undefined, postId: string | undefined) => `${threadUrl(threadId)}?post=${postId}`
+function postUrl(threadId: string | undefined, postId: string | undefined){
+  return `${threadUrl(threadId)}?post=${postId}`;
+} 
