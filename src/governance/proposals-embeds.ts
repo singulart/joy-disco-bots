@@ -138,6 +138,17 @@ export function getPostDeletedEmbed(proposalId: ProposalDiscussionThreadId | und
     .setTimestamp();
 }
 
+export function getPostUpdatedEmbed(proposalId: ProposalDiscussionThreadId | undefined, member: string, postId: ProposalDiscussionPostId): Discord.MessageEmbed {
+  return new Discord.MessageEmbed()
+    .setTitle(`Updated post ${postId.toString()} under the proposal ${proposalId?.toString()}`)
+    .addFields([
+      { name: 'Proposal URL', value: proposalUrl(proposalId?.toString() || ''), inline: true },
+      { name: 'Updated By', value: member, inline: true }, 
+    ])
+    .setColor(joystreamBlue)
+    .setTimestamp();
+}
+
 function proposalUrl(id: string) {
   return `https://dao.joystream.org/#/proposals/preview/${id}`;
 }
