@@ -5,7 +5,7 @@ import { Balance } from '@polkadot/types/interfaces/runtime';
 import { PalletCommonBalanceKind, PalletProposalsCodexGeneralProposalParams } from '@polkadot/types/lookup';
 import { PalletProposalsCodexProposalDetails } from '@polkadot/types/lookup';
 import { PalletCommonFundingRequestParameters } from '@polkadot/types/lookup';
-import { PalletCommonWorkingGroup } from '@polkadot/types/lookup';
+import { PalletCommonWorkingGroupIterableEnumsWorkingGroup } from '@polkadot/types/lookup';
 import Discord from 'discord.js';
 import { joystreamBlue } from '../../config';
 import { hexToString, formatBalance } from '@polkadot/util';
@@ -79,7 +79,7 @@ function getFundingProposalCreatedEmbed(
 function getWgBudgetProposalCreatedEmbed(
   proposalId: ProposalId | undefined,
   generalInformation: PalletProposalsCodexGeneralProposalParams | undefined,
-  budgetData: ITuple<[Balance, PalletCommonWorkingGroup, PalletCommonBalanceKind]>,
+  budgetData: ITuple<[Balance, PalletCommonWorkingGroupIterableEnumsWorkingGroup, PalletCommonBalanceKind]>,
   authorHandleOrId: string): Discord.MessageEmbed {
 
   return new Discord.MessageEmbed()
