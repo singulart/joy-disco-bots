@@ -3,9 +3,9 @@ import { AxiosRequestConfig } from "axios";
 import { BackOffPolicy, RetryOptions } from "typescript-retry-decorator";
 import { ChannelNames, Licenses } from "./src/types";
 
-export const pioneerApi = "https://atlas-next.joystream.org/query-node/server/graphql";
-export const atlasApi = "https://atlas-next.joystream.org/query-node/server/graphql";
-export const wsLocation = "wss://atlas-next.joystream.org/ws-rpc"; 
+export const pioneerApi = "https://pl.joystreamstats.live/graphql";
+export const atlasApi = "https://pl.joystreamstats.live/graphql";
+export const wsLocation = "wss://pl.joystreamstats.live/rpc"; 
 export const database = "joy_dao";
 
 
