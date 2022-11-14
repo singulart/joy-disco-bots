@@ -5,7 +5,7 @@ import { TextChannel } from 'discord.js';
 import { EventWithBlock } from 'src/types';
 import { BaseEventHandler } from './base-event.handler';
 import { getBudgetSetEmbed } from './embeds';
-import { PalletCommonWorkingGroup } from '@polkadot/types/lookup';
+import { PalletCommonWorkingGroupIterableEnumsWorkingGroup } from '@polkadot/types/lookup';
 
 @Injectable()
 export class BudgetUpdatedHandler extends BaseEventHandler {
@@ -18,7 +18,7 @@ export class BudgetUpdatedHandler extends BaseEventHandler {
       return;
     }
     const budgetChange = (data[1] as Balance).toNumber();
-    const wg: PalletCommonWorkingGroup = data[0] as PalletCommonWorkingGroup;
+    const wg: PalletCommonWorkingGroupIterableEnumsWorkingGroup = data[0] as PalletCommonWorkingGroupIterableEnumsWorkingGroup;
     console.log(wg.toHuman());
     let dynamicChannels: TextChannel[] = [];
 
