@@ -27,7 +27,7 @@ export class VideoCreatedHandler {
 
   @Once('ready')
   async onReady(): Promise<void> {
-    this.distributionBuckets = await this.atlasClient.getDistributionBucketsWithOperators();
+    // this.distributionBuckets = await this.atlasClient.getDistributionBucketsWithOperators();
   }
 
   @OnEvent('*.VideoCreated')

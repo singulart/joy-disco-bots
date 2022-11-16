@@ -26,6 +26,8 @@
     "@graphql-codegen/typescript-graphql-request": "^4.5.5",
     "@graphql-codegen/typescript-operations": "^2.5.3",
     "@joystream/types": "0.20.3",
+    "@polkadot/util": "9.5.1",
+    "@polkadot/util-crypto": "9.5.1",
     "@nestjs/common": "^8.4.7",
     "@nestjs/config": "2.1.0",
     "@nestjs/core": "^8.4.7",
