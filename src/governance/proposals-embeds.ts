@@ -105,7 +105,7 @@ export function getProposalDecidedEmbed(proposalId: ProposalId | undefined, deci
 export function getVotedEmbed(proposalId: ProposalId | undefined, voter: string, vote: string, rationale: string): Discord.MessageEmbed {
   return new Discord.MessageEmbed()
     .setTitle(`Proposal ${proposalId?.toString()} got ${vote} vote`)
-    .setDescription(rationale)
+    .setDescription(hexToString(rationale))
     .addFields([
       { name: 'Link', value: proposalUrl(proposalId?.toString() || ''), inline: true },
       { name: 'Voter CM', value: voter, inline: true }, 
@@ -118,7 +118,7 @@ export function getVotedEmbed(proposalId: ProposalId | undefined, voter: string,
 export function getPostCreatedEmbed(proposalId: ProposalDiscussionThreadId | undefined, member: string, postText: string): Discord.MessageEmbed {
   return new Discord.MessageEmbed()
     .setTitle(`New post under the proposal ${proposalId?.toString()}`)
-    .setDescription(postText)
+    .setDescription(hexToString(postText))
     .addFields([
       { name: 'Proposal URL', value: proposalUrl(proposalId?.toString() || ''), inline: true },
       { name: 'Created By', value: member, inline: true }, 
