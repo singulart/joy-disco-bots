@@ -7,11 +7,15 @@ import { Balance } from '@polkadot/types/interfaces';
 import { OpeningByIdQuery, WorkerByIdQuery, ApplicationByIdQuery, MemberByIdQuery, WorkersByAccountQuery } from '../qntypes';
 import { EventWithBlock } from 'src/types';
 
+formatBalance.setDefaults({
+  decimals: 10, //TODO clarify
+  unit: 'JOY',
+})
 
 export function getBudgetSetEmbed(balanceSet: number, blockNumber: number, event: EventRecord): Discord.MessageEmbed {
 
   return addCommonProperties(new Discord.MessageEmbed()
-    .setTitle(`💰 💵 💸 💴 💶 ${formatBalance(balanceSet, { withUnit: 'tJOY' })} added to the Treasury 💰 💵 💸 💴 💶 `)
+    .setTitle(`💰 💵 💸 💴 💶 ${formatBalance(balanceSet)} added to the Treasury 💰 💵 💸 💴 💶 `)
     , blockNumber, event);
 }
 
@@ -25,7 +29,7 @@ export function getOpeningAddedEmbed(id: OpeningId, opening: OpeningByIdQuery, b
     .addFields(
       { name: 'ID', value: id.toString(), inline: true },
       { name: 'Reward', value: openingData?.rewardPerBlock.toString(), inline: true },
-      { name: 'Application Stake', value: openingData?.stakeAmount.toString(), inline: true },
+      { name: 'Application Stake', value: formatBalance(openingData?.stakeAmount.toString()), inline: true },
     ), blockNumber, event);
 }
 
@@ -63,7 +67,7 @@ export function getWorkerRewardAmountUpdatedEmbed(reward: Balance, member: Worke
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 Salary of ${member.workerByUniqueInput?.membership.handle} updated`)
     .addFields(
-      { name: 'Salary', value: formatBalance(reward.toString(), { withUnit: 'tJOY' }), inline: true }
+      { name: 'Salary', value: formatBalance(reward.toString()), inline: true }
     ), blockNumber, event);
 }
 
@@ -73,7 +77,7 @@ export function getDiscretionarySpendingEmbed(spending: Balance, recipient: Work
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 User ${recipient.workers[0].membership.handle} was paid via discretionary budget spending`)
     .addFields(
-      { name: 'Amount paid', value: formatBalance(spending.toString(), { withUnit: 'tJOY' }), inline: true }
+      { name: 'Amount paid', value: formatBalance(spending.toString()), inline: true }
     ), blockNumber, event);
 }
 
@@ -83,7 +87,7 @@ export function getDiscretionarySpendingToNonWorkerAddressEmbed(spending: Balanc
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 Discretionary budget spending was made`)
     .addFields(
-      { name: 'Amount paid', value: formatBalance(spending.toString(), { withUnit: 'tJOY' }), inline: true },
+      { name: 'Amount paid', value: formatBalance(spending.toString()), inline: true },
       { name: 'Recipient', value: recipientAddress, inline: true }
     ), blockNumber, event);
 }
@@ -95,7 +99,7 @@ export function getWorkerRewardedEmbed(reward: Balance, member: WorkerByIdQuery,
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 Remuneration${missed ? ' debt' : ''} for ${member.workerByUniqueInput?.membership.handle} paid successfully`)
     .addFields(
-      { name: `Amount paid`, value: formatBalance(reward.toString(), { withUnit: 'tJOY' }), inline: true }
+      { name: `Amount paid`, value: formatBalance(reward.toString()), inline: true }
     ), blockNumber, event);
 }
 
@@ -140,7 +144,7 @@ export function getStakeUpdatedEmbed(stake: Balance | null, member: WorkerByIdQu
   return addCommonProperties(new Discord.MessageEmbed()
     .setTitle(`💰💰💰 ${member.workerByUniqueInput?.membership.handle}'s stake has been ${action}`)
     .addFields(
-      { name: 'Amount', value: stake ? formatBalance(stake.toString(), { withUnit: 'tJOY' }) : 'Not Set', inline: true }
+      { name: 'Amount', value: stake ? formatBalance(stake.toString()) : 'Not Set', inline: true }
     ), blockNumber, event);
 }
 

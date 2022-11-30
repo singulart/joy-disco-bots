@@ -11,7 +11,7 @@ import { joystreamBlue } from '../../config';
 import { hexToString, formatBalance } from '@polkadot/util';
 
 formatBalance.setDefaults({
-  decimals: 9, //TODO clarify
+  decimals: 10, //TODO clarify
   unit: 'JOY',
 })
 
