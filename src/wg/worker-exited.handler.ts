@@ -12,7 +12,7 @@ export class WorkerExitedHandler extends BaseEventHandler {
 
   @OnEvent('*.WorkerExited')
   async handleWorkerExitedEvent(payload: EventWithBlock) {
-    let { section, data } = payload.event.event;
+    const { section, data } = payload.event.event;
     if (!this.checkChannel(section)) {
       return;
     }

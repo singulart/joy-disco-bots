@@ -26,7 +26,7 @@ export class StakeHandler extends BaseEventHandler {
   }
 
   async handle(payload: EventWithBlock) {
-    let { section, method, data } = payload.event.event;
+    const { section, method, data } = payload.event.event;
     if (!this.checkChannel(section)) {
       return;
     }

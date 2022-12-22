@@ -28,7 +28,7 @@ export function getEvents(api: ApiPromise, hash: Hash): Promise<Vec<EventRecord>
 } 
 
 export async function getDiscordChannels (client: Client): Promise<DiscordChannels> {
-  let discordChannels: DiscordChannels = {};
+  const discordChannels: DiscordChannels = {};
   Object.keys(channelNames).map(async (c) => {
     const channel = findDiscordChannel(client, channelNames[c]);
     if (channel && channel.length > 0) discordChannels[c] = channel;

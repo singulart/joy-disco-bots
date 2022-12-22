@@ -66,7 +66,7 @@ export class RoleSyncService {
         }
 
         // Bulk Query Node call to get the on-chain roles
-        let queryNodeMember = await this.findMembership(memberHandles, ithMember);
+        const queryNodeMember = await this.findMembership(memberHandles, ithMember);
         if(!queryNodeMember) {
           continue;
         }

@@ -56,8 +56,8 @@ export const databaseProviders = [
 
 function parseConnectionString(connectionString: string): any {
 
-  let config: any = {};
-  let options: any = {}
+  const config: any = {};
+  const options: any = {}
 
   const urlParts = url.parse(connectionString);
 
@@ -81,7 +81,7 @@ function parseConnectionString(connectionString: string): any {
           config.password = authParts.slice(1).join(':');
   }
 
-  let result = Object.assign({}, config, options);
+  const result = Object.assign({}, config, options);
 
   return result;
 }

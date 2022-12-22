@@ -25,7 +25,7 @@ export class EventEmitterService {
       const hash = await getBlockHash(api, +header.number);
       const events = await getEvents(api, hash);
       events.forEach((e: EventRecord) => {
-        let { section, method } = e.event;
+        const { section, method } = e.event;
         this.eventEmitter.emit(`${section}.${method}`, {event: e, block: +header.number} as EventWithBlock); 
       });
     });

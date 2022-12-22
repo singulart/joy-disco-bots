@@ -32,7 +32,7 @@ export class VideoCreatedHandler {
 
   @OnEvent('*.VideoCreated')
   async handleVideoCreatedEvent(payload: EventWithBlock) {
-    let { data } = payload.event.event;
+    const { data } = payload.event.event;
     const videoId = (data[2] as VideoId).toString();
     this.logger.debug(videoId);
 
