@@ -3,3 +3,4 @@ src/qntype*
 node_modules
 lib
 dist
+.env
