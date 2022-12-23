@@ -1,21 +1,28 @@
-import { GraphQLClientInject, GraphQLRequestModule } from '@golevelup/nestjs-graphql-request';
+import {
+  GraphQLClientInject,
+  GraphQLRequestModule,
+} from '@golevelup/nestjs-graphql-request';
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getSdk } from '../qntypes-atlas';
-import { atlasApi } from '../../config';
 import { GraphQLClient } from 'graphql-request';
 import { RetryableAtlasClient } from './atlas.client';
 
 @Module({
   imports: [
-    GraphQLRequestModule.forRoot(GraphQLRequestModule, {
-      // Exposes configuration options based on the graphql-request package
-      
-      endpoint: atlasApi,
-      options: {
-        headers: {
-          'content-type': 'application/json'
+    GraphQLRequestModule.forRootAsync(GraphQLRequestModule, {
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        endpoint:
+          configService.get<string>('ATLAS_NODE') ||
+          'https://orion.joystream.org/graphql',
+        options: {
+          headers: {
+            'content-type': 'application/json',
+          },
         },
-      },
+      }),
+      inject: [ConfigService],
     }),
   ],
   providers: [
@@ -25,8 +32,8 @@ import { RetryableAtlasClient } from './atlas.client';
       inject: [GraphQLClientInject],
       useFactory: (client: GraphQLClient) => getSdk(client),
     },
-    RetryableAtlasClient
+    RetryableAtlasClient,
   ],
-  exports: [RetryableAtlasClient]
+  exports: [RetryableAtlasClient],
 })
 export class AtlasGraphQLModule {}

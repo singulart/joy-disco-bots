@@ -1,21 +1,28 @@
-import { GraphQLClientInject, GraphQLRequestModule } from '@golevelup/nestjs-graphql-request';
+import {
+  GraphQLClientInject,
+  GraphQLRequestModule,
+} from '@golevelup/nestjs-graphql-request';
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getSdk } from '../qntypes';
-import { pioneerApi } from '../../config';
 import { GraphQLClient } from 'graphql-request';
 import { RetryablePioneerClient } from './pioneer.client';
 
 @Module({
   imports: [
-    GraphQLRequestModule.forRoot(GraphQLRequestModule, {
-      // Exposes configuration options based on the graphql-request package
-      
-      endpoint: pioneerApi,
-      options: {
-        headers: {
-          'content-type': 'application/json'
+    GraphQLRequestModule.forRootAsync(GraphQLRequestModule, {
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        endpoint:
+          configService.get<string>('QUERY_NODE') ||
+          'https://query.joystream.org/graphql',
+        options: {
+          headers: {
+            'content-type': 'application/json',
+          },
         },
-      },
+      }),
+      inject: [ConfigService],
     }),
   ],
   providers: [
@@ -25,8 +32,8 @@ import { RetryablePioneerClient } from './pioneer.client';
       inject: [GraphQLClientInject],
       useFactory: (client: GraphQLClient) => getSdk(client),
     },
-    RetryablePioneerClient
+    RetryablePioneerClient,
   ],
-  exports: ['PioneerGqlSdk', RetryablePioneerClient]
+  exports: ['PioneerGqlSdk', RetryablePioneerClient],
 })
 export class PioneerGraphQLModule {}

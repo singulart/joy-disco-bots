@@ -3,9 +3,6 @@ import { AxiosRequestConfig } from 'axios';
 import { BackOffPolicy, RetryOptions } from 'typescript-retry-decorator';
 import { ChannelNames, Licenses } from './src/types';
 
-export const pioneerApi = 'https://query.joystream.org/graphql';
-export const atlasApi = 'https://orion.joystream.org/graphql';
-export const wsLocation = 'wss://rpc.joystream.org:9944';
 export const database = 'joy_dao';
 
 // wg bot
