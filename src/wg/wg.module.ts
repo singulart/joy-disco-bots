@@ -19,25 +19,25 @@ import { BudgetSpendingHandler } from './budget-spending.handler';
 
 @Module({
   imports: [
-    DiscordModule.forFeature(), 
-    ConfigModule.forRoot(), 
-    PioneerGraphQLModule
+    DiscordModule.forFeature(),
+    ConfigModule.forRoot(),
+    PioneerGraphQLModule,
   ],
   providers: [
     BudgetSetHandler,
     BudgetUpdatedHandler,
     BudgetSpendingHandler,
     ApplicationCreatedHandler,
-    ApplicationWithdrawnHandler, 
+    ApplicationWithdrawnHandler,
     OpeningAddedOrCancelledHandler,
     OpeningFilledHandler,
-    RewardPaidHandler,
+    // RewardPaidHandler,
     RewardUpdatedHandler,
     LeadHandler,
     StakeHandler,
     TerminationHandler,
     WorkerExitedHandler,
-    WorkingGroupService
+    WorkingGroupService,
   ],
 })
 export class WgModule {}
