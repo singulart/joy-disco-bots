@@ -30,8 +30,8 @@ export abstract class BaseEventHandler {
       this.getLogger().log(`Mapped channels not found for categoryId=${categoryId}, parentCategory=${parentCategoryId}`);
       return null;
     }
-    let oneD = [] as TextChannel[];
-    for (let row of Object.values(channels)) for (let e of row) oneD.push(e);
+    const oneD = [] as TextChannel[];
+    for (const row of Object.values(channels)) for (const e of row) oneD.push(e);
     return oneD.filter((ch: TextChannel) => mappedChannels.includes(ch.name));
   }
 

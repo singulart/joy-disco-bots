@@ -11,7 +11,7 @@ export class LeadHandler extends BaseEventHandler {
 
   @OnEvent('*.LeaderSet')
   async handleLeadSetEvent(payload: EventWithBlock) {
-    let { section, data } = payload.event.event;
+    const { section, data } = payload.event.event;
     if (!this.checkChannel(section)) {
       return;
     }
@@ -25,7 +25,7 @@ export class LeadHandler extends BaseEventHandler {
 
   @OnEvent('*.LeaderUnset')
   async handleLeadUnsetEvent(payload: EventWithBlock) {
-    let { section } = payload.event.event;
+    const { section } = payload.event.event;
     if (!this.checkChannel(section)) {
       return;
     }

@@ -14,7 +14,7 @@ export class RewardUpdatedHandler extends BaseEventHandler {
 
   @OnEvent('*.WorkerRewardAmountUpdated')
   async handleRewardUpdatedEvent(payload: EventWithBlock) {
-    let { section, data } = payload.event.event;
+    const { section, data } = payload.event.event;
     if (!this.checkChannel(section)) {
       return;
     }

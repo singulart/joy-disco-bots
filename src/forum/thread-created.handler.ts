@@ -13,7 +13,7 @@ export class ThreadCreatedHandler extends BaseEventHandler {
 
   @OnEvent('forum.ThreadCreated')
   async handleThreadCreatedEvent(payload: EventWithBlock) {
-    let { data } = payload.event.event;
+    const { data } = payload.event.event;
     const threadId = data[1] as ForumThreadId;
     const thread = await this.queryNodeClient.forumThreadById(threadId.toString());
     const serverChannels = this.findChannelsByThread(thread, this.channels);

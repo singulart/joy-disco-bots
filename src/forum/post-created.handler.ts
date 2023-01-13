@@ -13,7 +13,7 @@ export class PostCreatedHandler extends BaseEventHandler {
 
   @OnEvent('forum.PostAdded')
   async handlePostCreatedEvent(payload: EventWithBlock) {
-    let { data } = payload.event.event;
+    const { data } = payload.event.event;
     const postId = data[0] as ForumPostId;
     const post = await this.queryNodeClient.postById(postId.toString());
     const serverChannels = this.findChannelsByPost(post, this.channels);
